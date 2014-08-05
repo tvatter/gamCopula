@@ -81,7 +81,7 @@ for(i in 1:length(basis)){
 }
 
 
-# define GAM-vine model list
+# define gam-vine model list
 count <- 1
 model <- vector(mode = "list", length = d*(d-1)/2)
 # First tree
@@ -93,7 +93,7 @@ for(i in 1:(d-1))
   # Simulate and fit some data
   temp <- BiCopSim(n, family, par = BiCopEta2Par(family, eta0), par2 = par2)
   dataset <- data.frame("u1" = temp[,1], "u2" = temp[,2])      
-  model[[count]] <- GAMBiCopEst(family = family, parFrhs = ~1, dataset, tau = tau,
+  model[[count]] <- gamBiCopEst(family = family, parFrhs = ~1, dataset, tau = tau,
                                 method = met, tol.rel = tol.rel, n.iters = n.iters)$res
   count <- count + 1
 }
@@ -144,17 +144,17 @@ for(j in 2:(d-1)){
     dataset <- cbind(dataset, X)
     names(dataset)[3:(2+l)] <- cond   
     
-    # Estimate the GAM model
-    model[[count]] <- GAMBiCopEst(family = family, parFrhs = formula.expr, dataset, tau = tau,
+    # Estimate the gam model
+    model[[count]] <- gamBiCopEst(family = family, parFrhs = formula.expr, dataset, tau = tau,
                                   method = met, tol.rel = tol.rel, n.iters = n.iters)$res   
     count <- count+1  
   } 
 }
 
-# define GAMVineMatrix object
-GVM <- GAMVineMatrix(Matrix=Matrix,model = model,names=nnames)
+# define gamVineMatrix object
+GVM <- gamVineMatrix(Matrix=Matrix,model = model,names=nnames)
 print(GVM)
 print(GVM, detail = TRUE)
 
 N <- 5e2
-system.time(simData <- GAMVineSim(N, GVM))
+system.time(simData <- gamVineSim(N, GVM))

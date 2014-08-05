@@ -1,4 +1,4 @@
-## Update parameters with respect to fited GAM model
+## Update parameters with respect to fited gam model
 "pars.update" <- function(mm, family, data, tau = TRUE){
 
 	out <- list()

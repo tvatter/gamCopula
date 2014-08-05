@@ -1,6 +1,6 @@
-#' Simulate from fitted \code{\link{GAMBiCop-class}} object
+#' Simulate from fitted \code{\link{gamBiCop-class}} object
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param newdata (same as in \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which simulations are required. 
 #' If this is not provided then simulations corresponding to the original data are returned. 
 #' @param N sample size.
@@ -16,11 +16,11 @@
 #' and/or \code{return.tau = TRUE}, then the list also contains respectively items
 #' \code{calib}, \code{par} and/or \code{tau}.
 #' @export
-GAMBiCopSim <- 
+gamBiCopSim <- 
   function(object, newdata = NULL, N = NULL, return.calib = FALSE, return.par = FALSE, return.tau = FALSE){
 	
-	if(!validGAMBiCop(object)){
-		stop("GAMBiCopPred can only be used to predict from GAMBiCop objects")
+	if(!validgamBiCop(object)){
+		stop("gamBiCopPred can only be used to predict from gamBiCop objects")
 	}
   if(is.null(N)){
     if(!is.null(newdata)){
@@ -68,7 +68,7 @@ GAMBiCopSim <-
     newdata <- newdata[sample.int(dd,N,replace = TRUE),]
   }
   
-	temp <- GAMBiCopPred(object@model, newdata, target = c("par", "eta", "tau"))
+	temp <- gamBiCopPred(object@model, newdata, target = c("par", "eta", "tau"))
   
   data = t(mapply(BiCopSim, 1, object@family, temp$par, object@par2)) 
   out <- list(data = data)

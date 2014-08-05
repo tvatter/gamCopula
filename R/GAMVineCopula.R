@@ -2,7 +2,7 @@
 # ##  gam vine copulas  ##
 # #########################
 
-# validGAMVineCopula = function(object) {
+# validgamVineCopula = function(object) {
   # dim <- object@dimension
   # if( dim <= 2)
     # return("Number of dimension too small (>2).")
@@ -13,20 +13,20 @@
   # return (TRUE)
 # }
 
-# setOldClass("GAMVineMatrix")
+# setOldClass("gamVineMatrix")
 
-# setClass("GAMVineCopula",
+# setClass("gamVineCopula",
          # representation = representation(copulas="list", dimension="integer", 
-                                         # GVM="GAMVineMatrix"),
-         # prototype = prototype(GVM=structure(list(),class="GAMVineMatrix")),
-         # validity = validGAMVineCopula,
+                                         # GVM="gamVineMatrix"),
+         # prototype = prototype(GVM=structure(list(),class="gamVineMatrix")),
+         # validity = validgamVineCopula,
          # contains = list("copula")
 # )
 
 # # constructor
-# GAMVineCopula <- function (GVM) { # GVM <- 4L
+# gamVineCopula <- function (GVM) { # GVM <- 4L
   
-  # stopifnot(class(GVM)=="GAMVineMatrix") 
+  # stopifnot(class(GVM)=="gamVineMatrix") 
   
   # ltr <- lower.tri(GVM$Matrix)
   # copDef <- cbind(GVM$family[ltr], GVM$par[ltr], GVM$par2[ltr])
@@ -34,13 +34,13 @@
                                    # copulaFromFamilyIndex(x[1],x[2],x[3])
                                  # }))
   
-  # new("GAMVineCopula", copulas=copulas, dimension = as.integer(nrow(GVM$Matrix)),
+  # new("gamVineCopula", copulas=copulas, dimension = as.integer(nrow(GVM$Matrix)),
       # GVM=GVM, parameters = numeric(),
       # param.names = character(), param.lowbnd = numeric(), 
-      # param.upbnd = numeric(), fullname = paste("GAMVine copula family."))
+      # param.upbnd = numeric(), fullname = paste("gamVine copula family."))
 # }
 
-# showGAMVineCopula <- function(object) {
+# showgamVineCopula <- function(object) {
   # dim <- object@dimension
   # cat(object@fullname, "\n")
   # cat("Dimension: ", dim, "\n")
@@ -51,40 +51,40 @@
   # }
 # }
 
-# setMethod("show", signature("GAMVineCopula"), showGAMVineCopula)
+# setMethod("show", signature("gamVineCopula"), showgamVineCopula)
 
 # ## density ##
 
-# dGAMVine <- function(u, copula, log=FALSE) {
+# dgamVine <- function(u, copula, log=FALSE) {
   # GVM <- copula@GVM
-  # vineLoglik <- GAMVineLogLik(u, GVM, separate=TRUE)$loglik
+  # vineLoglik <- gamVineLogLik(u, GVM, separate=TRUE)$loglik
   # if(log)
     # return(vineLoglik)
   # else
     # return(exp(vineLoglik))
 # }
 
-# setMethod("dCopula", signature("numeric","GAMVineCopula"), 
+# setMethod("dCopula", signature("numeric","gamVineCopula"), 
           # function(u, copula, log, ...) {
-            # dGAMVine(matrix(u, ncol=copula@dimension), copula, log, ...)
+            # dgamVine(matrix(u, ncol=copula@dimension), copula, log, ...)
           # })
-# setMethod("dCopula", signature("matrix","GAMVineCopula"), dGAMVine)
-# setMethod("dCopula", signature("data.frame","GAMVineCopula"), 
+# setMethod("dCopula", signature("matrix","gamVineCopula"), dgamVine)
+# setMethod("dCopula", signature("data.frame","gamVineCopula"), 
           # function(u, copula, log, ...) {
-            # dGAMVine(as.matrix(u), copula, log, ...)
+            # dgamVine(as.matrix(u), copula, log, ...)
           # })
 
 # ## simulation
 
-# GAMVine <- function(n, copula) {
+# gamVine <- function(n, copula) {
   # GVM <- copula@GVM
-  # GAMVineSim(n, GVM)
+  # gamVineSim(n, GVM)
 # }
 
-# setMethod("rCopula", signature("numeric","GAMVineCopula"), GAMVine)
+# setMethod("rCopula", signature("numeric","gamVineCopula"), gamVine)
 
-# # fitting using GAMVine
-# fitGAMVineCop <- function(copula, data, 
+# # fitting using gamVine
+# fitgamVineCop <- function(copula, data, 
                        # method=list(StructureSelect=FALSE, indeptest=FALSE)) {
   # stopifnot(copula@dimension==ncol(data))
   # if("familyset" %in% names(method))
@@ -97,14 +97,14 @@
     # indept <- FALSE
   # if("StructureSelect" %in% names(method)) {
     # if(method[["StructureSelect"]])
-      # GAMVineCop <- GAMVineCopula(GAMVineStructureSelect(data, familyset, indeptest=indept))
+      # gamVineCop <- gamVineCopula(gamVineStructureSelect(data, familyset, indeptest=indept))
     # else 
-      # GAMVineCop <- GAMVineCopula(GAMVineCopSelect(data, familyset, copula@GVM$Matrix, indeptest=indept))
+      # gamVineCop <- gamVineCopula(gamVineCopSelect(data, familyset, copula@GVM$Matrix, indeptest=indept))
   # } else {
-    # GAMVineCop <- GAMVineCopula(GAMVineCopSelect(data, familyset, copula@GVM$Matrix, indeptest=indept))
+    # gamVineCop <- gamVineCopula(gamVineCopSelect(data, familyset, copula@GVM$Matrix, indeptest=indept))
   # }
   
-  # return(GAMVineCop)
+  # return(gamVineCop)
 # }
 
-# setMethod("fitCopula", signature=signature("GAMVineCopula"), fitGAMVineCop) 
+# setMethod("fitCopula", signature=signature("gamVineCopula"), fitgamVineCop) 

@@ -3,7 +3,7 @@
 ##	2) Estimate the model and display results
 ##															
 
-library(GAMVineCopula)
+library(gamVineCopula)
 set.seed(1)
 
 ##  Simulation parameters
@@ -119,7 +119,7 @@ basis <- c(3,3,3)
 formula <- ~s(x1, k=basis[1], bs = "cr", fx= !pen)+
         s(x2, k=basis[2], bs = "cr", fx= !pen)+
         s(x3, k=basis[3], bs = "cr", fx= !pen)
-system.time(fit <- GAMBiCopEst(dataset, family = fam, parFrhs = formula))
+system.time(fit <- gamBiCopEst(dataset, family = fam, parFrhs = formula))
 
 ## Model fit with a better basis size and penalized cubic splines
 pen <- TRUE
@@ -127,9 +127,9 @@ basis2 <- c(3,10,10)
 formula <- ~s(x1, k=basis2[1], bs = "cr", fx= !pen)+
   s(x2, k=basis2[2], bs = "cr", fx= !pen)+
   s(x3, k=basis2[3], bs = "cr", fx= !pen)
-system.time(fit2 <- GAMBiCopEst(dataset, family = fam, parFrhs = formula))
+system.time(fit2 <- gamBiCopEst(dataset, family = fam, parFrhs = formula))
 
-## Extract the GAMBiCop object and use various methods
+## Extract the gamBiCop object and use various methods
 res <- fit$res
 res2 <- fit2$res
 show(res)
@@ -140,8 +140,8 @@ AIC(res)
 AIC(res2)
 BIC(res)
 BIC(res2)
-fitted <- GAMBiCopPred(res, newdata = Xx, type="terms")$calib
-fitted2 <- GAMBiCopPred(res2, newdata = Xx, type="terms")$calib
+fitted <- gamBiCopPred(res, newdata = Xx, type="terms")$calib
+fitted2 <- gamBiCopPred(res2, newdata = Xx, type="terms")$calib
 
 ## Spline approximation of each true smooth function for the two basis sizes
 for(i in 1:length(basis)){

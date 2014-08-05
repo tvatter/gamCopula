@@ -28,7 +28,7 @@ for(i in 1:length(Nn)){
 	N <- Nn[i]
 	U <- matrix(runif(N*5), ncol = 5)
 	t1[i] <- system.time(Sim1 <- RVineSim(N, RVM, U))[3]
-	t2[i] <- system.time(Sim2 <- GAMVineSim(N, RVM, U))[3]
+	t2[i] <- system.time(Sim2 <- gamVineSim(N, RVM, U))[3]
 	all.equal(Sim1,Sim2)
 }
 

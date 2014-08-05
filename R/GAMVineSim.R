@@ -1,11 +1,11 @@
-GAMVineSim <- function(N, GVM, U = NULL)
+gamVineSim <- function(N, GVM, U = NULL)
 {
   stopifnot(N >= 1)
-  if(!is(GVM, "GAMVineMatrix")) stop("'GVM' has to be an GAMVineMatrix object.")
+  if(!is(GVM, "gamVineMatrix")) stop("'GVM' has to be an gamVineMatrix object.")
 
 	o = diag(GVM$Matrix)
 	d = length(o)
-	GVM = normalizeGAMVineMatrix(GVM)
+	GVM = normalizegamVineMatrix(GVM)
   fam <- family(GVM)
   
   model.count <- rep(0,d^2)
@@ -46,7 +46,7 @@ GAMVineSim <- function(N, GVM, U = NULL)
 				zz = Vindirect[k,mm,]
 			}
       if(k == 1){
-        par <- rep(GAMBiCopPred(model, target = "par")$par[1],N)
+        par <- rep(gamBiCopPred(model, target = "par")$par[1],N)
         par2 <- model@par2
       }else{
         vars <- all.vars(model@model$pred.formula)
@@ -58,7 +58,7 @@ GAMVineSim <- function(N, GVM, U = NULL)
           newdata <- data.frame(t(Vdirect[1,1:nvars,]))
             names(newdata) <- vars
         } 
-        par <- GAMBiCopPred(model, newdata, target = "par")$par
+        par <- gamBiCopPred(model, newdata, target = "par")$par
         par2 <- model@par2
       }
 			    

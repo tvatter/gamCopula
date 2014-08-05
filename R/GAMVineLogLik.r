@@ -1,4 +1,4 @@
-# GAMVineLogLik <-function(data,GVM,par=GVM$par,par2=GVM$par2,separate=FALSE,verbose=TRUE){
+# gamVineLogLik <-function(data,GVM,par=GVM$par,par2=GVM$par2,separate=FALSE,verbose=TRUE){
 # 	
 #   if(is.vector(data)){
 #     data = t(as.matrix(data))
@@ -11,13 +11,13 @@
 # 	n<-d
 # 	N<-T
 # 	if(n != dim(GVM)) stop("Dimensions of 'data' and 'GVM' do not match.")
-#   if(!is(GVM, "GAMVineMatrix")) stop("'GVM' has to be an GAMVineMatrix object.")
+#   if(!is(GVM, "gamVineMatrix")) stop("'GVM' has to be an gamVineMatrix object.")
 #   
 # 	o = diag(GVM$Matrix)
 # 	if(any(o != length(o):1))
 # 	{
 # 		oldGVM = GVM
-# 		GVM = normalizeGAMVineMatrix(GVM)
+# 		GVM = normalizegamVineMatrix(GVM)
 # 		data = data[,o[length(o):1]]
 # 	}
 # 
@@ -69,7 +69,7 @@
 #   		out<-0
 #   	}
 #     
-#     # out <- .C("VineLogLikGAMVine",
+#     # out <- .C("VineLogLikgamVine",
 # 		# as.integer(T),
 # 		# as.integer(d),
 # 		# as.integer(w1),

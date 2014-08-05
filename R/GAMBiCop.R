@@ -1,10 +1,10 @@
 #############################
 ##  gam bivariate copulas  ##
 #############################
-validGAMBiCop = function(object) {	
+validgamBiCop = function(object) {	
  d <- length(attributes(object))
  if(d < 2){
-  	return("A GAMBiCop contains at least a copula family and a mgcv model.")
+  	return("A gamBiCop contains at least a copula family and a mgcv model.")
  }else if(d >= 2){
   	if(!is(object@model, "gam")){
   		return("Invalid mgcv model.")	
@@ -23,9 +23,9 @@ validGAMBiCop = function(object) {
 
 setOldClass(c("gam"))
 
-#'  The \code{\link{GAMBiCop-class}}
+#'  The \code{\link{gamBiCop-class}}
 #'
-#'  \code{\link{GAMBiCop-class}} is an S4 class to store 
+#'  \code{\link{gamBiCop-class}} is an S4 class to store 
 #'  a Generalized Additive Model for bivariate copula a parameter or Kendall's tau.
 #'
 #' @slot family A copula family: \code{1} Gaussian, \code{2} Student t, 
@@ -37,16 +37,16 @@ setOldClass(c("gam"))
 #' @slot par2 Second parameter for the Studen t-copula.
 #' @slot tau \code{FALSE} (default) for a calibration fonction specified for the Copula parameter 
 #' or \code{TRUE} for a calibration function specified for Kendall's tau.
-#' @seealso \code{\link{GAMBiCop}}, \code{\link{GAMBiCopEst}} and \code{\link{GAMBiCopPred}}.
+#' @seealso \code{\link{gamBiCop}}, \code{\link{gamBiCopEst}} and \code{\link{gamBiCopPred}}.
 #' @export
-setClass("GAMBiCop",
+setClass("gamBiCop",
          slots = c(family="integer", model = "gam", par2 = "numeric", tau = "logical"),
-         validity = validGAMBiCop
+         validity = validgamBiCop
 )
 
-#' Constructor of the \code{\link{GAMBiCop-class}}
+#' Constructor of the \code{\link{gamBiCop-class}}
 #' 
-#' A constructor for objects of the \code{\link{GAMBiCop-class}}.
+#' A constructor for objects of the \code{\link{gamBiCop-class}}.
 #'
 #' @param family A copula family: \code{1} Gaussian, \code{2} Student t, 
 #' \code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton, \code{14} Survival Gumbel, 
@@ -57,10 +57,10 @@ setClass("GAMBiCop",
 #' @param par2 Second parameter for the Studen t-copula.
 #' @param tau \code{FALSE} (default) for a calibration fonction specified for the Copula parameter 
 #' or \code{TRUE} for a calibration function specified for Kendall's tau.
-#' @return A \code{\link{GAMBiCop-class}} object.
-#' @seealso \code{\link{GAMBiCop-class}}, \code{\link{GAMBiCopEst}} and \code{\link{GAMBiCopPred}}.
+#' @return A \code{\link{gamBiCop-class}} object.
+#' @seealso \code{\link{gamBiCop-class}}, \code{\link{gamBiCopEst}} and \code{\link{gamBiCopPred}}.
 #' @export
-GAMBiCop <- function (family, model, par2 = 0, tau = FALSE) {
+gamBiCop <- function (family, model, par2 = 0, tau = FALSE) {
  	if(family != 2){
  		par2 = 0
  	}
@@ -70,10 +70,10 @@ GAMBiCop <- function (family, model, par2 = 0, tau = FALSE) {
  	if(!(is.logical(tau) || (tau == 0) || (tau == 1))){
  		return("Tau should takes 0/1 or FALSE/TRUE to model the copula parameter/Kendall's tau.")
  	} 
-  	new("GAMBiCop", family = as.integer(family), model = model, par2 = par2, tau = as.logical(tau))
+  	new("gamBiCop", family = as.integer(family), model = model, par2 = par2, tau = as.logical(tau))
 }
 
-show.GAMBiCop <- function(object) {
+show.gamBiCop <- function(object) {
   cat("Family: ", object@family, "\n")
   if(object@tau == TRUE){
   	cat("Model: ")
@@ -94,25 +94,24 @@ show.GAMBiCop <- function(object) {
   }
   show(object@model$formula)
 }
-setMethod("show", signature("GAMBiCop"), show.GAMBiCop)
+setMethod("show", signature("gamBiCop"), show.gamBiCop)
 
-#' Log-likelihood for a fitted \code{GAMBiCop} object
+#' Log-likelihood for a fitted \code{gamBiCop} object
 #' 
-#' Function to extract the log-likelihood for a fitted \code{GAMBiCop-class}
+#' Function to extract the log-likelihood for a fitted \code{gamBiCop-class}
 #' object (note that the models are usually fitted by penalized likelihood maximization). 
 #' Used by \code{\link{AIC}} and \code{\link{BIC}}.
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @return Standard \code{logLik} object: see \code{\link{logLik}}.
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
-#' @name logLik.GAMBiCop
 #' @rdname logLik-methods
 #' @export
-logLik.GAMBiCop <- function(object, ...) {
+logLik.gamBiCop <- function(object, ...) {
   family <- object@family  
-  par <- GAMBiCopPred(object, target = "par")$par
+  par <- gamBiCopPred(object, target = "par")$par
   data <- cbind(object@model$data[,c(3,4)],par)
   
   if(family == 2){
@@ -136,127 +135,126 @@ logLik.GAMBiCop <- function(object, ...) {
 }
 #' @docType methods
 #' @rdname logLik-methods
-setMethod("logLik", signature("GAMBiCop"), logLik.GAMBiCop)
+setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
 
-#' Extract the Number of Obserations from a fitted \code{\link{GAMBiCop-class}} object
+#' Extract the Number of Obserations from a fitted \code{\link{gamBiCop-class}} object
 #' 
 #' Extract the number of 'observations' from a model fit. 
 #' This is principally intended to be used in computing BIC (see \code{\link{AIC}}).
 #'
-#' @S3method nobs GAMBiCop
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @S3method nobs gamBiCop
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @return A single number, normally an integer.
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
-#' @name nobs.GAMBiCop
+#' @name nobs.gamBiCop
 #' @rdname nobs-methods
 #' @export
-nobs.GAMBiCop <- function(object, ...) {
+nobs.gamBiCop <- function(object, ...) {
   n <- dim(object@model$data)[1]
   return(n)
 }
 #' @docType methods
 #' @rdname nobs-methods
-setMethod("nobs", signature("GAMBiCop"), nobs.GAMBiCop)
+setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 
-#' Akaike's 'An Information Criterion' for a fitted \code{\link{GAMBiCop-class}}
+#' Akaike's 'An Information Criterion' for a fitted \code{\link{gamBiCop-class}}
 #' 
-#' Function calculating Akaike's 'An Information Criterion' (AIC) for a fitted \code{\link{GAMBiCop-class}}
+#' Function calculating Akaike's 'An Information Criterion' (AIC) for a fitted \code{\link{gamBiCop-class}}
 #' object (note that the models are usually fitted by penalized likelihood maximization). 
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @param k numeric, the penalty per parameter to be used; the default \code{k = 2} is the classical AIC.
 #' @return A numeric value with the corresponding AIC.
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
-#' @name AIC.GAMBiCop
 #' @rdname AIC-methods
 #' @export
-AIC.GAMBiCop <- function(object, ..., k = 2) {
-  l <- logLik.GAMBiCop(object)
+AIC.gamBiCop <- function(object, ..., k = 2) {
+  l <- logLik.gamBiCop(object)
   d <- attributes(l)$df
   return(k*d-2*l[1])
 }
 #' @docType methods
 #' @rdname AIC-methods
-setMethod("AIC", signature("GAMBiCop"), AIC.GAMBiCop)
+setMethod("AIC", signature("gamBiCop"), AIC.gamBiCop)
 
-#' Schwarz's Bayesian Information Criterion for a fitted \code{\link{GAMBiCop-class}}
+#' Schwarz's Bayesian Information Criterion for a fitted \code{\link{gamBiCop-class}}
 #' 
 #' Function calculating the Schwarz's Bayesian Information Criterion (BIC) 
-#' for a fitted \code{\link{GAMBiCop-class}} object 
+#' for a fitted \code{\link{gamBiCop-class}} object 
 #' (note that the models are usually fitted by penalized likelihood maximization). 
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @return A numeric value with the corresponding BIC.
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @rdname BIC-methods
-BIC.GAMBiCop <- function(object, ...){
-  return(AIC.GAMBiCop(object, ..., k = log(nobs(object))))
+BIC.gamBiCop <- function(object, ...){
+  return(AIC.gamBiCop(object, ..., k = log(nobs(object))))
 }
 #' @docType methods
 #' @rdname BIC-methods
 #' @export
-setMethod("BIC", signature("GAMBiCop"), BIC.GAMBiCop)
+setMethod("BIC", signature("gamBiCop"), BIC.gamBiCop)
 
 
-#' \code{\link{GAMBiCop-class}} formula
+#' \code{\link{gamBiCop-class}} formula
 #' 
-#' Description of the \code{\link{gam}} formula for  fitted \code{\link{GAMBiCop-class}} object.
+#' Description of the \code{\link{gam}} formula for  fitted \code{\link{gamBiCop-class}} object.
 #' This function is a wrapper to \code{\link{formula.gam}}
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param x fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @seealso \code{\link{formula.gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @docType methods
 #' @rdname formula-methods
-formula.GAMBiCop <- function(x, ...){
+formula.gamBiCop <- function(x, ...){
   return(x@model$formula)
 }
 #' @docType methods
 #' @rdname formula-methods
 #' @export
-setMethod("formula", signature("GAMBiCop"), formula.GAMBiCop)
+setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 
-#' \code{\link{GAMBiCop-class}} formula
+#' \code{\link{gamBiCop-class}} formula
 #' 
-#' Description of the \code{\link{gam}} formula for  fitted \code{\link{GAMBiCop-class}} object.
+#' Description of the \code{\link{gam}} formula for  fitted \code{\link{gamBiCop-class}} object.
 #' This function is a wrapper to \code{\link{formula.gam}}
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @seealso \code{\link{formula.gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @docType methods
 #' @rdname formula-methods
-formula.GAMBiCop <- function(x, ...){
+formula.gamBiCop <- function(x, ...){
   return(x@model$formula)
 }
 #' @docType methods
 #' @rdname formula-methods
 #' @export
-setMethod("formula", signature("GAMBiCop"), formula.GAMBiCop)
+setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 
-#' Equivalent Degrees of Freedom for a fitted \code{\link{GAMBiCop-class}}
+#' Equivalent Degrees of Freedom for a fitted \code{\link{gamBiCop-class}}
 #' 
 #' Function calculating the Equivalent Degrees of Freedom (EDF) 
-#' for a fitted \code{\link{GAMBiCop-class}} object. 
+#' for a fitted \code{\link{gamBiCop-class}} object. 
 #' It basically sums the edf of the \code{\link{gamObject}} 
 #' for each smooth component.
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @return Estimated degrees of freedom for each smooth component.
 #' @docType methods
 #' @rdname EDF-methods
 #' @export
-EDF.GAMBiCop <- function(object){
+EDF.gamBiCop <- function(object){
   
   edf <- object@model$edf[-1]
   

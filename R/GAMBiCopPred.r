@@ -1,6 +1,6 @@
-#' Predict from fitted \code{\link{GAMBiCop-class}} object
+#' Predict from fitted \code{\link{gamBiCop-class}} object
 #'
-#' @param object fitted \code{\link{GAMBiCop-class}} object.
+#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param newdata (Same as in \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which predictions are required. 
 #' If this is not provided then predictions corresponding to the original data are returned. 
 #' If newdata is provided then it should contain all the variables needed for prediction: 
@@ -26,7 +26,7 @@
 #' Otherwhise, if \code{type = "lpmatrix"} (only active for \code{type = "calib"}),
 #' then a matrix is returned which will give a vector of linear predictor values (minus any offest) at the supplied covariate
 #' values, when applied to the model coefficient vector (similar as \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}). 
-#' @seealso \code{\link{GAMBiCop}} and \code{\link{GAMBiCopPred}}.
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPred}}.
 #' @export
 #' @examples
 #' ##    													
@@ -34,7 +34,7 @@
 #' ##	2) Estimate the model and display results
 #' ##															
 #' 
-#' library(GAMVineCopula)
+#' library(gamVineCopula)
 #' set.seed(1)
 #' 
 #' ##  Simulation parameters
@@ -150,7 +150,7 @@
 #' formula <- ~s(x1, k=basis[1], bs = "cr", fx= !pen)+
 #'         s(x2, k=basis[2], bs = "cr", fx= !pen)+
 #'         s(x3, k=basis[3], bs = "cr", fx= !pen)
-#' system.time(fit <- GAMBiCopEst(dataset, family = fam, parFrhs = formula))
+#' system.time(fit <- gamBiCopEst(dataset, family = fam, parFrhs = formula))
 #' 
 #' ## Model fit with a better basis size and penalized cubic splines
 #' pen <- TRUE
@@ -158,9 +158,9 @@
 #' formula <- ~s(x1, k=basis2[1], bs = "cr", fx= !pen)+
 #'   s(x2, k=basis2[2], bs = "cr", fx= !pen)+
 #'   s(x3, k=basis2[3], bs = "cr", fx= !pen)
-#' system.time(fit2 <- GAMBiCopEst(dataset, family = fam, parFrhs = formula))
+#' system.time(fit2 <- gamBiCopEst(dataset, family = fam, parFrhs = formula))
 #' 
-#' ## Extract the GAMBiCop object and use various methods
+#' ## Extract the gamBiCop object and use various methods
 #' res <- fit$res
 #' res2 <- fit2$res
 #' show(res)
@@ -171,8 +171,8 @@
 #' AIC(res2)
 #' BIC(res)
 #' BIC(res2)
-#' fitted <- GAMBiCopPred(res, newdata = Xx, type="terms")$calib
-#' fitted2 <- GAMBiCopPred(res2, newdata = Xx, type="terms")$calib
+#' fitted <- gamBiCopPred(res, newdata = Xx, type="terms")$calib
+#' fitted2 <- gamBiCopPred(res2, newdata = Xx, type="terms")$calib
 #' 
 #' ## Spline approximation of each true smooth function for the two basis sizes
 #' for(i in 1:length(basis)){
@@ -236,11 +236,11 @@
 #' lines(xx, bias.approx[,3], col = "red", lty = 2)
 #' lines(xx, bias.fitted2[,3], col = "green", lty = 1)
 #' lines(xx, bias.approx2[,3], col = "green", lty = 2)
-GAMBiCopPred <- 
+gamBiCopPred <- 
   function(object, newdata = NULL, target = "calib", alpha = 0, type = "link"){
 	
-	if(!validGAMBiCop(object)){
-		stop("GAMBiCopPred can only be used to predict from GAMBiCop objects")
+	if(!validgamBiCop(object)){
+		stop("gamBiCopPred can only be used to predict from gamBiCop objects")
 	}
     if(!is.character(target) || !is.null(dim(target))){
     	targerr <- TRUE

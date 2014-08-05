@@ -1,4 +1,4 @@
-# GAMVineSeqEst<-function(dataset,GVM, method = "FS", tol.rel = 1e-3, n.iters = 10, verbose = FALSE)
+# gamVineSeqEst<-function(dataset,GVM, method = "FS", tol.rel = 1e-3, n.iters = 10, verbose = FALSE)
 # {
 # 	data=as.matrix(data)
 # 	if(any(data>1) || any(data<0)) stop("Data has be in the interval [0,1].")
@@ -6,7 +6,7 @@
 # 	N = nrow(data)
 # 	if(dim(data)[2] != dim(GVM)) stop("Dimensions of 'data' and 'GVM' do not match.")
 #   if(N < 2) stop("Number of observations has to be at least 2.")
-#   if(!is(GVM,"GAMVineMatrix")) stop("'GVM' has to be an GAMVineMatrix object.")
+#   if(!is(GVM,"gamVineMatrix")) stop("'GVM' has to be an gamVineMatrix object.")
 # 
 #   if(method!="FS" && method!="NR") stop("Estimation method has to be either 'FS' or 'NR'.")
 #   if(is.logical(se)==FALSE) stop("'se' has to be a logical variable (TRUE or FALSE).")
@@ -18,7 +18,7 @@
 #   oldGVM = GVM
 # 
 # 	if(any(o != length(o):1)){	
-# 	 GVM = normalizeGAMVineMatrix(GVM)
+# 	 GVM = normalizegamVineMatrix(GVM)
 # 	 data = data[,o[length(o):1]]
 #   }
 # 
@@ -59,7 +59,7 @@
 #           if(k == n) message(oldGVM$Matrix[i,i],",",oldGVM$Matrix[k,i])
 #           else message(oldGVM$Matrix[i,i],",",oldGVM$Matrix[k,i],"|",paste(oldGVM$Matrix[(k+1):n,i],collapse=","))
 #         }
-#         par.out <- GAMBiCopEst(zr2,zr1,GVM$family[k,i], method, se, max.df, weights)
+#         par.out <- gamBiCopEst(zr2,zr1,GVM$family[k,i], method, se, max.df, weights)
 # 				#par1 <- out.par$par
 # 				Params[k,i] <- par.out$model
 # 				Params2[k,i] <- par.out$par2
@@ -74,7 +74,7 @@
 #           if(k == n) message(oldGVM$Matrix[i,i],",",oldGVM$Matrix[k,i])
 #           else message(oldGVM$Matrix[i,i],",",oldGVM$Matrix[k,i],"|",paste(oldGVM$Matrix[(k+1):n,i],collapse=","))
 #         }
-#         par.out <- GAMBiCopEst(zr2,zr1,GVM$family[k,i], method, se, max.df, max.BB,weights)
+#         par.out <- gamBiCopEst(zr2,zr1,GVM$family[k,i], method, se, max.df, max.BB,weights)
 # 				#par1 <- out.par$par
 # 				Params[k,i] <- par.out$model
 # 				Params2[k,i] <- par.out$par2

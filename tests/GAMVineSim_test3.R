@@ -32,7 +32,7 @@ true <- true.approx <- matrix(NA, ngrid, dim(Xx)[2])
 ## Base level
 eta0 <- 1
 
-# define GAM-vine model list
+# define gam-vine model list
 count <- 1
 model <- vector(mode = "list", length = d*(d-1)/2)
 par <- matrix(0,d,d)
@@ -47,7 +47,7 @@ for(i in 1:(d-1))
   # Simulate and fit some data
   temp <- BiCopSim(n, family, par = BiCopEta2Par(family, eta0), par2 = par2)
   dataset <- data.frame("u1" = temp[,1], "u2" = temp[,2])      
-  model[[count]] <- GAMBiCopEst(family = family, parFrhs = ~1, dataset, tau = tau,
+  model[[count]] <- gamBiCopEst(family = family, parFrhs = ~1, dataset, tau = tau,
                                 method = met, tol.rel = tol.rel, n.iters = n.iters)$res
   par[sel[i]] <- BiCopEta2Par(family,model[[count]]@model$coefficient[1])
   count <- count + 1
@@ -95,15 +95,15 @@ for(j in 2:(d-1)){
     dataset <- cbind(dataset, X)
     names(dataset)[3:(2+l)] <- cond   
     
-    # Estimate the GAM model
-    model[[count]] <- GAMBiCopEst(family = family, parFrhs = formula.expr, dataset, tau = tau,
+    # Estimate the gam model
+    model[[count]] <- gamBiCopEst(family = family, parFrhs = formula.expr, dataset, tau = tau,
                                   method = met, tol.rel = tol.rel, n.iters = n.iters)$res 
     par[sel[i]-j+1] <- BiCopEta2Par(family,model[[count]]@model$coefficient[1])
     count <- count+1  
   } 
 }
-# define GAMVineMatrix object
-GVM <- GAMVineMatrix(Matrix=Matrix,model = model,names=nnames)
+# define gamVineMatrix object
+GVM <- gamVineMatrix(Matrix=Matrix,model = model,names=nnames)
 print(GVM)
 fam <- family(GVM)
 par22 <- fam
@@ -118,7 +118,7 @@ for(i in 1:length(Nn)){
   N <- Nn[i]
   U <- matrix(rep(0.5,N*5), ncol = 5)
   t1[i] <- system.time(Sim1 <- RVineSim(N, RVM, U))[3]
-  t2[i] <- system.time(Sim2 <- GAMVineSim(N, GVM, U))[3]
+  t2[i] <- system.time(Sim2 <- gamVineSim(N, GVM, U))[3]
   print(all.equal(Sim1,Sim2,1e-3))
 }
 
