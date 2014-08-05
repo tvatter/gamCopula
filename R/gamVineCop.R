@@ -77,7 +77,7 @@ valid.gamVineCop = function(object) {
 #'  \code{\link{gamVineCop-class}} is an S4 class to store 
 #'  a generalized additive model on a vine copula.
 #'
-#' @slot matrix lower triangular d x d matrix that defines the R-vine tree structure.
+#' @slot Matrix lower triangular d x d matrix that defines the R-vine tree structure.
 #' @slot model list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.
 #' @slot names vector of d names.
 #' @seealso \code{\link{gamVineCop}}, \code{\link{RVineMatrix}} and \code{\link{gamBiCop-class}}.
@@ -91,9 +91,9 @@ setClass("gamVineCop",
 #'
 #'  A constructor for objects of the \code{\link{gamVineCop-class}}.
 #'
-#' @slot matrix lower triangular d x d matrix that defines the R-vine tree structure.
-#' @slot model list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.
-#' @slot names vector of d names.
+#' @param Matrix lower triangular d x d matrix that defines the R-vine tree structure.
+#' @param model list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.
+#' @param names vector of d names.
 #' @return A \code{\link{gamVineCop-class}} object.
 #' @seealso \code{\link{gamVineCop-class}}, \code{\link{RVineMatrix}} and \code{\link{gamBiCop-class}}.
 gamVineCop  <- 
@@ -109,7 +109,7 @@ gamVineCop  <-
 #' Change the R-vine matrix in the natural order, 
 #' i.e. with d:1 on the diagonal
 #'
-#' @param object fitted \code{\link{gamVineCop-class}} object.
+#' @param GVC fitted \code{\link{gamVineCop-class}} object.
 #' @return Normalized \code{gamVineCop-class} object.
 #' @seealso \code{gamVineCop-class} and \code{gamVineCop}.
 #' @export
@@ -223,12 +223,12 @@ setMethod("print", signature("gamVineCop"), print.gamVineCop)
 
 #' Family matrix of \code{gamVineCop-class} object
 #' 
-#' Return the matrix of copula family (see \code{\link{GamBiCop-class}}) corresponding 
-#' to the model list.
+#' Return the matrix of copula family (see \code{\link{gamBiCop-class}}) corresponding 
+#' to the model list in the \code{gamVineCop-class} object.
 #'
 #' @param x fitted \code{\link{gamVineCop-class}} object.
-#' @return Matrix of copula family (see \code{\link{GamBiCop-class}}) corresponding 
-#' to the model list.
+#' @return Matrix of copula family (see \code{\link{gamBiCop-class}}) corresponding 
+#' to the model list in the \code{gamVineCop-class} object.
 #' @seealso \code{gamVineCop-class} and \code{gamVineCop}.
 #' @export
 gamVineCopFamily = function(x){

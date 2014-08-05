@@ -22,6 +22,7 @@ License: \tab GPL-3\cr
 }
 \author{
 Thibault Vatter
+
 Maintainer: Thibault Vatter <thibault.vatter@gmail.com>
 }
 \references{
@@ -63,9 +64,8 @@ CRC.
 }
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[mgcv:mgcv-package]{mgcv}} ~~
+The present package is heavly relying on the \code{\link[mgcv:mgcv-package]{mgcv}} and \code{\link{VineCopula}} packages, as it basically extends and mix both of them.
 }
 \examples{
-~~ print(12) ~~
+print("quand je l'aurai fait, ca sera vraiment bien ;)")
 }

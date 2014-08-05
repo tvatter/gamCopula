@@ -9,12 +9,12 @@ gamVineCopFamily(x)
 \item{x}{fitted \code{\link{gamVineCop-class}} object.}
 }
 \value{
-Matrix of copula family (see \code{\link{GamBiCop-class}}) corresponding
-to the model list.
+Matrix of copula family (see \code{\link{gamBiCop-class}}) corresponding
+to the model list in the \code{gamVineCop-class} object.
 }
 \description{
-Return the matrix of copula family (see \code{\link{GamBiCop-class}}) corresponding
-to the model list.
+Return the matrix of copula family (see \code{\link{gamBiCop-class}}) corresponding
+to the model list in the \code{gamVineCop-class} object.
 }
 \seealso{
 \code{gamVineCop-class} and \code{gamVineCop}.

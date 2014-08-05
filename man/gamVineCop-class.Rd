@@ -10,7 +10,7 @@
 \section{Slots}{
 
 \describe{
-\item{\code{matrix}}{lower triangular d x d matrix that defines the R-vine tree structure.}
+\item{\code{Matrix}}{lower triangular d x d matrix that defines the R-vine tree structure.}
 
 \item{\code{model}}{list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.}
 

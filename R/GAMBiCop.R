@@ -96,6 +96,29 @@ show.gamBiCop <- function(object) {
 }
 setMethod("show", signature("gamBiCop"), show.gamBiCop)
 
+#' Extract the Number of Obserations from a fitted \code{\link{gamBiCop-class}} object
+#' 
+#' Extract the number of 'observations' from a model fit. 
+#' This is principally intended to be used in computing BIC (see \code{\link{AIC}}).
+#'
+#' @S3method nobs gamBiCop
+#' @param object fitted \code{\link{gamBiCop-class}} object.
+#' @param ... un-used in this class
+#' @return A single number, normally an integer.
+#' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
+#' @docType methods
+#' @name nobs.gamBiCop
+#' @rdname nobs-methods
+#' @export
+nobs.gamBiCop <- function(object, ...) {
+  n <- dim(object@model$data)[1]
+  return(n)
+}
+#' @docType methods
+#' @rdname nobs-methods
+setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
+
+
 #' Log-likelihood for a fitted \code{gamBiCop} object
 #' 
 #' Function to extract the log-likelihood for a fitted \code{gamBiCop-class}
@@ -136,28 +159,6 @@ logLik.gamBiCop <- function(object, ...) {
 #' @docType methods
 #' @rdname logLik-methods
 setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
-
-#' Extract the Number of Obserations from a fitted \code{\link{gamBiCop-class}} object
-#' 
-#' Extract the number of 'observations' from a model fit. 
-#' This is principally intended to be used in computing BIC (see \code{\link{AIC}}).
-#'
-#' @S3method nobs gamBiCop
-#' @param object fitted \code{\link{gamBiCop-class}} object.
-#' @param ... un-used in this class
-#' @return A single number, normally an integer.
-#' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
-#' @docType methods
-#' @name nobs.gamBiCop
-#' @rdname nobs-methods
-#' @export
-nobs.gamBiCop <- function(object, ...) {
-  n <- dim(object@model$data)[1]
-  return(n)
-}
-#' @docType methods
-#' @rdname nobs-methods
-setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 
 #' Akaike's 'An Information Criterion' for a fitted \code{\link{gamBiCop-class}}
 #' 
@@ -209,26 +210,6 @@ setMethod("BIC", signature("gamBiCop"), BIC.gamBiCop)
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
 #' @param x fitted \code{\link{gamBiCop-class}} object.
-#' @param ... un-used in this class
-#' @seealso \code{\link{formula.gam}} function 
-#' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
-#' @docType methods
-#' @rdname formula-methods
-formula.gamBiCop <- function(x, ...){
-  return(x@model$formula)
-}
-#' @docType methods
-#' @rdname formula-methods
-#' @export
-setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
-
-#' \code{\link{gamBiCop-class}} formula
-#' 
-#' Description of the \code{\link{gam}} formula for  fitted \code{\link{gamBiCop-class}} object.
-#' This function is a wrapper to \code{\link{formula.gam}}
-#' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
-#'
-#' @param object fitted \code{\link{gamBiCop-class}} object.
 #' @param ... un-used in this class
 #' @seealso \code{\link{formula.gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.

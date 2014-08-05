@@ -1,4 +1,13 @@
-gamVineCopSim <- function(N, GVC, U = NULL)
+#' Simulation from a \code{\link{gamVineCop-class}} object
+#'
+#' @param N number of d-dimensional observations to simulate.
+#' @param GVC fitted \code{\link{gamVineCop-class}} object.
+#' @param U (similar as \code{\link{RVineSim}} from the from the \code{\link{VineCopula}} package) 
+#' If not NULL, an (N,d)-matrix of U[0,1] random variates to be transformed to the copula sample.
+#' @return A Nxd matrix of data simulated from the given \code{\link{gamVineCop-class}} object.
+#' @export
+gamVineCopSim <- 
+  function(N, GVC, U = NULL)
 {
   stopifnot(N >= 1)
   if(!is(GVC, "gamVineCop")) stop("'GVC' has to be an gamVineCop object.")

@@ -8,17 +8,9 @@
 formula.gamBiCop(x, ...)
 
 \S4method{formula}{gamBiCop}(x, ...)
-
-formula.gamBiCop(x, ...)
-
-\S4method{formula}{gamBiCop}(x, ...)
 }
 \arguments{
 \item{x}{fitted \code{\link{gamBiCop-class}} object.}
-
-\item{...}{un-used in this class}
-
-\item{object}{fitted \code{\link{gamBiCop-class}} object.}
 
 \item{...}{un-used in this class}
 }
@@ -26,15 +18,8 @@ formula.gamBiCop(x, ...)
 Description of the \code{\link{gam}} formula for  fitted \code{\link{gamBiCop-class}} object.
 This function is a wrapper to \code{\link{formula.gam}}
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
-
-Description of the \code{\link{gam}} formula for  fitted \code{\link{gamBiCop-class}} object.
-This function is a wrapper to \code{\link{formula.gam}}
-from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \seealso{
-\code{\link{formula.gam}} function
-from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
-
 \code{\link{formula.gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }

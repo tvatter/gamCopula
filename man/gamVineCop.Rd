@@ -5,21 +5,19 @@
 \usage{
 gamVineCop(Matrix, model, names = NA)
 }
+\arguments{
+\item{Matrix}{lower triangular d x d matrix that defines the R-vine tree structure.}
+
+\item{model}{list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.}
+
+\item{names}{vector of d names.}
+}
 \value{
 A \code{\link{gamVineCop-class}} object.
 }
 \description{
 A constructor for objects of the \code{\link{gamVineCop-class}}.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{matrix}}{lower triangular d x d matrix that defines the R-vine tree structure.}
-
-\item{\code{model}}{list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.}
-
-\item{\code{names}}{vector of d names.}
-}}
 \seealso{
 \code{\link{gamVineCop-class}}, \code{\link{RVineMatrix}} and \code{\link{gamBiCop-class}}.
 }

@@ -6,7 +6,7 @@
 gamVineCopNormalize(GVC)
 }
 \arguments{
-\item{object}{fitted \code{\link{gamVineCop-class}} object.}
+\item{GVC}{fitted \code{\link{gamVineCop-class}} object.}
 }
 \value{
 Normalized \code{gamVineCop-class} object.
