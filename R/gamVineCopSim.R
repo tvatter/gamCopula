@@ -1,12 +1,12 @@
-gamVineSim <- function(N, GVM, U = NULL)
+gamVineCopSim <- function(N, GVC, U = NULL)
 {
   stopifnot(N >= 1)
-  if(!is(GVM, "gamVineMatrix")) stop("'GVM' has to be an gamVineMatrix object.")
+  if(!is(GVC, "gamVineCop")) stop("'GVC' has to be an gamVineCop object.")
 
-	o = diag(GVM$Matrix)
-	d = length(o)
-	GVM = normalizegamVineMatrix(GVM)
-  fam <- family(GVM)
+	o <- diag(GVC$Matrix)
+	d <- length(o)
+	GVC <- gamVineCopNormalize(GVC)
+  fam <- gamVineCopFamily(GVC)
   
   model.count <- rep(0,d^2)
   temp <- 1:(d*(d-1)/2)
@@ -20,11 +20,11 @@ gamVineSim <- function(N, GVM, U = NULL)
 	model.count <- matrix(model.count,d,d)
 	
 	rotate <- function(x) t(apply(x, 2, rev))
-	m = rotate(rotate(GVM$Matrix))
+	m = rotate(rotate(GVC$Matrix))
 	fam = rotate(rotate(fam))
 	model.count = rotate(rotate(model.count))
-	maxmat = rotate(rotate(GVM$MaxMat))
-	conindirect = rotate(rotate(GVM$CondDistr$indirect))
+	maxmat = rotate(rotate(GVC$MaxMat))
+	conindirect = rotate(rotate(GVC$CondDistr$indirect))
 		
 	Vdirect <- Vindirect <- array(dim = c(d,d,N))
 	if(is.null(U)){
@@ -38,7 +38,7 @@ gamVineSim <- function(N, GVM, U = NULL)
 	for(i in 2:d){
 		for(k in (i-1):1){
       #print(model.count[k,i])
-      model <- GVM$model[[model.count[k,i]]]
+      model <- GVC$model[[model.count[k,i]]]
 			mm <- maxmat[k,i]
 			if(mm == m[k,i]){
 				zz = Vdirect[k,mm,]
@@ -85,8 +85,8 @@ gamVineSim <- function(N, GVM, U = NULL)
 	}
 
  	out <- t(Vdirect[1,,])
-	if(!is.null(GVM$names)){
-		colnames(out) = GVM$names
+	if(!is.null(GVC$names)){
+		colnames(out) = GVC$names
 	}
 	out = out[,sort(o[length(o):1],index.return=TRUE)$ix]
 

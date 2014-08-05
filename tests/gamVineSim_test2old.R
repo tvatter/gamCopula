@@ -112,7 +112,6 @@ for(j in 2:(d-1)){
     
     # Simulate a dataset
     if(l != 1){
-      rho <- 0
       covariates.distr <- copula:::mvdc(copula:::normalCopula(rho, dim = l), c("unif"), list(list(min = 0, max = Tf)), marginsIdentical = TRUE) 
       X <- copula:::rMvdc(n,covariates.distr)
       formula.expr <- c()
@@ -153,9 +152,9 @@ for(j in 2:(d-1)){
 }
 
 # define gamVineMatrix object
-GVC <- gamVineCop(Matrix=Matrix,model = model,names=nnames)
-print(GVC)
-print(GVC, detail = TRUE)
+GVM <- gamVineMatrix(Matrix=Matrix,model = model,names=nnames)
+print(GVM)
+print(GVM, detail = TRUE)
 
 N <- 5e2
-system.time(simData <- gamVineSim(N, GVC))
+system.time(simData <- gamVineSim(N, GVM))
