@@ -9,13 +9,13 @@ Maintainer: Thibault Vatter <thibault.vatter@gmail.com>
 Depends:
     R (>= 3.0.2)
 Imports:
-    VineCopula (>= 1.3),
-    mgcv (>= 1.8-2),
+    VineCopula,
+    mgcv,
     MASS,
     gsl,
-    methods
-Suggests:
-    copula
+    methods,
+    copula,
+    plot3D
 Description: This package implements various inference and simulation tools to
     apply generalized additive models to bivariate dependence structures and
     vine copulas.

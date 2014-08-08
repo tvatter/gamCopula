@@ -242,6 +242,27 @@ derivGumbel <- function(s,u,v){
 	return(temp*sum(temp2))
 }
 
+# Check parameter(s) for a given copula family
+family.check <- function(family, par, par2 = 0){
+  if(!(family %in% c(1,2,3,4,13,14,23,24,33,34))){
+    return("Copula family not yet implemented.")
+  }else if((family == 1 || family == 2) && abs(par) >= 1){
+    return("The parameter of the Gaussian and t-copula has to be in the interval (-1,1).")
+  }else if (family == 2 && par2 <= 2){
+    return("The degrees of freedom parameter of the t-copula has to be larger than 2.")
+  }else if ((family == 3 || family == 13) &&  par <= 0){
+    return("The parameter of the Clayton copula has to be positive.")
+  }else if ((family == 4 || family == 14) && par < 1){
+    return("The parameter of the Gumbel copula has to be in the interval [1,oo).")
+  }else if ((family == 23 || family == 33) &&  par >= 0){
+    return("The parameter of the rotated Clayton copula has to be negative.")
+  }else if ((family == 24 || family == 34) &&  par > -1){
+    return("The parameter of the rotated Gumbel copula has to be in the interval (-oo,-1].")
+  }else{
+    return(TRUE)
+  }
+}
+
 ## Nice function (but nothing to do here)
 .ls.objects <- function (pos = 1, pattern, order.by,
                         decreasing=FALSE, head=FALSE, n=5) {

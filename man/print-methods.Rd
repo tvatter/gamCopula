@@ -3,23 +3,21 @@
 \name{print.gamVineCop}
 \alias{print,gamVineCop-method}
 \alias{print.gamVineCop}
-\title{Print a \code{gamVineCop-class} object}
+\title{Print a \code{\link{gamVineCop-class}} object}
 \usage{
-print.gamVineCop(x, detail = FALSE, ...)
+print.gamVineCop(x, ...)
 
-\S4method{print}{gamVineCop}(x, detail = FALSE, ...)
+\S4method{print}{gamVineCop}(x, ...)
 }
 \arguments{
-\item{x}{fitted \code{\link{gamVineCop-class}} object.}
+\item{x}{\code{\link{gamVineCop-class}} object.}
 
-\item{detail}{should additional details be printed (\code{detail=TRUE}) or not?}
-
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{un-used for this class.}
 }
 \description{
-Print a \code{gamVineCop-class} object.
+Print a \code{\link{gamVineCop-class}} object
 }
 \seealso{
-\code{gamVineCop-class} and \code{gamVineCop}.
+\code{\link{gamVineCop-class}} and \code{\link{gamVineCop}}.
 }
 

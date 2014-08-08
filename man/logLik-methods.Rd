@@ -3,14 +3,14 @@
 \name{logLik.gamBiCop}
 \alias{logLik,gamBiCop-method}
 \alias{logLik.gamBiCop}
-\title{Log-likelihood for a fitted \code{gamBiCop} object}
+\title{Log-likelihood for a \code{\link{gamBiCop-class}} object}
 \usage{
 logLik.gamBiCop(object, ...)
 
 \S4method{logLik}{gamBiCop}(object, ...)
 }
 \arguments{
-\item{object}{fitted \code{\link{gamBiCop-class}} object.}
+\item{object}{\code{\link{gamBiCop-class}} object.}
 
 \item{...}{un-used in this class}
 }
@@ -18,9 +18,9 @@ logLik.gamBiCop(object, ...)
 Standard \code{logLik} object: see \code{\link{logLik}}.
 }
 \description{
-Function to extract the log-likelihood for a fitted \code{gamBiCop-class}
+Function to extract the log-likelihood for a fitted \code{\link{gamBiCop-class}}
 object (note that the models are usually fitted by penalized likelihood maximization).
-Used by \code{\link{AIC}} and \code{\link{BIC}}.
+This function is used by \code{\link{AIC}} and \code{\link{BIC}}.
 }
 \seealso{
 \code{\link{AIC}} and \code{\link{BIC}}.

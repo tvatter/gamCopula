@@ -8,7 +8,7 @@ gamVineCopSim(N, GVC, U = NULL)
 \arguments{
 \item{N}{number of d-dimensional observations to simulate.}
 
-\item{GVC}{fitted \code{\link{gamVineCop-class}} object.}
+\item{GVC}{\code{\link{gamVineCop-class}} object.}
 
 \item{U}{(similar as \code{\link{RVineSim}} from the from the \code{\link{VineCopula}} package)
 If not NULL, an (N,d)-matrix of U[0,1] random variates to be transformed to the copula sample.}
@@ -18,5 +18,58 @@ A Nxd matrix of data simulated from the given \code{\link{gamVineCop-class}} obj
 }
 \description{
 Simulation from a \code{\link{gamVineCop-class}} object
+}
+\examples{
+#########
+## Comparison between RVine package's simulation (in C) with the same algorithm in R
+#########
+
+require(VineCopula)
+
+# define 5-dimensional R-vine tree structure matrix
+Matrix = c(5,2,3,1,4,0,2,3,4,1,0,0,3,4,1,0,0,0,4,1,0,0,0,0,1)
+Matrix = matrix(Matrix,5,5)
+
+# define R-vine pair-copula family matrix
+family = c(0,1,3,4,4,0,0,3,4,1,0,0,0,4,1,0,0,0,0,3,0,0,0,0,0)
+family = matrix(family,5,5)
+
+# define R-vine pair-copula parameter matrix
+par = c(0,0.2,0.9,1.5,3.9,0,0,1.1,1.6,0.9,0,0,0,1.9,0.5,
+        0,0,0,0,4.8,0,0,0,0,0)
+par = matrix(par,5,5)
+
+# define second R-vine pair-copula parameter matrix
+par2 = matrix(0,5,5)
+
+# define RVineMatrix object
+RVM = RVineMatrix(Matrix=Matrix,family=family,par=par,par2=par2,
+                  names=c("V1","V2","V3","V4","V5"))
+
+# convert as a gamVineCop object
+GVC <- RVM2GVC(RVM)
+
+# vector of sample sizes
+Nn <- rep(c(1,2,5), 3)*10^c(rep(1,3),rep(2,3), rep(3,3))
+
+# to store the times
+t1 <- t2 <- rep(0, length(Nn))
+
+# simulate a sample for each size / method,
+# store the times
+for(i in 1:length(Nn)){
+  N <- Nn[i]
+  U <- matrix(runif(N*5), ncol = 5)
+  t1[i] <- system.time(Sim1 <- RVineSim(N, RVM, U))[3]
+  t2[i] <- system.time(Sim2 <- gamVineCopSim(N, GVC, U))[3]
+  print(all.equal(Sim1,Sim2))
+}
+
+# display results
+# indeed, the R code is much slower
+plot(Nn, t1, ylim = range(t1,t2), log = "xy",
+ xlab = "Number of observations", ylab = "Time elapsed")
+points(Nn, t2, pch = 2)
+legend("topleft", c("VineCopula", "gamVineCopula"), pch = 1:2)
 }
 

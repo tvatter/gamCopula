@@ -3,7 +3,7 @@
 \name{nobs.gamBiCop}
 \alias{nobs,gamBiCop-method}
 \alias{nobs.gamBiCop}
-\title{Extract the Number of Obserations from a fitted \code{\link{gamBiCop-class}} object}
+\title{Extract the number of obserations from a fitted \code{\link{gamBiCop-class}} object}
 \usage{
 nobs.gamBiCop(object, ...)
 

@@ -12,7 +12,8 @@
 \describe{
 \item{\code{Matrix}}{lower triangular d x d matrix that defines the R-vine tree structure.}
 
-\item{\code{model}}{list containing d x (d-1)/2 \code{\link{gamBiCop-class}} objects.}
+\item{\code{model}}{list containing d x (d-1)/2 lists with three numeric items (family,
+par and par2) and/or \code{\link{gamBiCop-class}} objects.}
 
 \item{\code{names}}{vector of d names.}
 }}

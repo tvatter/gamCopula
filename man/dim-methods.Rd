@@ -3,7 +3,7 @@
 \name{dim.gamVineCop}
 \alias{dim,gamVineCop-method}
 \alias{dim.gamVineCop}
-\title{Dimension of a \code{gamVineCop-class} object}
+\title{Dimension of a \code{\link{gamVineCop-class}} object}
 \usage{
 \method{dim}{gamVineCop}(x)
 
@@ -13,12 +13,12 @@
 \item{x}{fitted \code{\link{gamVineCop-class}} object.}
 }
 \value{
-Dimension of the \code{gamVineCop-class} object.
+Dimension of the \code{\link{gamVineCop-class}} object.
 }
 \description{
-Retrieve the dimension of a \code{gamVineCop-class} object.
+Retrieve the dimension of a \code{\link{gamVineCop-class}} object.
 }
 \seealso{
-\code{gamVineCop-class} and \code{gamVineCop}.
+\code{\link{gamVineCop-class}} and \code{\link{gamVineCop}}.
 }
 
