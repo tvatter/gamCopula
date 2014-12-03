@@ -41,7 +41,8 @@ Kendall's tau.}
 \item{n.iters}{Maximal number of iterations for
 \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{parallel}{\code{TRUE} for a parallel estimation across copula families.}
+\item{parallel}{\code{TRUE} for a parallel estimation across copula families.
+As the code is based on mclapply, this parameter has no effect on windows.}
 
 \item{verbose}{\code{TRUE} prints informations during the estimation.}
 

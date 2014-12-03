@@ -18,8 +18,8 @@ gamVineSim <- function(N, GVC, U = NULL) {
   d <- length(o)
   GVC <- gamVineNormalize(GVC)
   fam <- gamVineFamily(GVC)
-  MaxMat <- VineCopula:::createMaxMat(GVC@Matrix)
-  CondDistr <- VineCopula:::neededCondDistr(GVC@Matrix)
+  MaxMat <- createMaxMat(GVC@Matrix)
+  CondDistr <- neededCondDistr(GVC@Matrix)
   
   model.count <- rep(0, d^2)
   temp <- 1:(d * (d - 1)/2)

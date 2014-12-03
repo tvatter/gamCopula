@@ -278,63 +278,114 @@ family.check <- function(family, par, par2 = 0) {
   }
 }
 
-## mclapply.hack Nathan VanHoudnos nathanvan AT northwestern FULL STOP edu July
-## 14, 2014 A script to implement a hackish version of parallel:mclapply() on
-## Windows machines.  On Linux or Mac, the script has no effect.
-
-## Define the hack
-mclapply.hack <- function(...) {
-  ## Create a cluster
-  size.of.list <- length(list(...)[[1]])
-  cl <- parallel::makeCluster(min(size.of.list, parallel::detectCores()))
+createMaxMat <- function(Matrix){
   
-  ## Find out the names of the loaded packages
-  loaded.package.names <- c(
-    ## Base packages
-    sessionInfo()$basePkgs,
-    ## Additional packages
-    names( sessionInfo()$otherPkgs ))
+  if(dim(Matrix)[1]!=dim(Matrix)[2]) 
+    stop("Structure matrix has to be quadratic.")
   
-  tryCatch({
-    
-    ## Copy over all of the objects within scope to all clusters.
-    this.env <- environment()
-    while (identical(this.env, globalenv()) == FALSE) {
-      parallel::clusterExport(cl, ls(all.names = TRUE, env = this.env), envir = this.env)
-      this.env <- parent.env(environment())
+  MaxMat <- reorderRVineMatrix(Matrix)  
+  n  <- nrow(MaxMat)  
+  for(j in 1:(n-1)){
+    for(i in (n-1):j){
+      MaxMat[i,j] <- max(MaxMat[i:(i+1),j])
     }
-    parallel::clusterExport(cl, ls(all.names = TRUE, env = globalenv()), envir = globalenv())
-    
-    ## Load the libraries on all the clusters N.B. length(cl) returns the number of
-    ## clusters
-    parallel::parLapply(cl, 1:length(cl), function(xx) {
-      lapply(loaded.package.names, function(yy) {
-        require(yy, character.only = TRUE)
-      })
-    })
-    
-    ## Run the lapply in parallel
-    return(parallel::parLapply(cl, ...))
-  }, finally = {
-    ## Stop the cluster
-    parallel::stopCluster(cl)
-  })
+  }
+  
+  tMaxMat <- MaxMat
+  tMaxMat[is.na(tMaxMat)] <- 0  
+  oldSort <- diag(Matrix)
+  oldSort <- oldSort[n:1]  
+  for(i in 1:n){
+    MaxMat[tMaxMat == i] <- oldSort[i]
+  }
+  
+  return(MaxMat)
 }
 
-
-## If the OS is Windows, set mclapply to the hackish version. Otherwise, leave
-## the definition alone.
-mclapply <- switch(Sys.info()[["sysname"]], Windows = {
-  mclapply.hack
-}, Linux = {
-  parallel::mclapply
-}, Darwin = {
-  parallel::mclapply
-})
-
-## Return a source code with roxygen comments
-roxygen.comment <- function(input, start=1, output=input){
-  rox <- sapply(readLines(input), function(x) 
-    paste("#'",substring(x,start)))
-  writeLines(rox, output)
+neededCondDistr <- function(Vine){
+  if(dim(Vine)[1]!=dim(Vine)[2]) stop("Structure matrix has to be quadratic.")
+  
+  Vine <- reorderRVineMatrix(Vine)
+  MaxMat <- createMaxMat(Vine)
+  d <- nrow(Vine)
+  
+  M <- list()
+  M$direct <- matrix(FALSE,d,d)
+  M$indirect <- matrix(FALSE,d,d)  
+  M$direct[2:d,1] <- TRUE
+  
+  for(i in 2:(d-1)){
+    v <- d-i+1 
+    bw <- as.matrix(MaxMat[i:d,1:(i-1)]) == v  
+    direct <- Vine[i:d,1:(i-1)] == v  
+    M$indirect[i:d,i] <- apply(as.matrix(bw & (!direct)),1,any)   
+    M$direct[i:d,i] <- TRUE  
+    M$direct[i,i] <- any(as.matrix(bw)[1,] & as.matrix(direct)[1,])
+  }
+  
+  return(M)
 }
+
+reorderRVineMatrix <- function(Matrix){
+  oldOrder <- diag(Matrix) 
+  O <- apply(t(1:nrow(Matrix)),2,"==", Matrix) 
+  for(i in 1:nrow(Matrix)){
+    Matrix[O[,oldOrder[i]]] <- nrow(Matrix)-i+1
+  }  
+  return(Matrix)
+}
+
+# 
+# ## mclapply.hack Nathan VanHoudnos nathanvan AT northwestern FULL STOP edu July
+# ## 14, 2014 A script to implement a hackish version of parallel:mclapply() on
+# ## Windows machines.  On Linux or Mac, the script has no effect.
+# 
+# ## Define the hack
+# mclapply.hack <- function(...) {
+#   ## Create a cluster
+#   size.of.list <- length(list(...)[[1]])
+#   cl <- parallel::makeCluster(min(size.of.list, parallel::detectCores()))
+#   
+#   ## Find out the names of the loaded packages
+#   loaded.package.names <- c(
+#     ## Base packages
+#     sessionInfo()$basePkgs,
+#     ## Additional packages
+#     names( sessionInfo()$otherPkgs ))
+#   
+#   tryCatch({
+#     
+#     ## Copy over all of the objects within scope to all clusters.
+#     this.env <- environment()
+#     while (identical(this.env, globalenv()) == FALSE) {
+#       parallel::clusterExport(cl, ls(all.names = TRUE, env = this.env), envir = this.env)
+#       this.env <- parent.env(environment())
+#     }
+#     parallel::clusterExport(cl, ls(all.names = TRUE, env = globalenv()), envir = globalenv())
+#     
+#     ## Load the libraries on all the clusters N.B. length(cl) returns the number of
+#     ## clusters
+#     parallel::parLapply(cl, 1:length(cl), function(xx) {
+#       lapply(loaded.package.names, function(yy) {
+#         require(yy, character.only = TRUE)
+#       })
+#     })
+#     
+#     ## Run the lapply in parallel
+#     return(parallel::parLapply(cl, ...))
+#   }, finally = {
+#     ## Stop the cluster
+#     parallel::stopCluster(cl)
+#   })
+# }
+# 
+# 
+# ## If the OS is Windows, set mclapply to the hackish version. Otherwise, leave
+# ## the definition alone.
+# mclapply <- switch(Sys.info()[["sysname"]], Windows = {
+#   mclapply.hack
+# }, Linux = {
+#   parallel::mclapply
+# }, Darwin = {
+#   parallel::mclapply
+# })

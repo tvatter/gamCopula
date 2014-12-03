@@ -13,7 +13,7 @@ gamVineNormalize <- function(GVC) {
     stop("'GVC' has to be an gamVine object.")
   
   oldOrder <- diag(GVC@Matrix)
-  Matrix <- VineCopula:::reorderRVineMatrix(GVC@Matrix)
+  Matrix <- reorderRVineMatrix(GVC@Matrix)
   
   return(gamVine(Matrix, GVC@model, names = rev(GVC@names[oldOrder])))
 }

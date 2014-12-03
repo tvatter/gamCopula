@@ -33,6 +33,7 @@
 #' @param n.iters Maximal number of iterations for 
 #' \code{'FS'}/\code{'NR'} algorithm.
 #' @param parallel \code{TRUE} for a parallel estimation across copula families.
+#' As the code is based on mclapply, this parameter has no effect on windows.
 #' @param verbose \code{TRUE} prints informations during the estimation.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' @return \code{gamBiCopEst} returns a list consisting of 
@@ -194,7 +195,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
     res <- lapply(familyset,function(x) 
       gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
   } else {
-    res <- mclapply(familyset,function(x) 
+    res <- parallel::mclapply(familyset,function(x) 
       gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
   }
   
