@@ -1,21 +1,21 @@
 
 show.gamBiCop <- function(object) {
   cat("Family: ", object@family, "\n")
-  if(object@tau == TRUE){
+  if (object@tau == TRUE) {
     cat("Model: ")
     cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")
-  }else{
+  } else {
     cat("Model for the Copula parameter:\n")
-    if(object@family %in% c(1,2)){
+    if (object@family %in% c(1, 2)) {
       cat("par(z) = (exp(z)-1)/(exp(z)+1) where \n")
-    }else if(object@family %in% c(3,13)){
-      cat("par(z) = exp(z) where \n")	 	
-    }else if(object@family %in% c(4,14)){
-      cat("par(z) = 1+exp(z) where \n")	  	 	
-    }else if(object@family %in% c(23,33)){
-      cat("par(z) = -exp(z) where \n")	 	
-    }else if(object@family %in% c(24,34)){
-      cat("par(z) = -1-exp(z) where \n")	
+    } else if (object@family %in% c(3, 13)) {
+      cat("par(z) = exp(z) where \n")
+    } else if (object@family %in% c(4, 14)) {
+      cat("par(z) = 1+exp(z) where \n")
+    } else if (object@family %in% c(23, 33)) {
+      cat("par(z) = -exp(z) where \n")
+    } else if (object@family %in% c(24, 34)) {
+      cat("par(z) = -1-exp(z) where \n")
     }
   }
   show(object@model$formula)
@@ -57,22 +57,22 @@ setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 #' @docType methods
 #' @rdname logLik-methods
 logLik.gamBiCop <- function(object, ...) {
-  family <- object@family  
+  family <- object@family
   par <- gamBiCopPred(object, target = "par")$par
-  data <- cbind(object@model$data[,c(3,4)],par)
-
-  if(family == 2){
+  data <- cbind(na.omit(object@model$data)[, c(3, 4)], par)
+  
+  if (family == 2) {
     par2 <- rep(object@par2, length(par))
     data <- cbind(data, par2)
-    Li<- apply(data, 1, function(x) BiCopPDF(x[1], x[2],family=2,x[3],x[4]))
-  }else{
-    Li<- apply(data, 1, function(x) BiCopPDF(x[1], x[2],family=family,x[3]))
+    Li <- apply(data, 1, function(x) BiCopPDF(x[1], x[2], family = 2, x[3], x[4]))
+  } else {
+    Li <- apply(data, 1, function(x) BiCopPDF(x[1], x[2], family = family, x[3]))
   }
   val <- sum(log(Li))
   df <- sum(object@model$edf)
   
-  if(family == 2){
-    df <- df+1    
+  if (family == 2) {
+    df <- df + 1
   }
   
   attr(val, "df") <- df
@@ -100,7 +100,7 @@ setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
 AIC.gamBiCop <- function(object, ..., k = 2) {
   l <- logLik.gamBiCop(object)
   d <- attributes(l)$df
-  return(k*d-2*l[1])
+  return(k * d - 2 * l[1])
 }
 #' @docType methods
 #' @rdname AIC-methods
@@ -119,7 +119,7 @@ setMethod("AIC", signature("gamBiCop"), AIC.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @rdname BIC-methods
-BIC.gamBiCop <- function(object, ...){
+BIC.gamBiCop <- function(object, ...) {
   return(AIC.gamBiCop(object, ..., k = log(nobs(object))))
 }
 #' @docType methods
@@ -140,7 +140,7 @@ setMethod("BIC", signature("gamBiCop"), BIC.gamBiCop)
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @docType methods
 #' @rdname formula-methods
-formula.gamBiCop <- function(x, ...){
+formula.gamBiCop <- function(x, ...) {
   return(x@model$formula)
 }
 #' @docType methods
@@ -160,26 +160,28 @@ setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 #' @docType methods
 #' @rdname EDF-methods
 #' @export
-EDF.gamBiCop <- function(object){
+EDF <- function(object) {
   
   edf <- object@model$edf[-1]
   
   param.terms <- object@model$pterms
   ll.param <- dim(attributes(param.terms)$factors)[2]
-  if(is.null(ll.param)){
+  if (is.null(ll.param)) {
     ll.param <- 0
   }
   
   smooth.terms <- object@model$smooth
   ll.smooth <- length(smooth.terms)
-  bs.dim <- unlist(lapply(smooth.terms, function(x) x$bs.dim))-1
+  bs.dim <- unlist(lapply(smooth.terms, function(x) x$bs.dim)) - 1
   
-  out <- rep(NA, ll.param+ll.smooth+1)
-  out[1:(ll.param+1)] <- 1
-  sel <- c(ll.param,ll.param+cumsum(bs.dim))
-  if(length(sel) > 1){for(i in 1:(length(sel)-1)){
-    out[ll.param+1+i] <- sum(edf[(sel[i]+1):sel[i+1]])
-  }}
+  out <- rep(NA, ll.param + ll.smooth + 1)
+  out[1:(ll.param + 1)] <- 1
+  sel <- c(ll.param, ll.param + cumsum(bs.dim))
+  if (length(sel) > 1) {
+    for (i in 1:(length(sel) - 1)) {
+      out[ll.param + 1 + i] <- sum(edf[(sel[i] + 1):sel[i + 1]])
+    }
+  }
   
   return(out)
-}
+} 
