@@ -106,7 +106,9 @@ U <- CondBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
 data <- data.frame(U$data,X)
 names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
 
-## Parallel family selection using AIC
+## Parallel family selection using AIC (may take about 3mn on single core
+## computers... or for windows users as the parallelization is handled by
+## mclapply)
 system.time(best <- gamBiCopSel(data, parallel = TRUE))
 print(best$res)
 EDF(best$res)

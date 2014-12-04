@@ -70,8 +70,8 @@ gamVineSeqEst <- function(dataset, GVC,
   Mat <- GVC@Matrix
   oldMat <- oldGVC@Matrix
   fam <- gamVineFamily(GVC)
-  MaxMat <- VineCopula:::createMaxMat(Mat)
-  CondDistr <- VineCopula:::neededCondDistr(Mat)
+  MaxMat <- createMaxMat(Mat)
+  CondDistr <- neededCondDistr(Mat)
   
   V <- list()
   V$direct <- array(NA, dim = c(d, d, n))
