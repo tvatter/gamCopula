@@ -1,7 +1,7 @@
-\name{gamVineCopula-package}
-\alias{gamVineCopula-package}
-\alias{gamVineCopula}
-\alias{gamVineCopula.package}
+\name{gamCopula-package}
+\alias{gamCopula-package}
+\alias{gamCopula}
+\alias{gamCopula.package}
 \docType{package}
 \title{
 Generalized additive models for bivariate dependence structures and vine copulas
@@ -13,7 +13,7 @@ More references in Vatter and Chavez-Demoulin (2014) and Vatter (2014).
 }
 \details{
 \tabular{ll}{
-Package: \tab gamVineCopula\cr
+Package: \tab gamCopula\cr
 Type: \tab Package\cr
 Version: \tab 0.0-1\cr
 Date: \tab 2014-08-05\cr

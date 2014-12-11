@@ -1,4 +1,4 @@
-Package: gamVineCopula
+Package: gamCopula
 Type: Package
 Title: Generalized additive models for bivariate conditional dependence
     structures and Vine copulas
