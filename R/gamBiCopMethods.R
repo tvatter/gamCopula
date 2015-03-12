@@ -56,6 +56,7 @@ setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @rdname logLik-methods
+#' @export
 logLik.gamBiCop <- function(object, ...) {
   family <- object@family
   par <- gamBiCopPred(object, target = "par")$par
@@ -147,6 +148,24 @@ formula.gamBiCop <- function(x, ...) {
 #' @rdname formula-methods
 #' @export
 setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
+
+#' Plot a fitted \code{\link{gamBiCop-class}} object
+#' 
+#' Plot from a model fit. 
+#' The function is based on (see \code{\link{plot.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' 
+#' @param x fitted \code{\link{gamBiCop-class}} object.
+#' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
+#' @return This function simply generates plots.
+#' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' @docType methods
+#' @rdname plot-methods
+#' @export
+plot.gamBiCop <- function(x, ...) {
+  plot.gam(x@model, ...)
+}
+setMethod("plot", signature(x="gamBiCop"), plot.gamBiCop)
 
 #' Equivalent Degrees of Freedom for a fitted \code{\link{gamBiCop-class}}
 #' 
