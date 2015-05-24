@@ -1,11 +1,9 @@
 
 show.gamBiCop <- function(object) {
-  cat("Family: ", object@family, "\n")
+  cat(BiCopName(object@family, short = FALSE), "copula with ")
   if (object@tau == TRUE) {
-    cat("Model: ")
     cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")
   } else {
-    cat("Model for the Copula parameter:\n")
     if (object@family %in% c(1, 2)) {
       cat("par(z) = (exp(z)-1)/(exp(z)+1) where \n")
     } else if (object@family %in% c(3, 13)) {
@@ -21,6 +19,28 @@ show.gamBiCop <- function(object) {
   show(object@model$formula)
 }
 setMethod("show", signature("gamBiCop"), show.gamBiCop)
+
+summary.gamBiCop <- function(object) {
+  cat(BiCopName(object@family, short = FALSE), "copula with ")
+  if (object@tau == TRUE) {
+    cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")
+  } else {
+    if (object@family %in% c(1, 2)) {
+      cat("par(z) = (exp(z)-1)/(exp(z)+1) where \n")
+    } else if (object@family %in% c(3, 13)) {
+      cat("par(z) = exp(z) where \n")
+    } else if (object@family %in% c(4, 14)) {
+      cat("par(z) = 1+exp(z) where \n")
+    } else if (object@family %in% c(23, 33)) {
+      cat("par(z) = -exp(z) where \n")
+    } else if (object@family %in% c(24, 34)) {
+      cat("par(z) = -1-exp(z) where \n")
+    }
+  }
+  tmp <- capture.output(summary(object@model))
+  cat(paste(tmp[-c(1:4)], "\n"))
+}
+setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 
 #' Extract the number of obserations from a fitted \code{\link{gamBiCop-class}} object
 #' 

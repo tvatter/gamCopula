@@ -15,6 +15,7 @@ Imports:
     gsl,
     methods,
     copula,
+    igraph,
     parallel
 Description: This package implements various inference and simulation tools to
     apply generalized additive models to bivariate dependence structures and

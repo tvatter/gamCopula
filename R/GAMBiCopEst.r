@@ -8,8 +8,8 @@
 #' a generalized ridge regression, which is solved using 
 #' the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
-#' @param data A list or data frame containing the model responses, (u1,u2) in 
-#' [0,1]x[0,1], and covariates required by the formula.
+#' @param data A list, data frame or matrix containing the model responses,
+#'  (u1,u2) in [0,1]x[0,1], and covariates required by the formula.
 #' @param formula A gam formula (see \code{\link{gam}}, 
 #' \code{\link{formula.gam}} and \code{\link{gam.models}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
@@ -42,7 +42,7 @@
 #' \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopSim}}.
 #' @examples
-#' set.seed(1)
+#' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
 #' ## Clayton copula family)
@@ -164,76 +164,14 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
                         tol.rel = 0.001, n.iters = 10, 
                         verbose = FALSE, ...) {
 
-  if (!(is.list(data) || is.data.frame(data))) {
-    stop("data has to be either a list or a data frame")
-  } else {
-    if(is.list(data)){
-      if(!is.null(data$xt)){
-        xt <- data$xt
-        data <- as.data.frame(data[-which(names(data) == "xt")])
-      }else{
-        data <- as.data.frame(data)
-      }     
-    }
-    n <- dim(data)[1]
-    m <- dim(data)[2]
-    u1 <- data$u1
-    u2 <- data$u2
-    u <- cbind(u1,u2)
-  }
-  
-  if (is.null(u1) == TRUE || is.null(u2) == TRUE) 
-    stop("u1 and/or u2 are missing.")
-  if (n < 2) 
-    stop("Number of observations has to be at least 2.")
-  if (any(u > 1) || any(u < 0)) 
-    stop("(u1, u2) have to be in [0,1]x[0,1].")
-  
-  options(warn = -1)
-  if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
-        (as.integer(n.iters) < 1) || 
-        (as.integer(n.iters) !=  as.numeric(n.iters))) {
-    stop("N.iters should be a positive integer.")
-  } else {
-    n.iters <- as.integer(n.iters)
-  }
-  
-  if (is.null(tau) ||  is.na(tau) ||  
-        !(is.logical(tau) || (tau == 0) || (tau == 1))) {
-    stop("Tau should takes 0/1 or FALSE/TRUE to specify a model for 
-         the copula parameter/Kendall's tau.")
-  }
-  
-  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || 
-        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-    stop("Tol.rel should be a real number in [0,1].")
-  } else {
-    tol.rel <- as.numeric(tol.rel)
-  }
-  
-  if (is.null(method) || !is.element(method, c("FS", "NR"))) {
-    stop("Method should be a string, either NR (Newton-Raphson) 
-         or FS (Fisher-scoring, faster but unstable).")
-  }
-  
-  if (is.null(verbose) ||  is.na(verbose) || 
-        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
-    stop("Verbose should takes 0/1 or FALSE/TRUE.")
-  } else {
-    verbose <- as.logical(verbose)
-  }
-  options(warn = 0)
+  tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, family)
+  if (tmp != TRUE)
+    stop(tmp)
 
-  temp <- VineCopula:::fasttau(u1, u2)
+  #temp <- VineCopula:::fasttau(u1, u2)
   rotated <- family
   
-  if (!is.element(family, c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {
-    stop("Copula family not yet implemented!")
-  } else if (is.element(family, c(3, 4, 13, 14)) && (temp < 0)) {
-    stop("This copula family cannot be used for negatively dependent data.")
-  } else if (is.element(family, c(23, 24, 33, 34)) && (temp > 0)) {
-    stop("This copula family cannot be used for positively dependent data.")
-  } else if (is.element(family, c(13, 14))) {
+  if (is.element(family, c(13, 14))) {
     u <- rotate.data(u, 180)    
     if (family == 13) {
       family <- 3
@@ -329,7 +267,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       -sum(log(apply(data, 1, function(x) BiCopPDF(x[1], x[2], family = 2, 
         x[3], 2 + 1e-08 + exp(nu)))), na.rm = TRUE)
     }
-    
+    browser()
     nu <- optimize(LL, c(log(2), log(30)))
     u[, 4] <- new.pars$par2 <- rep(2 + 1e-08 + exp(nu$minimum), n)
     
@@ -433,3 +371,73 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
               n.iters = n.iters, trace = trace[1:k], conv = conv)
   return(out)
 } 
+
+valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose, 
+                              family) {
+  if (!(is.list(data) || is.data.frame(data) || is.matrix(data))) {
+    return("data has to be either a list, a data frame or a matrix.")
+  } else {
+    if(is.list(data)){
+      if(!is.null(data$xt)){
+        xt <- data$xt
+        data <- as.data.frame(data[-which(names(data) == "xt")])
+      }else{
+        data <- as.data.frame(data)
+      }     
+    }
+    n <- dim(data)[1]
+    m <- dim(data)[2]
+    u1 <- data$u1
+    u2 <- data$u2
+    u <- cbind(u1,u2)
+  }
+  
+  if (is.null(u1) == TRUE || is.null(u2) == TRUE) 
+    return("u1 and/or u2 are missing.")
+  if (n < 2) 
+    return("Number of observations has to be at least 2.")
+  if (any(u > 1) || any(u < 0)) 
+    return("(u1, u2) have to be in [0,1]x[0,1].")
+  
+  options(warn = -1)
+  if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
+        (as.integer(n.iters) < 1) || 
+        (as.integer(n.iters) !=  as.numeric(n.iters))) {
+    return("N.iters should be a positive integer.")
+  } 
+  
+  if (is.null(tau) ||  is.na(tau) ||  
+        !(is.logical(tau) || (tau == 0) || (tau == 1))) {
+    return("Tau should takes 0/1 or FALSE/TRUE to specify a model for 
+           the copula parameter/Kendall's tau.")
+  }
+  
+  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || 
+        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
+    return("Tol.rel should be a real number in [0,1].")
+  } 
+  
+  if (is.null(method) || !is.element(method, c("FS", "NR"))) {
+    return("Method should be a string, either NR (Newton-Raphson) 
+         or FS (Fisher-scoring, faster but unstable).")
+  }
+  
+  if (is.null(verbose) ||  is.na(verbose) || 
+        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
+    return("Verbose should takes 0/1 or FALSE/TRUE.")
+  } 
+  options(warn = 0)
+  
+  temp <- VineCopula:::fasttau(u1, u2)
+  rotated <- family
+  
+  if (!is.element(family, c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {
+    return("Copula family not yet implemented!")
+  } else if (is.element(family, c(3, 4, 13, 14)) && (temp < 0)) {
+    return("This copula family cannot be used for negatively dependent data.")
+  } else if (is.element(family, c(23, 24, 33, 34)) && (temp > 0)) {
+    return("This copula family cannot be used for positively dependent data.")
+  }
+  
+  return(TRUE)
+}

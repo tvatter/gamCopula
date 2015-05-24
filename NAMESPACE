@@ -1,26 +1,43 @@
+## Import packages
 import(VineCopula)
 import(mgcv)
 import(methods)
 import(MASS)
+import(igraph)
 
+## Import selected functions
 importFrom(gsl, expint_E1)
 importFrom(copula, mvdc)
 importFrom(copula, normalCopula)
 importFrom(copula, rMvdc)
 importFrom(parallel, mclapply)
 
+## Classes
 export(gamBiCop)
-export(logLik.gamBiCop)
+export(gamVine)
+
+## Methods
+exportMethods("plot")
+exportMethods("logLik")
+exportMethods("summary")
 export(EDF)
+
+## gamBiCop related functions
+export(gamBiCopSim)
 export(gamBiCopEst)
 export(gamBiCopPred)
-export(gamBiCopSim)
+export(gamBiCopPDF)
+export(gamBiCopCDF)
 export(gamBiCopSel)
-export(gamVine)
+
+## gamVine related functions
 export(gamVineSim)
+export(gamVineSeqEst)
 export(gamVineNormalize)
 export(gamVineFamily)
 export(RVM2GVC)
+
+## Others
 export(rotate.data)
 export(rotate.param)
 export(BiCopEta2Par)

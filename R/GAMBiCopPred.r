@@ -38,9 +38,9 @@
 #' linear predictor values (minus any offest) at the supplied covariate values, 
 #' when applied to the model coefficient vector (similar as 
 #' \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}). 
-#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPred}}.
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}.
 #' @examples 
-#' set.seed(1)
+#' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
 #' ## Clayton copula family)

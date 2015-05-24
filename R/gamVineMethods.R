@@ -36,85 +36,123 @@ dim.gamVine <- function(x) {
 #' @rdname dim-methods
 setMethod("dim", signature("gamVine"), dim.gamVine)
 
-#' Print a \code{\link{gamVine-class}} object
-#'
-#' @param x \code{\link{gamVine-class}} object.
-#' @param ... un-used for this class.
-## @param detail should additional details be printed (\code{detail=TRUE}) or
-## not?
-#' @seealso \code{\link{gamVine-class}} and \code{\link{gamVine}}.
-#' @docType methods
-#' @rdname print-methods
-#' @export
-print.gamVine <- function(x, ...) {
-  ## TODO , detail=TRUE
+show.gamVine <- function(object) {
   detail <- FALSE
-  GVC <- x
-  message("gam-vine matrix:")
-  print(GVC@Matrix, ...)
-  message("")
-  message("Where")
+  GVC <- object
+  cat("GAM-Vine matrix:","\n")
+  show(GVC@Matrix)
+  cat("\n", "Where", "\n")
   for (i in 1:length(GVC@names)) {
-    message(i, " <-> ", GVC@names[[i]])
+    cat(i, " <-> ", GVC@names[[i]], "\n")
   }
   
   d <- dim(GVC)
   count <- 1
-  if (detail == TRUE || detail == T) {
-    message("")
-    message("Tree 1:")
-    for (i in 1:(d - 1)) {
-      a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", GVC@names[[GVC@Matrix[d, 
-        i]]], sep = "")
-      if (is.numeric(GVC@model[[count]])) {
-        a <- paste(a, ": ", BiCopName(GVC@model[[count]], short = FALSE), 
-          sep = "")
-      } else {
-        a <- paste(a, ": ", BiCopName(GVC@model[[count]]@family, short = FALSE), 
-          sep = "")
+  cat("\n", "Tree 1:", "\n")
+  for (i in 1:(d - 1)) {
+    a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+               GVC@names[[GVC@Matrix[d,i]]], sep = "")
+    a <- paste(a, ": ", BiCopName(GVC@model[[count]]$family,
+                                  short = FALSE), sep = "")
+    cat(a, "\n")
+    # if(GVC@model[d,i]!=0) { show(GVC@model[d,i]) }
+    count <- count + 1
+  }
+  for (j in 2:(d - 1)) {
+    a <- paste("Tree ", j, ":", sep = "")
+    cat("\n", a, "\n")
+    for (i in 1:(d - j)) {
+      a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+                 GVC@names[[GVC@Matrix[d - j + 1, i]]], sep = "")
+      a <- paste(a, "|", sep = "")
+      conditioningSet <- (d - j + 2):d
+      for (k in 1:length(conditioningSet)) {
+        if (k > 1) {
+          a <- paste(a, ",", sep = "")
+        }
+        a <- paste(a, GVC@names[[GVC@Matrix[conditioningSet[k], i]]],sep = "")
       }
-      message(a)
-      # if(GVC@model[d,i]!=0) { print(GVC@model[d,i]) }
+      mm <- GVC@model[[count]]
+      if ( valid.gamBiCop(mm) != TRUE) {
+        a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+        cat(a, "\n")
+      } else {
+        cat(a, ": ")
+        show(mm)
+      }
       count <- count + 1
     }
-    for (j in 2:(d - 1)) {
-      message("")
-      a <- paste("Tree ", j, ":", sep = "")
-      message(a)
-      for (i in 1:(d - j)) {
-        a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", GVC@names[[GVC@Matrix[d - 
-          j + 1, i]]], sep = "")
-        a <- paste(a, "|", sep = "")
-        conditioningSet <- (d - j + 2):d
-        for (k in 1:length(conditioningSet)) {
-          if (k > 1) {
-          a <- paste(a, ",", sep = "")
-          }
-          a <- paste(a, GVC@names[[GVC@Matrix[conditioningSet[k], i]]], 
-                     sep = "")
-        }
-        if (is.numeric(GVC@model[[count]])) {
-          a <- paste(a, ": ", BiCopName(GVC@model[[count]], 
-                                        short = FALSE), sep = "")
-        } else {
-          EDF <- EDF(GVC@model[[count]])
-          a <- paste(a, ": ", BiCopName(GVC@model[[count]]@family, 
-                                        short = FALSE), sep = "")
-          a <- paste(a, paste("EDF:", paste(round(EDF[-1], 3), 
-                                            collapse = ", ")),sep = "\n")
-        }
-        message(a)
-        # if(GVC@model[d-j+1,i]!=0) { if(GVC@model[d-j+1,i]!=0) {
-        # print(GVC@model[d-j+1,i]) } }
-        count <- count + 1
-      }
-    }
-    
   }
 }
-#' @docType methods
-#' @rdname print-methods
-setMethod("print", signature("gamVine"), print.gamVine)
+setMethod("show", signature("gamVine"), show.gamVine)
+
+summary.gamVine <- function(object) {
+  detail <- FALSE
+  GVC <- object
+  cat("GAM-Vine matrix:","\n")
+  show(GVC@Matrix)
+  cat("\n", "Where", "\n")
+  for (i in 1:length(GVC@names)) {
+    cat(i, " <-> ", GVC@names[[i]], "\n")
+  }
+  
+  d <- dim(GVC)
+  count <- 1
+  cat("\n", "Tree 1:", "\n")
+  for (i in 1:(d - 1)) {
+    mm <- GVC@model[[count]]
+    a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+               GVC@names[[GVC@Matrix[d,i]]], sep = "")
+    a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+    if (mm$family!=0) {
+      a <- paste(a, " with par=", round(mm$par,2), sep="")
+      if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,104,
+                          114,124,134,204,214,224,234)) {
+        a <- paste(a," and par2=", round(mm$par2,2), sep="")
+      }
+      a <- paste(a, " (tau=", 
+                 round(BiCopPar2Tau(mm$family,mm$par,mm$par2),2), ")", sep="")
+    }
+    cat(a, "\n")
+    count <- count + 1
+  }
+  for (j in 2:(d - 1)) {
+    a <- paste("Tree ", j, ":", sep = "")
+    cat("\n", a, "\n")
+    for (i in 1:(d - j)) {
+      a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+                 GVC@names[[GVC@Matrix[d - j + 1, i]]], sep = "")
+      a <- paste(a, "|", sep = "")
+      conditioningSet <- (d - j + 2):d
+      for (k in 1:length(conditioningSet)) {
+        if (k > 1) {
+          a <- paste(a, ",", sep = "")
+        }
+        a <- paste(a, GVC@names[[GVC@Matrix[conditioningSet[k], i]]],sep = "")
+      }
+      mm <- GVC@model[[count]]
+      if ( valid.gamBiCop(mm) != TRUE) {
+        a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+        if (mm$family!=0) {
+          a <- paste(a, " with par=", round(mm$par,2), sep="")
+          if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,
+                               104,114,124,134,204,214,224,234)) {
+            a <- paste(a," and par2=", round(mm$par2,2), sep="")
+          }
+          a <- paste(a, " (tau=", 
+                     round(BiCopPar2Tau(mm$family,mm$par,mm$par2),2), 
+                     ")", sep="")
+        }
+        cat(a, "\n")
+      } else {
+        cat(a, ": ")
+        summary(mm)
+      }
+      count <- count + 1
+    }
+  }
+}
+setMethod("summary", signature("gamVine"), summary.gamVine)
 
 #' Family matrix of \code{\link{gamVine-class}} object
 #' 
@@ -188,3 +226,28 @@ RVM2GVC <- function(RVM) {
   }
   return(out)
 }
+
+#' Plot a fitted \code{\link{gamVine-class}} object
+#' 
+#' Plot from a model fit. 
+#' The function is based on (see \code{\link{plot.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' 
+#' @param x fitted \code{\link{gamVine-class}} object.
+#' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
+#' @return This function simply generates plots.
+#' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' @docType methods
+#' @rdname plot-methods
+#' @export
+plot.gamVine <- function(x, ...) {
+  sel <- sapply(GVC@model,valid.gamBiCop) == "TRUE"
+  if (any(sel)) {
+    par(ask = T)
+    sel <- which(sel)
+    for(j in sel) {
+      plot(GVC@model[[j]])
+    }
+  }
+}
+setMethod("plot", signature(x="gamVine"), plot.gamVine)

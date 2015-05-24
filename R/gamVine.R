@@ -4,10 +4,10 @@ valid.gamVine <- function(object) {
   d <- length(attributes(object))
   if ((d < 3) || names(attributes(object))[1:3] != 
         c("Matrix", "model", "names")) {
-    return(paste("A gamVine contains at least 1) a R-Vine matrix,",
-                 "2) a list of lists with three numeric items ",
-                 "(family, par and par2) and/or gamBiCop objects and ",
-                 "3) a vector of names.", sep = ""))
+    msg <- paste("A gamVine contains at least 1) a R-Vine matrix, 2) a list of",
+                 "lists with three numeric items (family, par and par2) and/or", 
+                 " gamBiCop objects and 3) a vector of names.", sep = "")
+    return(msg)
   }
   Matrix <- object@Matrix
   names <- object@names
@@ -36,15 +36,15 @@ valid.gamVine <- function(object) {
     
     if (!is.list(mm) || any(names(mm) != c("family", "par", "par2")) || 
           !is.numeric(unlist(mm))) {
-      return(paste("Element", 
-                   count, "of the model list (first tree) should be a list ","
-                   with three numeric items (family, par and par2)."))
+      msg <- paste("Element", count, "of model (first tree) should be",
+                   "a list with three numeric items (family, par and par2).")
+      return(msg)
     }
     
     chk <- family.check(mm$family, mm$par, mm$par2)
     if (chk != TRUE) {
-      return(paste("In element", count, "of the model list (first tree):", 
-        chk))
+      msg <- paste("In element", count, "of model (first tree):", chk)
+      return(msg)
     }
     count <- count + 1
   }
@@ -54,25 +54,26 @@ valid.gamVine <- function(object) {
     for (i in 1:(d - j)) {
       mm <- model[[count]]
       if (valid.gamBiCop(mm) == TRUE) {
-        cond <- sort(all.vars(model$pred.formula))
+        cond <- sort(all.vars(mm@model$pred.formula))
         cond2 <- names[sort(Matrix[(d - j + 2):d, i])]
         if (!all(cond == cond2)) {
-          return(paste("The formula of element", count, "of the model list, ",
-                       "(tree",j, ") does not not contain the correct ",
-                       "conditioning variables."))
+          msg <- paste("The formula of element", count, "of model (tree",j, ")",
+                       " does not not contain the correct conditioning",
+                       " variables.")
+          return(msg)
         }
       } else {
         if (!is.list(mm) || any(names(mm) != c("family", "par", "par2")) || 
           !is.numeric(unlist(mm))) {
-          return(paste("Element", count, "of the model list, (tree", j, 
-                       ") should be a valid gamBiCop object or a list",
-                       " containing three items (family, par, par2)."))
+          msg <- paste("Element", count, "of model, (tree", j, ") should be a",
+                       " valid gamBiCop object or a list containing three",
+                       " items (family, par, par2).")
+          return(msg)
         }
         
         chk <- family.check(mm$family, mm$par, mm$par2)
         if (chk != TRUE) {
-          return(paste("In element", count, 
-                       "of the model list, (tree", j,"):", chk))
+          return(paste("In element", count, "of model, (tree", j,"):", chk))
         }
       }
       count <- count + 1
@@ -94,7 +95,7 @@ valid.gamVine <- function(object) {
 #' \code{\link{gamBiCop-class}}.
 #' @export
 setClass("gamVine", slots = c(Matrix = "matrix", model = "list", 
-                              names = "character"),validity = valid.gamVine)
+                              names = "character"), validity = valid.gamVine)
 
 #' Constructor of the \code{\link{gamVine-class}}
 #'
