@@ -19,7 +19,7 @@
 #' estimation and \code{FALSE} (default) for a silent version.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
-#' @return \code{gamBiCopEst} returns a \code{\link{gamVine-class}} object.
+#' @return \code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
 #' @examples
 #' require(VineCopula)
 #' set.seed(0)

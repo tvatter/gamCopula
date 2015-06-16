@@ -27,7 +27,7 @@ estimation and \code{FALSE} (default) for a silent version.}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
-\code{gamBiCopEst} returns a \code{\link{gamVine-class}} object.
+\code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
 }
 \description{
 This function estimates the parameter(s) of a Generalized Additive model
