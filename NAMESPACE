@@ -33,11 +33,13 @@ export(gamBiCopSel)
 ## gamVine related functions
 export(gamVineSim)
 export(gamVineSeqEst)
+export(gamVineStructureSelect)
 export(gamVineNormalize)
 export(gamVineFamily)
 export(RVM2GVC)
 
 ## Others
+export(links)
 export(rotate.data)
 export(rotate.param)
 export(BiCopEta2Par)

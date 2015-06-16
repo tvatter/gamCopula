@@ -242,3 +242,71 @@ CondBiCopSim <- function(family, calib.fnc, X,
     return(data)
   }
 } 
+
+## Link and inverse link functions for all VineCopula package's copula families
+links <- function(family, inv = FALSE) {
+  if (!inv) {
+    f1 <- function(x) tanh(x/2)
+    f2 <- function(x) exp(x)
+    f3 <- function(x) 1 + f2(x)
+    f4 <- function(x) (tanh(x/2)+1)/2
+    f5 <- function(x) 2 + f2(x)    
+    f2r <- function(x) -f2(-x)
+    f3r <- function(x) -f3(-x)
+    f4r <- function(x) -f4(-x)
+    id <- function(x) x
+  } else {
+    f1 <- function(x) 2*atanh(x)
+    f2 <- function(x) log(x)
+    f3 <- function(x) f2(x-1)
+    f4 <- function(x) 2*atanh(2*x-1)
+    f5 <- function(x) f2(x-2)
+    f2r <- function(x) -f2(-x)
+    f3r <- function(x) -f3(-x)
+    f4r <- function(x) -f4(-x)
+    id <- function(x) x
+  }
+
+  switch(BiCopName(family),
+         N = list(par = f1, par2 = NULL),
+         t = list(par = f1, par2 = f5),
+         C = list(par = f2, par2 = NULL),
+         G = list(par = f3, par2 = NULL),
+         F = list(par = id, par2 = NULL),
+         J = list(par = f3, par2 = NULL),
+         BB1 = list(par = f2, par2 = f3),
+         BB6 = list(par = f3, par2 = f3),
+         BB7 = list(par = f3, par2 = f2),
+         BB8 = list(par = f3, par2 = f4),
+         SC = list(par = f2, par2 = NULL),
+         SG = list(par = f3, par2 = NULL),
+         SJ = list(par = f3, par2 = NULL),
+         SBB1 = list(par = f2, par2 = f3),
+         SBB6 = list(par = f3, par2 = f3),
+         SBB7 = list(par = f3, par2 = f2),
+         SBB8 = list(par = f3, par2 = f4),
+         C90 = list(par = f2r, par2 = NULL),
+         G90 = list(par = f3r, par2 = NULL),
+         F90 = list(par = f3r, par2 = NULL),
+         J90 = list(par = f3r, par2 = NULL),
+         BB1_90 = list(par = f2r, par2 = f3r),
+         BB6_90 = list(par = f3r, par2 = f3r),
+         BB7_90 = list(par = f3r, par2 = f2r),
+         BB8_90 = list(par = f3r, par2 = f4r),
+         C270 = list(par = f2r, par2 = NULL),
+         G270 = list(par = f3r, par2 = NULL),
+         F270 = list(par = f3r, par2 = NULL),
+         J270 = list(par = f3r, par2 = NULL),
+         BB1_270 = list(par = f2r, par2 = f3r),
+         BB6_270 = list(par = f3r, par2 = f3r),
+         BB7_270 = list(par = f3r, par2 = f2r),
+         BB8_270 = list(par = f3r, par2 = f4r),
+         Tawn = list(par = f3, par2 = f4),
+         Tawn180 = list(par = f3, par2 = f4),
+         Tawn90 = list(par = f3r, par2 = f4),
+         Tawn270 = list(par = f3r, par2 = f4),
+         Tawn2 = list(par = f3, par2 = f4),
+         Tawn2_180 = list(par = f3, par2 = f4),
+         Tawn2_90 = list(par = f3r, par2 = f4),
+         Tawn2_270 = list(par = f3r, par2 = f4))
+}

@@ -1,9 +1,12 @@
-gamVineStructureSelect <- function(data, type = 0, selectioncrit = "AIC", 
-                                  indeptest = FALSE, level = 0.05, trunclevel = NA, 
-                                method = "NR", tol.rel = 0.001, n.iters = 10, 
-                                verbose = FALSE) {
+gamVineStructureSelect <- function(data, type = 0, familyset = NA, 
+                                   rotations = TRUE, selectioncrit = "AIC", 
+                                   SAtestOptions = "ERC",
+                                   indeptest = TRUE, level = 0.05,
+                                   trunclevel = NA, method = "NR", 
+                                   tol.rel = 0.001, n.iters = 10, 
+                                   verbose = FALSE) {
   
-  chk <- valid.gamVineStructureSelect(bla)
+  chk <- valid.gamVineStructureSelect(TODO)
   if (chk != TRUE) {
     return(chk)
   } 
@@ -14,19 +17,28 @@ gamVineStructureSelect <- function(data, type = 0, selectioncrit = "AIC",
     type <- "CVine"
   }
   
-  dataset <- data.frame(dataset)
-  n <- dim(dataset)[1]
-  d <- dim(dataset)[2] 
+  data <- data.frame(data)
+  n <- dim(data)[1]
+  d <- dim(data)[2] 
   
-  if (is.null(colnames(dataset))) {
+  if (is.null(colnames(data))) {
     nn <- paste("V",1:d,sep="") 
-    colnames(dataset) <- nn
+    colnames(data) <- nn
   } else {
-    nn <- colnames(dataset)
+    nn <- colnames(data)
   }  
   
   if (is.na(trunclevel)) {
     trunclevel <- d
+  }
+  if (trunclevel == 0) {
+    familyset <- 0
+  }
+  if (is.na(familyset)) {
+    familyset <- 1:4
+  }
+  if (rotations) {
+    familyset <- withRotations(familyset)
   }
   
   out <- list(tree <- vector("list", d), graph <- vector("list", d))
@@ -34,21 +46,19 @@ gamVineStructureSelect <- function(data, type = 0, selectioncrit = "AIC",
   graph <- initFirstGraph(data)
   mst <- findMST(graph, type)
   tree <- fitFirstTree(mst, data, familyset, selectioncrit, indeptest, level)
-  
-  out$tree[[1]] <- tree
-  out$graph[[1]] <- graph
+  out$Tree[[1]] <- tree
+  out$Graph[[1]] <- graph
   oldtree  <- tree
-  
-  
+
   for(i in 2:(d-1)){    
     if(trunclevel == i-1) {
       familyset <- 0
     }
     
-    graph <- buildNextGraph(tree)
+    graph <- buildNextGraph(tree, data, SAtestOptions)
     mst <- findMST(graph, type) 
-    tree <- fitTree(mst, tree, familyset, selectioncrit, 
-                    indeptest, level, progress)
+    tree <- fitTree(mst, tree, data, familyset, selectioncrit, SAtestOptions,
+                    indeptest, level, method, tol.rel, n.iters, verbose)
     
     out$Tree[[i]] <- tree
     out$Graph[[i]] <- graph
@@ -86,8 +96,8 @@ findMST <- function(g, mode = "RVine") {
   }
 }
 
-fitFirstTree <- function(mst, data, type, copulaSelectionBy, 
-                         testForIndependence, testForIndependence.level) {
+fitFirstTree <- function(mst, data, familyset, 
+                         selectioncrit, indeptest, level) {
   
   d <- ecount(mst)
   
@@ -124,16 +134,11 @@ fitFirstTree <- function(mst, data, type, copulaSelectionBy,
     } 
   }
   
-  outForACopula <- lapply(X <- parameterForACopula, FUN <- wrapper.fitACopula, 
-                          type, copulaSelectionBy, testForIndependence, 
-                          testForIndependence.level)
+  outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
+                          familyset, selectioncrit, indeptest, level)
   
-  for(i in 1:d)
-  {
-    E(mst)$param[[i]] <- c(outForACopula[[i]]$par,outForACopula[[i]]$par2)
-    E(mst)[i]$type <- outForACopula[[i]]$family
-    E(mst)[i]$out <- list(outForACopula[[i]])
-    
+  for(i in 1:d) {
+    E(mst)[i]$model <- list(outForACopula[[i]]$model)
     E(mst)[i]$CondData1 <- list(outForACopula[[i]]$CondOn1)
     E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn2)
   }
@@ -141,15 +146,16 @@ fitFirstTree <- function(mst, data, type, copulaSelectionBy,
   return(mst)
 }
 
-fitTree <- function(mst, oldVineGraph, type,copulaSelectionBy,testForIndependence,testForIndependence.level,progress,weights=NA)
-{
+fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit, 
+                    SAtestOptions, indeptest, level, 
+                    method, tol.rel, n.iters, verbose) {
+
   d <- ecount(mst)
   
   parameterForACopula <- list()
   
-  for(i in 1:d)
-  {
-    parameterForACopula[[i]] <- list()
+  for(i in 1:d) {
+    #parameterForACopula[[i]] <- list()
     
     con <- get.edge(mst,i)
     tmp <- get.edges(oldVineGraph,con)
@@ -194,26 +200,32 @@ fitTree <- function(mst, oldVineGraph, type,copulaSelectionBy,testForIndependenc
       n2a=n2
     }
     
-    if(progress == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
+    if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
     
-    parameterForACopula[[i]]$zr1 <- zr1a
-    parameterForACopula[[i]]$zr2 <- zr2a
+    #parameterForACopula[[i]]$zr1 <- zr1a
+    #parameterForACopula[[i]]$zr2 <- zr2a
     
     E(mst)[i]$Data1 <-  list(zr1a)
     E(mst)[i]$Data2 <-  list(zr2a)
     
     E(mst)[i]$CondName2 <- n1a
     E(mst)[i]$CondName1 <- n2a
-  }
-  
-  outForACopula <- lapply(X <- parameterForACopula, FUN <- wrapper.fitACopula, type,copulaSelectionBy,testForIndependence,testForIndependence.level,weights)
-  
-  for(i in 1:d)
-  {
-    E(mst)$param[[i]] <- c(outForACopula[[i]]$par,outForACopula[[i]]$par2)
-    E(mst)[i]$type <- outForACopula[[i]]$family
-    E(mst)[i]$out <- list(outForACopula[[i]])
     
+    tmp <- E(mst)$conditioningSet[[i]]
+    parameterForACopula[[i]] <- data.frame(u1 = zr1a, u2 = zr2a, data[,tmp])
+    names(parameterForACopula[[i]])[-c(1,2)] <- names(data)[tmp]
+    #E(mst)[i]$ConditioningSet <- data[,E(mst)$conditioningSet[[i]]]
+  }
+
+  outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, familyset, 
+                          selectioncrit, SAtestOptions, indeptest, level, 
+                          method, tol.rel, n.iters)
+
+  for (i in 1:d) {
+    #E(mst)$param[[i]] <- c(outForACopula[[i]]$par,outForACopula[[i]]$par2)
+    #E(mst)[i]$type <- outForACopula[[i]]$family
+    #E(mst)[i]$out <- list(outForACopula[[i]])
+    E(mst)[i]$model <- list(outForACopula[[i]]$model)
     E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn1)
     E(mst)[i]$CondData1 <- list(outForACopula[[i]]$CondOn2)
   }
@@ -221,7 +233,7 @@ fitTree <- function(mst, oldVineGraph, type,copulaSelectionBy,testForIndependenc
   return(mst)
 }	
 
-buildNextGraph <- function(graph) {
+buildNextGraph <- function(graph, data, SAtestOptions) {
   
   EL <- get.edgelist(graph)
   d <- ecount(graph)
@@ -275,13 +287,10 @@ buildNextGraph <- function(graph) {
       }
       noNAs <- !(is.na(zr1a) | is.na(zr2a))
       
-      #### TO MODIFY HERE
-      #### TO MODIFY HERE
-      #### TO MODIFY HERE
-      #### TO MODIFY HERE
-      #### TO MODIFY HERE
-      browser()
-      E(g)[i]$weight <- cor(zr1[noNAs], zr2[noNAs], method="kendall")
+      #browser()
+      E(g)[i]$weight <- SAtest(cbind(zr1a[noNAs], zr2a[noNAs]), 
+                               data[noNAs, same], SAtestOptions)$pValue
+      #E(g)[i]$weight <- cor(zr1a[noNAs], zr2a[noNAs], method="kendall")
       
       name.node1 <- strsplit(V(g)[con[1]]$name,split=" *[,|] *")[[1]]
       name.node2 <- strsplit(V(g)[con[2]]$name,split=" *[,|] *")[[1]]   
@@ -338,9 +347,12 @@ buildNextGraph <- function(graph) {
   return(g)
 }
 
-wrapper.fitACopula <- function(parameterForACopula,type,...)
-{
-  return(fitACopula(parameterForACopula$zr1,parameterForACopula$zr2,type,...))
+wrapper.fitACopula <- function(parameterForACopula,...) {
+  if (length(parameterForACopula) == 2) {
+    return(fitACopula(parameterForACopula$zr1,parameterForACopula$zr2,...))
+  } else {
+    return(fitAGAMCopula(parameterForACopula,...))
+  } 
 }
 
 intersectDifference <- function(liste1, liste2) {
@@ -376,71 +388,122 @@ intersectDifference <- function(liste1, liste2) {
 fitACopula <- function(u1, u2, familyset=NA, selectioncrit="AIC", 
                         indeptest=FALSE,level=0.05) {
   
-  out <- BiCopSelect(u1, u2, familyset, selectioncrit, indeptest, level)
-  if(out$family%in%c(23,24))
-  {
+
+  ## select family and estimate parameter(s) for the pair copula
+  out <- BiCopSelect(u1, u2,
+                     familyset,
+                     selectioncrit,
+                     indeptest,
+                     level,
+                     rotations = FALSE)
+  
+  if (out$family %in% c(23,24)) {
     out$family <- out$family+10
-  }
-  else if(out$family%in%c(33,34))
-  {
+  } else if(out$family %in% c(33,34)) {
     out$family <- out$family-10
   }
-  tmp <- .C("Hfunc1", as.integer(out$family), as.integer(length(u1)), 
-            as.double(u1), as.double(u2), as.double(out$par),
-            as.double(out$par2), as.double(rep(0,length(u1))), 
-            PACKAGE='VineCopula')[[7]]
-  out$CondOn1 <- tmp
   
-  tmp <- .C("Hfunc2", as.integer(out$family), as.integer(length(u1)), 
-            as.double(u1), as.double(u2), as.double(out$par),
-            as.double(out$par2), as.double(rep(0,length(u1))), 
-            PACKAGE='VineCopula')[[7]]
-  out$CondOn2 <- tmp
+  ## store pseudo-observations for estimation in next tree
+  model <- list(family = out$family, par = out$par, par2 = out$par2)
+  tmp <- BiCopHfunc(u1, u2, out$family, out$par, out$par2)
+  out <- list(model = model, CondOn1 = tmp$hfunc2, CondOn2 = tmp$hfunc1)
   
   return(out)
 }
 
-as.RVM <- function(RVine){
+fitAGAMCopula <- function(data, familyset = NA, selectioncrit = "AIC", 
+                          SAtestOptions = "ERC", indeptest = FALSE, 
+                          level = 0.05, method = "FS", tol.rel = 0.001, 
+                          n.iters = 10) {
+  out <- list()
+  u1 <- data[,1]
+  u2 <- data[,2]
+
+  ## perform independence test (if asked for)
+  if (indeptest == TRUE && familyset != 0) {
+    p1 <- SAtest(data[,1:2], data[,-c(1,2)], SAtestOptions)$pValue
+    if (p1 >= level) {
+      p2 <- BiCopIndTest(u1, u2)$p.value
+    } else {
+      p2 <- NA
+    }
+    out$pValue <- c(p1, p2)
+  } else {
+    out$pValue <- rep(NA, 2)
+  }  
+  if (familyset == 0 || (!any(is.na(out$pValue)) && out$pValue[2] >= level)) {
+    out$model <- list(family = 0, par = 0, par2 = 0)    
+    par <- rep(0, length(u1))
+    fam <- 0
+    par2 <- 0
+  } else {
+    if (!any(is.na(out$pValue)) && out$pValue[2] < level) {
+      out$model <- BiCopSelect(u1, u2, familyset, selectioncrit,
+                               indeptest = FALSE, rotations = FALSE)
+      par <- rep(out$model$par, length(u1))
+      fam <- out$model$family
+      par2 <- out$model$par2
+    } else {
+      tmp <- gamBiCopSel(data, familyset, selectioncrit, FALSE,
+                               method, tol.rel, n.iters, parallel = TRUE)
+      #tmp <- gamBiCopSel(data, 2, selectioncrit, FALSE,
+      #                   method, tol.rel, n.iters, parallel = TRUE)
+      if (tmp$conv == 0) {
+        out$model <- tmp$res
+        par <- gamBiCopPred(out$model, target = "par")$par
+        fam <- out$model@family
+        par2 <- out$model@par2
+      } else {
+        browser()
+      }
+    }
+  }
   
-  n <- length(RVine$Tree)+1
+  if (fam %in% c(23,24)) {
+    fam <- fam+10
+  } else if (fam %in% c(33,34)) {
+    fam <- fam-10
+  }
+
+  if (isS4(out$model)) {
+    attr(out$model, "family") <- fam
+  } else {
+    out$model$family <- fam
+  }
+  
+  ## store pseudo-observations for estimation in next tree
+  tmp <- t(sapply(1:length(par), function(x) 
+    BiCopHfunc(u1[x], u2[x], fam, par[x], par2)))
+  out$CondOn1 <- tmp$hfunc2
+  out$CondOn2 <- tmp$hfunc1
+  
+  return(out)
+}
+
+as.GVC <- function(GVC){
+  n <- length(GVC$Tree)+1
   con <- list()
-  nam <- V(RVine$Tree[[1]])$name
+  nam <- V(GVC$Tree[[1]])$name
   
   conditionedSets <- NULL
-  corresppondingParams <- list()
-  corresppondingTypes <- list()
+  correspondingModel <- NULL
   
-  if(is.list(E(RVine$Tree[[n-1]])$conditionedSet))
-  {
-    conditionedSets[[n-1]][[1]] <- (E(RVine$Tree[[n-1]])$conditionedSet[[1]])	
-    for(k in 1:(n-2)){
-      #conditionedSets[[k]] <- E(RVine$Tree[[k]])$conditionedSet[[1]]
-      conditionedSets[[k]] <- E(RVine$Tree[[k]])$conditionedSet
-      corresppondingParams[[k]] <- as.list(E(RVine$Tree[[k]])$param)
-      corresppondingTypes[[k]] <- as.list(E(RVine$Tree[[k]])$type)
-    }
-    
-    corresppondingParams[[n-1]] <- list()
-    corresppondingParams[[n-1]] <- as.list(E(RVine$Tree[[n-1]])$param)
-    corresppondingTypes[[n-1]] <- as.list(E(RVine$Tree[[n-1]])$type)
-    #print(corresppondingParams)
+  if (is.list(E(GVC$Tree[[n-1]])$conditionedSet)) {
+    conditionedSets[[n-1]][[1]] <- (E(GVC$Tree[[n-1]])$conditionedSet[[1]])  
   }
   else{
-    conditionedSets[[n-1]][[1]] <- (E(RVine$Tree[[n-1]])$conditionedSet)
-    for(k in 1:(n-2)){
-      conditionedSets[[k]] <- E(RVine$Tree[[k]])$conditionedSet
-      corresppondingParams[[k]] <- as.list(E(RVine$Tree[[k]])$param)
-      corresppondingTypes[[k]] <- as.list(E(RVine$Tree[[k]])$type)
-    }
-    #print(conditionedSets)
-    corresppondingParams[[n-1]] <- list()
-    corresppondingParams[[n-1]] <- as.list(E(RVine$Tree[[n-1]])$param)
-    corresppondingTypes[[n-1]] <- as.list(E(RVine$Tree[[n-1]])$type)
+    conditionedSets[[n-1]][[1]] <- (E(GVC$Tree[[n-1]])$conditionedSet)
   }
   
-  Param <- array(dim=c(n,n))
-  Params2 <- array(0,dim=c(n,n))
-  Type <- array(dim=c(n,n))
+  for (k in 1:(n-2)) {
+    conditionedSets[[k]] <- E(GVC$Tree[[k]])$conditionedSet
+    correspondingModel[[k]] <- as.list(E(GVC$Tree[[k]])$model)
+  }
+  
+  correspondingModel[[n-1]] <- E(GVC$Tree[[n-1]])$model
+  
+  model.count <- get.modelCount(d)  
+  model <- vector("list", n*(n-1)/2)
   M <- matrix(NA,n,n)
   
   for(k in 1:(n-1)){
@@ -449,58 +512,60 @@ as.RVM <- function(RVine){
     M[k,k] <- w
     M[(k+1),k] <- conditionedSets[[n-k]][[1]][2]
     
-    Param[(k+1),k] <- corresppondingParams[[n-k]][[1]][1]
-    Params2[(k+1),k] <- corresppondingParams[[n-k]][[1]][2]
-    
-    Type[(k+1),k] <- corresppondingTypes[[n-k]][[1]]
-    
+    model[[model.count[(k+1),k]]] <- correspondingModel[[n-k]][[1]]
     if(k == (n-1)){
       M[(k+1),(k+1)] <- conditionedSets[[n-k]][[1]][2]
-    }else{
+    } else {
       for(i in (k+2):n){
         for(j in 1:length(conditionedSets[[n-i+1]])){
           cs <- conditionedSets[[n-i+1]][[j]]
-          cty <- corresppondingTypes[[n-i+1]][[j]]
+          tmp <- correspondingModel[[n-i+1]][[j]]
           if(cs[1] == w){
             M[i,k] <- cs[2]
-            Type[i,k] <- cty #Mathias 21.3.
+            model[[model.count[i,k]]] <- tmp
             break
           } else if(cs[2] == w){
-            M[i,k] <- cs[1]
-            if(any(cty == c(23,24,26))){ Type[i,k] <- cty+10} #Mathias 21.3.
-            if(any(cty == c(33,34,36))){ Type[i,k] <- cty-10} #Mathias 21.3.
-            if(!any(cty == c(23,24,26,33,34,36))){ Type[i,k] <- cty} #Mathias 21.3.
+            M[i,k] = cs[1]
+            if (isS4(tmp)) {
+              fam <- attr(tmp, "family")
+            } else {
+              fam <- tmp$family
+            }
+            
+            if (fam %in% c(23,24)) {
+              fam <- fam+10
+            } else if (fam %in% c(33,34)) {
+              fam <- fam-10
+            }
+            
+            if (isS4(tmp)) {
+              attr(tmp, "family") <- fam
+            } else {
+              tmp$family <- fam
+            }
+            model[[model.count[i,k]]] <- tmp
             break
           }
         }
-        Param[i,k] <- corresppondingParams[[n-i+1]][[j]][1]
-        Params2[i,k] <- corresppondingParams[[n-i+1]][[j]][2]
-        # changed Mathias 21.3.				Type[i,k] <- corresppondingTypes[[n-i+1]][[j]]
         
         conditionedSets[[n-i+1]][[j]] <- NULL
-        corresppondingParams[[n-i+1]][[j]] <- NULL
-        corresppondingTypes[[n-i+1]][[j]] <- NULL
+        correspondingModel[[n-i+1]][[j]] <- NULL
       }
     }
-    
   }
-  
-  M <- M#+1
-  M[is.na(M)]=0
-  Type[is.na(Type)]=0
-  
-  return(RVineMatrix(M, family <- Type, par <- Param, par2 <- Params2, names <- nam))
+  M[is.na(M)] <- 0
+  return(gamVine(M, model, nam))
   
 }
 
 valid.gamVineStructureSelect <- function(bla) {
-#   if (!is.element(type,c(0,1)) 
-#       return("Vine model not implemented.")
-#   
-#   if(selectioncrit != "AIC" && selectioncrit != "BIC") 
-#     return("Selection criterion not implemented.")
-#   if(level < 0 & level > 1) 
-#     return("Significance level has to be between 0 and 1.")
+  #   if (!is.element(type,c(0,1)) 
+  #       return("Vine model not implemented.")
+  #   
+  #   if(selectioncrit != "AIC" && selectioncrit != "BIC") 
+  #     return("Selection criterion not implemented.")
+  #   if(level < 0 & level > 1) 
+  #     return("Significance level has to be between 0 and 1.")
   
   return(TRUE)
 }

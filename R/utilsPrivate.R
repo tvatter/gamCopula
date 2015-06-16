@@ -278,72 +278,70 @@ family.check <- function(family, par, par2 = 0) {
   }
 }
 
-## Link and inverse link functions for all VineCopula package's copula families
-links <- function(family, inv = FALSE) {
-  if (!inv) {
-    f1 <- function(x) tanh(x/2)
-    f2 <- function(x) exp(x)
-    f3 <- function(x) 1 + f2(x)
-    f4 <- function(x) (tanh(x/2)+1)/2
-    f5 <- function(x) 2 + f2(x)    
-    f2r <- function(x) -f2(-x)
-    f3r <- function(x) -f3(-x)
-    f4r <- function(x) -f4(-x)
-    id <- function(x) x
+getRotations <- function (i) {
+  out <- i
+  if (i %in% c(3, 13, 23, 33)) 
+    out <- c(3, 13, 23, 33)
+  if (i %in% c(4, 14, 24, 34)) 
+    out <- c(4, 14, 24, 34)
+  if (i %in% c(6, 16, 26, 36)) 
+    out <- c(6, 16, 26, 36)
+  if (i %in% c(7, 17, 27, 37)) 
+    out <- c(7, 17, 27, 37)
+  if (i %in% c(8, 18, 28, 38)) 
+    out <- c(8, 18, 28, 38)
+  if (i %in% c(9, 19, 29, 39)) 
+    out <- c(9, 19, 29, 39)
+  if (i %in% c(10, 20, 30, 40)) 
+    out <- c(10, 20, 30, 40)
+  if (i %in% c(104, 114, 124, 134)) 
+    out <- c(104, 114, 124, 134)
+  if (i %in% c(204, 214, 224, 234)) 
+    out <- c(204, 214, 224, 234)
+  out
+}
+
+withRotations <- function(nums) {
+  unique(unlist(lapply(nums, getRotations)))
+}
+
+fasttau <- function(x, y, weights = NA) {
+  if (any(is.na(weights))) {
+    m <- length(x)
+    n <- length(y)
+    if (m == 0 || n == 0) 
+      stop("both 'x' and 'y' must be non-empty")
+    if (m != n) 
+      stop("'x' and 'y' must have the same length")
+    out <- .C("ktau",
+              x = as.double(x),
+              y = as.double(y),
+              N = as.integer(n),
+              tau = as.double(0),
+              S = as.double(0),
+              D = as.double(0),
+              T = as.integer(0), 
+              U = as.integer(0), 
+              V = as.integer(0), 
+              PACKAGE = "VineCopula")
+    ktau <- out$tau
   } else {
-    f1 <- function(x) 2*atanh(x)
-    f2 <- function(x) log(x)
-    f3 <- function(x) f2(x-1)
-    f4 <- function(x) 2*atanh(2*x-1)
-    f5 <- function(x) f2(x-2)
-    f2r <- function(x) -f2(-x)
-    f3r <- function(x) -f3(-x)
-    f4r <- function(x) -f4(-x)
-    id <- function(x) x
+    ktau <- TauMatrix(matrix(c(x, y), length(x), 2), weights)[2, 1]
   }
-  
-  switch(BiCopName(family),
-         N = list(par = f1, par2 = NULL),
-         t = list(par = f1, par2 = f5),
-         C = list(par = f2, par2 = NULL),
-         G = list(par = f3, par2 = NULL),
-         F = list(par = id, par2 = NULL),
-         J = list(par = f3, par2 = NULL),
-         BB1 = list(par = f2, par2 = f3),
-         BB6 = list(par = f3, par2 = f3),
-         BB7 = list(par = f3, par2 = f2),
-         BB8 = list(par = f3, par2 = f4),
-         SC = list(par = f2, par2 = NULL),
-         SG = list(par = f3, par2 = NULL),
-         SJ = list(par = f3, par2 = NULL),
-         SBB1 = list(par = f2, par2 = f3),
-         SBB6 = list(par = f3, par2 = f3),
-         SBB7 = list(par = f3, par2 = f2),
-         SBB8 = list(par = f3, par2 = f4),
-         C90 = list(par = f2r, par2 = NULL),
-         G90 = list(par = f3r, par2 = NULL),
-         F90 = list(par = f3r, par2 = NULL),
-         J90 = list(par = f3r, par2 = NULL),
-         BB1_90 = list(par = f2r, par2 = f3r),
-         BB6_90 = list(par = f3r, par2 = f3r),
-         BB7_90 = list(par = f3r, par2 = f2r),
-         BB8_90 = list(par = f3r, par2 = f4r),
-         C270 = list(par = f2r, par2 = NULL),
-         G270 = list(par = f3r, par2 = NULL),
-         F270 = list(par = f3r, par2 = NULL),
-         J270 = list(par = f3r, par2 = NULL),
-         BB1_270 = list(par = f2r, par2 = f3r),
-         BB6_270 = list(par = f3r, par2 = f3r),
-         BB7_270 = list(par = f3r, par2 = f2r),
-         BB8_270 = list(par = f3r, par2 = f4r),
-         Tawn = list(par = f3, par2 = f4),
-         Tawn180 = list(par = f3, par2 = f4),
-         Tawn90 = list(par = f3r, par2 = f4),
-         Tawn270 = list(par = f3r, par2 = f4),
-         Tawn2 = list(par = f3, par2 = f4),
-         Tawn2_180 = list(par = f3, par2 = f4),
-         Tawn2_90 = list(par = f3r, par2 = f4),
-         Tawn2_270 = list(par = f3r, par2 = f4))
+  return(ktau)
+}
+
+get.modelCount <- function(d) {
+  model.count <- rep(0, d^2)
+  temp <- 1:(d * (d - 1)/2)
+  t1 <- 1
+  sel <- seq(d, d^2 - d, by = d)
+  for (i in 1:(d - 1)) {
+    t2 <- t1 + d - i - 1
+    model.count[sel[1:(d - i)] - i + 1] <- temp[t1:t2]
+    t1 <- t2 + 1
+  }
+  model.count <- matrix(model.count, d, d)
 }
 
 # 

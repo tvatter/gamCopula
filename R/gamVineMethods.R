@@ -241,12 +241,25 @@ RVM2GVC <- function(RVM) {
 #' @rdname plot-methods
 #' @export
 plot.gamVine <- function(x, ...) {
-  sel <- sapply(GVC@model,valid.gamBiCop) == "TRUE"
+  sel <- sapply(x@model,valid.gamBiCop) == "TRUE"
   if (any(sel)) {
+    d <- (1+sqrt(1+8*length(x@model)))/2
+    model.count <- get.modelCount(d)
+    M <- x@Matrix
+    nn <- x@names
     par(ask = T)
     sel <- which(sel)
     for(j in sel) {
-      plot(GVC@model[[j]])
+      k <- which(model.count == j)
+      cc <- floor(k/d)+1
+      rr <- k %% d
+      if (rr == 0) {
+        rr <- d
+      }
+      con1 <- paste(nn[M[rr,cc]],nn[M[which(M[,cc] != 0)[1],cc]], 
+                    sep = ",", collapse = "")
+      con2 <- paste(nn[M[(rr+1):d,cc]], sep = ",", collapse = "")
+      plot(x@model[[j]], main = paste(con1,con2,sep = "|", collapse = ""), ...)
     }
   }
 }

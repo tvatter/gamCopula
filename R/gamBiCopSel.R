@@ -123,7 +123,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
   if (any(u > 1) || any(u < 0)) 
     stop("(u1, u2) have to be in [0,1]x[0,1].")
  
-  k.tau <- VineCopula:::fasttau(u1,u2)
+  k.tau <- fasttau(u1,u2)
 
   if (is.null(familyset) || (any(is.na(familyset)) && length(familyset) != 1) || 
         any(sapply(familyset, function(x) 
@@ -141,15 +141,25 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
   } else if ( k.tau > 0 && !any(c(1,2,3,4,13,14) %in% familyset) ) { 
     stop(paste("Because Kendall's tau is positive, familyset needs at least ",
                "one bivariate copula family for positive dependence."))
-  } else if ( k.tau < 0 && any(c(1,2,3,4,13,14) %in% familyset) ) {
-    stop(paste("Because Kendall's tau is negative, familyset cannot contain ",
-               "bivariate copula families for positive dependence."))
-  } else if ( k.tau > 0 && any(c(1,2,23,24,33,34) %in% familyset) ) { 
-    stop(paste("Because Kendall's tau is positive, familyset cannot contain ",
-               "bivariate copula families for negative dependence."))
-  } else {
-    familyset <- as.integer(familyset)
   }
+#   } else if ( k.tau < 0 && any(c(1,2,3,4,13,14) %in% familyset) ) {
+#     stop(paste("Because Kendall's tau is negative, familyset cannot contain ",
+#                "bivariate copula families for positive dependence."))
+#   } else if ( k.tau > 0 && any(c(1,2,23,24,33,34) %in% familyset) ) { 
+#     stop(paste("Because Kendall's tau is positive, familyset cannot contain ",
+#                "bivariate copula families for negative dependence."))
+#   } else {
+#     familyset <- as.integer(familyset)
+#   }
+  
+  ## find families for which estimation is required (only families that allow for
+  ## the empirical kendall's tau)
+  if ( k.tau < 0 ) {
+    todo <- c(1, 2, 5, 23, 24, 26:30, 33, 34, 36:40, 124, 134, 224, 234)
+  } else {
+    todo <- c(1:10, 13, 14, 16:20, 104, 114, 204, 214)
+  }
+  familyset <- as.integer(todo[which(todo %in% familyset)])
 
   options(warn = -1)
   if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
@@ -198,7 +208,8 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
       gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
   } else {
     res <- parallel::mclapply(familyset,function(x) 
-      gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
+      gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...), 
+      mc.cores = parallel::detectCores() - 1)
   }
   
   if (selectioncrit == "AIC") {
@@ -217,7 +228,7 @@ gamBiCopVarSel <- function(data, family,
   get.formula <- function(x,k){
     paste("s(",x,", k=",k,", bs='cr')",sep = "")
   } 
-  nn <- names(data[,-which( (names(data) == "u1") | (names(data) == "u2"))])
+  nn <- names(data)[-which( (names(data) == "u1") | (names(data) == "u2"))]
   basis <- rep(5,ncol(data)-2)
   formula.expr <- mapply(get.formula,nn,basis)
 

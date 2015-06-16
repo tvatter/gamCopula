@@ -95,7 +95,14 @@ gamVineSim <- function(N, GVC, U = NULL) {
   conindirect <- rotate(rotate(CondDistr$indirect))
   
   Vdirect <- Vindirect <- array(dim = c(d, d, N))
-  if (is.null(U)) {
+  takeU <- !is.null(U)
+  if (takeU) {
+    if (!is.matrix(U)) 
+      U <- rbind(U, deparse.level = 0L)
+    if ((d <- ncol(U)) < 2) 
+      stop("U should be at least bivariate")  # should be an (N, n) matrix
+    U <- U[, rev(o)]
+  } else {
     U <- matrix(runif(N * d), ncol = d)
   }
   for (i in 1:d) {

@@ -38,31 +38,31 @@
 #' # Parameters for the first tree (two unconditional copulas)
 #' par <- c(1,2)
 #' 
-#' # A link for the second tree (a unique conditional copula)
-#' g <- function(x){
-#'   tanh(x/2)
-#' }
-#' 
 #' # Pre-allocate the GAM-Vine model list
 #' count <- 1
 #' model <- vector(mode = "list", length = d*(d-1)/2)
 #' 
 #' # The first tree contains only the two unconditional copulas
-#' for(i in 1:(d-1))
-#' {
+#' for (i in 1:(d-1)) {
 #'   model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
 #'   count <- count + 1
 #' }
 #' 
 #' # The second tree contains a unique conditional copula
 #' # In this first example, we take a linear calibration function (10*x-5)
-#' tmp <- sapply(seq(0,1,1e-3), function(x) BiCopSim(1, fam[count], g(10*x-5))) 
-#' data <- data.frame(u1 = tmp[1,], u2 = tmp[2,], x1 = seq(0,1,1e-3))
-#' model[[count]] <- gamBiCopEst(data, ~ x1, fam[count])$res
+#' 
+#' # Set-up a dummy dataset
+#' tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
+#' 
+#' # Set-up an arbitrary linear model for the calibration function
+#' model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
+#' 
+#' # Update the coefficients of the model
+#' attr(model[[count]],"model")$coefficients <- c(-5, 10)
 #' 
 #' # Define gamVine object
 #' GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
-#' summary(GVC)
+#' GVC
 #' 
 #' # Simulate new data
 #' N <- 1e3
@@ -73,14 +73,15 @@
 #' summary(fitGVC <- gamVineSeqEst(simData, GVC))
 #' 
 #' # The second tree contains a unique conditional copula
-#' # In this first example, we take a quadratic calibration function
-#' quad <- function(t, Ti = 0, Tf = 1, b = 8) {
-#'   Tm <- (Tf - Ti)/2
-#'   a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
-#'   return(a + b * (t - Tm)^2)}
-#' tmp <- sapply(seq(0,1,1e-3), function(x) BiCopSim(1, fam[count], g(quad(x)))) 
-#' data <- data.frame(u1 = tmp[1,], u2 = tmp[2,], x1 = seq(0,1,1e-3))
-#' model[[count]] <- gamBiCopEst(data, ~ s(x1, k = 5, fx = T), fam[count])$res
+#' # In this second example, we take a smooth calibration function
+#' 
+#' # Set-up an arbitrary smooth model with 10 knots for the calibration function
+#' model[[count]] <- gamBiCopEst(tmp, ~ s(x1, k = 10, fx = T), 
+#'                               fam[count], n.iters = 1)$res
+#' 
+#' # Update the coefficients of the model
+#' attr(model[[count]],"model")$coefficients <- rnorm(11)
+#' plot(attr(model[[count]],"model"), se = F)
 #' 
 #' # Update the gamVine object
 #' GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
@@ -93,6 +94,7 @@
 #' 
 #' # Fit data
 #' summary(fitGVC <- gamVineSeqEst(simData, GVC))
+#' plot(fitGVC)
 #' @seealso \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #' \code{\link{gamBiCopEst}}.
 gamVineSeqEst <- function(dataset, GVC, 
@@ -134,16 +136,7 @@ gamVineSeqEst <- function(dataset, GVC,
   V$indirect <- array(NA, dim = c(d, d, n))
   V$direct[d, , ] <- t(dataset[, d:1])
   
-  model.count <- rep(0, d^2)
-  temp <- 1:(d * (d - 1)/2)
-  t1 <- 1
-  sel <- seq(d, d^2 - d, by = d)
-  for (i in 1:(d - 1)) {
-    t2 <- t1 + d - i - 1
-    model.count[sel[1:(d - i)] - i + 1] <- temp[t1:t2]
-    t1 <- t2 + 1
-  }
-  model.count <- matrix(model.count, d, d)
+  model.count <- get.modelCount(d)
   
   for (i in (d - 1):1) {
     for (k in d:(i + 1)) {

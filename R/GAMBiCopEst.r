@@ -167,8 +167,13 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, family)
   if (tmp != TRUE)
     stop(tmp)
+  
+  n <- dim(data)[1]
+  m <- dim(data)[2]
+  u1 <- data$u1
+  u2 <- data$u2
+  u <- cbind(u1,u2)
 
-  #temp <- VineCopula:::fasttau(u1, u2)
   rotated <- family
   
   if (is.element(family, c(13, 14))) {
@@ -194,7 +199,15 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     }
   } 
 
+  if (verbose == 1) {
+    print(paste("Initialization with the MLE"))
+    t <- Sys.time()
+  }
   init <- BiCopEst(u1, u2, family = family, method = "mle")
+  if (verbose == 1) {
+    print(Sys.time() - t)
+  }
+  
   new.pars <- list()
   new.pars$par <- rep(init$par, n)
   u <- cbind(u, new.pars$par)
@@ -259,20 +272,24 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       print(paste("DF iteration", 1))
       t <- Sys.time()
     }
-    
-    LL <- function(nu) {
-      if (2 + 1e-08 + exp(nu) == Inf) {
-        nu <- log(30)
-      }
-      -sum(log(apply(data, 1, function(x) BiCopPDF(x[1], x[2], family = 2, 
-        x[3], 2 + 1e-08 + exp(nu)))), na.rm = TRUE)
+    link <- function(nu) {
+      2 + 1e-08 + exp(nu)
     }
-    browser()
-    nu <- optimize(LL, c(log(2), log(30)))
-    u[, 4] <- new.pars$par2 <- rep(2 + 1e-08 + exp(nu$minimum), n)
+    nllvec <- function(nu) {
+      sel <- link(nu) == Inf
+      if (any(sel)) {
+        nu[sel] <- log(30)
+      }
+      nu <- link(nu)
+      pdf <- function(x, nu) BiCopPDF(x[1], x[2], family = 2, x[3], nu)
+      nll <- function(nu) -sum(log(apply(u, 1, function(x) pdf(x, nu))))
+      return(sapply(nu, nll))
+    }
+    nu <- optimize(nllvec, c(log(2), log(30)))
+    u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
     
     if (verbose == 1) {
-      print(u[1, 4])
+      #print(u[1, 4])
       print(Sys.time() - t)
     }
   }
@@ -309,7 +326,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
                   method, "algorithm. The ERROR comming from", 
                   "mgcv's gam function is:"))
       print(err)
-      print("......The results should not be trusted!")
+      print("...... The results should not be trusted!")
       return(NULL)
     })
     if (is.null(res)) {
@@ -327,29 +344,21 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       new.pars$tau <- temp2$tau
     }
     
-    if ((family == 2)) {
-      # && (k %% 2 == 0)){
-      if (verbose == 1) {
-        print(paste("DF iteration", k))
-        t <- Sys.time()
-      }
-      
-      LL <- function(nu) {
-        if (2 + 1e-08 + exp(nu) == Inf) {
-          nu <- log(30)
-        }
-        -sum(log(apply(data, 1, function(x) BiCopPDF(x[1], x[2], family = 2, 
-          x[3], 2 + 1e-08 + exp(nu)))), na.rm = TRUE)
-      }
-      
-      nu <- optimize(LL, c(log(2), log(30)))
-      u[, 4] <- new.pars$par2 <- rep(2 + 1e-08 + exp(nu$minimum), n)
-      
-      if (verbose == 1) {
-        print(u[1, 4])
-        print(Sys.time() - t)
-      }
-    }
+#     if ((family == 2)) {
+#       # && (k %% 2 == 0)){
+#       if (verbose == 1) {
+#         print(paste("DF iteration", k))
+#         t <- Sys.time()
+#       }
+#       
+#       nu <- optimize(nllvec, c(log(2), log(30)))
+#       u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
+#       
+#       if (verbose == 1) {
+#         print(u[1, 4])
+#         print(Sys.time() - t)
+#       }
+#     }
     tt <- trace.update(old.pars$partrans, new.pars$partrans)
     if (is.na(tt$eps)) {
       print(paste("A problem occured at the ", k, "th iteration of the ", 
@@ -363,6 +372,15 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   }
   
   if (family == 2) {
+    if (verbose == 1) {
+      print(paste("DF final iteration"))
+      t <- Sys.time()
+    }
+    nu <- optimize(nllvec, c(log(2), log(30)))
+    if (verbose == 1) {
+      print(Sys.time() - t)
+    }
+    u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
     res <- gamBiCop(rotated, mm, u[1, 4], tau)
   } else {
     res <- gamBiCop(rotated, mm, 0, tau)
@@ -428,7 +446,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   } 
   options(warn = 0)
   
-  temp <- VineCopula:::fasttau(u1, u2)
+  temp <- fasttau(u1, u2)
   rotated <- family
   
   if (!is.element(family, c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {

@@ -168,13 +168,13 @@ gamBiCopPred <- function(object, newdata = NULL,
       out$calib <- mgcv::predict.gam(mm, as.data.frame(newdata))
     }
   }
-  
+
   quantile.fun <- function(x) quantile(x, c((1 - alpha)/2, 1 - (1 - alpha)/2))
   if (!(type == "lpmatrix") && (alpha != 0) && (alpha != 1)) {
     Xp <- mgcv::predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
     b <- coef(mm)
     Vp <- vcov(mm)
-    br <- MASS::mvrnorm(10000, b, Vp)
+    br <- MASS::mvrnorm(1e4, b, Vp)
     calib <- br %*% t(Xp)
     out$calib.CI <- t(apply(calib, 2, quantile.fun))
   } else {
@@ -190,7 +190,7 @@ gamBiCopPred <- function(object, newdata = NULL,
           out$par <- -out$par
         }
         if (!is.null(calib)) {
-          tmp <- sapply((1 + tanh(calib/2))/2, tau2par.fun)
+          tmp <- apply((1 + tanh(calib/2))/2, 2, tau2par.fun)
           out$par.CI <- t(apply(tmp, 2, quantile.fun))
           if (family %in% c(23, 24, 33, 34)) {
           out$par.CI <- -out$par.CI
@@ -199,7 +199,7 @@ gamBiCopPred <- function(object, newdata = NULL,
       } else {
         out$par <- sapply(tmp, tau2par.fun)
         if (!is.null(calib)) {
-          tmp <- sapply(tanh(calib/2), tau2par.fun)
+          tmp <- apply(tanh(calib/2), 2, tau2par.fun)
           out$par.CI <- t(apply(tmp, 2, quantile.fun))
         }
       }
@@ -209,7 +209,7 @@ gamBiCopPred <- function(object, newdata = NULL,
         out$par <- -out$par
       }
       if (!is.null(calib)) {
-        tmp <- sapply(calib, eta2par.fun)
+        tmp <- apply(calib, 2, eta2par.fun)
         out$par.CI <- t(apply(tmp, 2, quantile.fun))
         if (family %in% c(23, 24, 33, 34)) {
           out$par.CI <- -out$par.CI
@@ -243,8 +243,8 @@ gamBiCopPred <- function(object, newdata = NULL,
         out$tau <- -out$tau
       }
       if (!is.null(calib)) {
-        tmp <- sapply(calib, eta2par.fun)
-        tmp <- sapply(tmp, par2tau.fun)
+        tmp <- apply(calib, 2, eta2par.fun)
+        tmp <- apply(tmp, 2, par2tau.fun)
         out$tau.CI <- t(apply(tmp, 2, quantile.fun))
         if (family %in% c(23, 24, 33, 34)) {
           out$tau.CI <- -out$tau.CI
