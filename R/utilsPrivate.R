@@ -136,6 +136,7 @@
 ## dependence measure transformations
 "derivatives.par" <- function(data, new.pars, family, method, tau = TRUE) {
   
+  #cat(paste(paste(range(data[,3]),collapse = ""), "\n"))
   # Derivatives of the copula with respect to its own parameter
   if (family == 2) {
     dp <- apply(data, 1, function(x) c(BiCopPDF(x[1], x[2], family = 2, x[3], 

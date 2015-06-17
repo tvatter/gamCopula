@@ -200,12 +200,12 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   } 
 
   if (verbose == 1) {
-    print(paste("Initialization with the MLE"))
+    cat(paste("Initialization with the MLE\n"))
     t <- Sys.time()
   }
   init <- BiCopEst(u1, u2, family = family, method = "mle")
   if (verbose == 1) {
-    print(Sys.time() - t)
+    cat(paste(Sys.time() - t,"\n"))
   }
   
   new.pars <- list()
@@ -235,7 +235,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   
   if (verbose == 1) {
     t <- Sys.time()
-    print(paste("gam iteration", 1))
+    cat(paste("gam iteration", 1, "\n"))
   }
 
   temp <- derivatives.par(u, new.pars, family, method, tau)
@@ -247,15 +247,15 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   res <- tryCatch({
     mm <- gam(par.formula, data = temp, weights = w, ...)
   }, error = function(err) {
-    print(paste("A problem occured at the first iteration of the ", 
+    cat(paste("A problem occured at the first iteration of the ", 
                 method, "algorithm. The ERROR comming from", 
-                "mgcv's gam function is:"))
+                "mgcv's gam function is:\n"))
     stop(err)
-    print("......The results should not be trusted!")
+    cat("......The results should not be trusted!\n")
     return(NULL)
   })
   if (verbose == 1) {
-    print(Sys.time() - t)
+    cat(paste(Sys.time() - t,"\n"))
   }
   stopifnot(!is.null(res))
   
@@ -269,7 +269,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   
   if (family == 2) {
     if (verbose == 1) {
-      print(paste("DF iteration", 1))
+      cat(paste("DF iteration", 1, "\n"))
       t <- Sys.time()
     }
     link <- function(nu) {
@@ -290,7 +290,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     
     if (verbose == 1) {
       #print(u[1, 4])
-      print(Sys.time() - t)
+      cat(paste(Sys.time() - t, "\n"))
     }
   }
   
@@ -311,22 +311,23 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     
     if (verbose == 1) {
       t <- Sys.time()
-      print(paste("gam iteration", k))
+      cat(paste("gam iteration", k, "\n"))
     }
     
-    temp <- derivatives.par(u, new.pars, family, method, tau)
-    temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
-    temp <- cbind(temp, data)
-    
     res <- tryCatch({
+      temp <- derivatives.par(u, new.pars, family, method, tau)
+      temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
+      temp <- cbind(temp, data)
       mm <- gam(par.formula, data = temp, weights = w, 
                 control = gam.control(keepData = TRUE), ...)
     }, error = function(err) {
-      print(paste("A problem occured at the ", k, "th iteration of the ", 
-                  method, "algorithm. The ERROR comming from", 
-                  "mgcv's gam function is:"))
-      print(err)
-      print("...... The results should not be trusted!")
+      #cat(paste("A problem occured at the ", k, "th iteration of the ", 
+      #            method, "algorithm. The ERROR comming from", 
+      #            "mgcv's gam function is:\n"))
+      cat(paste("A problem occured at the ", k, "th iteration of the ", 
+                method, "algorithm:\n"))
+      cat(paste(err, "\n"))
+      cat("...... The results should not be trusted!\n")
       return(NULL)
     })
     if (is.null(res)) {
@@ -334,7 +335,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       break
     }
     if (verbose == 1) {
-      print(Sys.time() - t)
+      cat(paste(Sys.time() - t, "\n"))
     }
     
     temp2 <- pars.update(mm, family, temp, tau)
@@ -361,8 +362,8 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
 #     }
     tt <- trace.update(old.pars$partrans, new.pars$partrans)
     if (is.na(tt$eps)) {
-      print(paste("A problem occured at the ", k, "th iteration of the ", 
-                  method, "algorithm... The results should not be trusted!"))
+      cat(paste("A problem occured at the ", k, "th iteration of the ", 
+                  method, "algorithm... The results should not be trusted!\n"))
       conv <- 1
       break
     } else {
@@ -373,12 +374,12 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   
   if (family == 2) {
     if (verbose == 1) {
-      print(paste("DF final iteration"))
+      cat("DF final iteration\n")
       t <- Sys.time()
     }
     nu <- optimize(nllvec, c(log(2), log(30)))
     if (verbose == 1) {
-      print(Sys.time() - t)
+      cat(paste(Sys.time() - t, "\n"))
     }
     u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
     res <- gamBiCop(rotated, mm, u[1, 4], tau)

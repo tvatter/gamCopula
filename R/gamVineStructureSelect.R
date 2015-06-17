@@ -43,6 +43,9 @@
 #' @param level Numerical; significance level of the test (default: 
 #' \code{level = 0.05}).
 #' @param trunclevel Integer; level of truncation.
+#' @param tau \code{TRUE} (default) for a calibration fonction specified for 
+#' Kendall's tau or \code{FALSE} for a calibration function specified 
+#' for the Copula parameter.
 #' @param method \code{'NR'} for Newton-Raphson
 #' and  \code{'FS'} for Fisher-scoring (default).
 #' @param tol.rel Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.
@@ -53,90 +56,57 @@
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
 #' @examples
-#' set.seed(1)
+#' require(VineCopula)
+#' set.seed(0)
 #' 
-#' ##  Simulation parameters
-#' # Sample size
-#' n <- 2e2  
-#' # Copula family
-#' familyset <- c(1:4,13,14,23,24,33,34)
-#' # Degrees of freedom (for the t-copula when fam <- 2)
-#' par2 <- 4 
-#' # Should the model be specified in terms of Kendall's tau (TRUE) or copula parameter
-#' tau <- FALSE
-#' # Define a 5-dimensional R-vine tree structure matrix
-#' d <- 4
-#' Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
+#' ## A first example with a 3-dimensional GAM-Vine
+#' 
+#' # Define a R-vine tree structure matrix
+#' d <- 3
+#' Matrix <- c(2,3,1,0,3,1,0,0,1)
 #' Matrix <- matrix(Matrix,d,d)
-#' nnames <- paste("X", 1:d, sep = "")
+#' nnames <- paste("x", 1:d, sep = "")
 #' 
-#' ## Covariates distribution
-#' rho <- 0.5
+#' # Copula families for each edge
+#' fam <- c(3,4,1)
 #' 
-#' # define gam-vine model list
+#' # Parameters for the first tree (two unconditional copulas)
+#' par <- c(1,2)
+#' 
+#' # Pre-allocate the GAM-Vine model list
 #' count <- 1
 #' model <- vector(mode = "list", length = d*(d-1)/2)
-#' par <- matrix(0,d,d)
-#' sel <- seq(d,d^2-d, by = d)
 #' 
-#' # First tree
+#' # The first tree contains only the two unconditional copulas
 #' for (i in 1:(d-1)) {
-#'   # Select a copula family
-#'   family <- sample(familyset, 1)
-#'   model[[count]]$family <- family
-#'   
-#'   # Use the canonical link and a randomly generated parameter 
-#'   model[[count]]$par <- links(family)$par(rnorm(1))
-#'   if (family == 2) {
-#'     model[[count]]$par2 <- links(family)$par2(rnorm(1))
-#'   } else {
-#'     model[[count]]$par2 <- 0
-#'   }
+#'   model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
 #'   count <- count + 1
 #' }
 #' 
-#' # Create a dummy dataset
-#' data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
+#' # The second tree contains a unique conditional copula
+#' # In this first example, we take a linear calibration function (10*x-5)
 #' 
-#' # Trees 2 to (d-1)
-#' for(j in 2:(d-1)){
-#'   for(i in 1:(d-j)){ 
-#'     # Select a copula family
-#'     family <- sample(familyset, 1)  
-#'     
-#'     # Select the conditiong set and create a model formula
-#'     cond <- nnames[sort(Matrix[(d-j+2):d,i])]
-#'     form <- as.formula(paste("~",paste(paste("s(", cond, ", k=10, bs='cr')",
-#'                                              sep = ""), collapse=" + ")))
-#'     
-#'     # Create a dummy gamBiCop object
-#'     tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
-#'     
-#'     # Update the copula family and the model coefficients to make them random
-#'     ll <- length(attr(tmp, "model")$coefficients)
-#'     attr(tmp, "model")$coefficients <- rnorm(ll)
-#'     attr(tmp, "family") <- family
-#'     if (family == 2) {
-#'       attr(tmp, "par2") <- links(family)$par2(rnorm(1))
-#'     }
-#'     model[[count]] <- tmp
-#'     count <- count+1  
-#'   } 
-#' }
+#' # Set-up a dummy dataset
+#' tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 #' 
-#' # Create gamVineCopula object
-#' GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
-#' print(GVC)
+#' # Set-up an arbitrary linear model for the calibration function
+#' model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
 #' 
-#' # simulate the gamVineMatrix
+#' # Update the coefficients of the model
+#' attr(model[[count]],"model")$coefficients <- c(-5, 10)
+#' 
+#' # Define gamVine object
+#' GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
+#' GVC
+#' 
+#' # Simulate new data
 #' N <- 1e3
-#' sim <- gamVineSim(N, GVC)
-#' fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+#' simData <- data.frame(gamVineSim(N, GVC))
+#' colnames(simData) <- nnames
 #' 
-#' par(mfrow=c(2,4))
-#' plot(GVC, se = F, ylim = c(-2.5,2.5))
-#' 
-#' plot(fitGVC, ylim = c(-2.5,2.5))
+#' # Fit data
+#' summary(fitGVC <- gamVineSeqEst(simData, GVC))
+#' summary(fitGVC2 <- gamVineStructureSelect(simData, GVC))
 #' 
 #' @seealso \code{\link{gamVine-class}}, \code{\link{gamVineSim}}, 
 #' \code{\link{gamVineSeqEst}} and \code{\link{gamBiCopEst}}.
@@ -144,7 +114,7 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
                                    rotations = TRUE, selectioncrit = "AIC", 
                                    SAtestOptions = "ERC",
                                    indeptest = TRUE, level = 0.05,
-                                   trunclevel = NA, method = "NR", 
+                                   trunclevel = NA, tau = TRUE, method = "FS",
                                    tol.rel = 0.001, n.iters = 10, 
                                    verbose = FALSE) {
   
@@ -200,7 +170,7 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
     graph <- buildNextGraph(tree, data, SAtestOptions)
     mst <- findMST(graph, type) 
     tree <- fitTree(mst, tree, data, familyset, selectioncrit, SAtestOptions,
-                    indeptest, level, method, tol.rel, n.iters, verbose)
+                    indeptest, level, tau, method, tol.rel, n.iters, verbose)
     
     out$Tree[[i]] <- tree
     out$Graph[[i]] <- graph
@@ -290,15 +260,13 @@ fitFirstTree <- function(mst, data, familyset,
 
 fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit, 
                     SAtestOptions, indeptest, level, 
-                    method, tol.rel, n.iters, verbose) {
+                    tau, method, tol.rel, n.iters, verbose) {
 
   d <- ecount(mst)
   
   parameterForACopula <- list()
   
   for(i in 1:d) {
-    #parameterForACopula[[i]] <- list()
-    
     con <- get.edge(mst,i)
     tmp <- get.edges(oldVineGraph,con)
     
@@ -344,9 +312,6 @@ fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit,
     
     if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
     
-    #parameterForACopula[[i]]$zr1 <- zr1a
-    #parameterForACopula[[i]]$zr2 <- zr2a
-    
     E(mst)[i]$Data1 <-  list(zr1a)
     E(mst)[i]$Data2 <-  list(zr2a)
     
@@ -354,19 +319,16 @@ fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit,
     E(mst)[i]$CondName1 <- n2a
     
     tmp <- E(mst)$conditioningSet[[i]]
+    print(names(data)[tmp])
     parameterForACopula[[i]] <- data.frame(u1 = zr1a, u2 = zr2a, data[,tmp])
     names(parameterForACopula[[i]])[-c(1,2)] <- names(data)[tmp]
-    #E(mst)[i]$ConditioningSet <- data[,E(mst)$conditioningSet[[i]]]
   }
 
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, familyset, 
                           selectioncrit, SAtestOptions, indeptest, level, 
-                          method, tol.rel, n.iters)
+                          tau, method, tol.rel, n.iters)
 
   for (i in 1:d) {
-    #E(mst)$param[[i]] <- c(outForACopula[[i]]$par,outForACopula[[i]]$par2)
-    #E(mst)[i]$type <- outForACopula[[i]]$family
-    #E(mst)[i]$out <- list(outForACopula[[i]])
     E(mst)[i]$model <- list(outForACopula[[i]]$model)
     E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn1)
     E(mst)[i]$CondData1 <- list(outForACopula[[i]]$CondOn2)
@@ -555,8 +517,8 @@ fitACopula <- function(u1, u2, familyset=NA, selectioncrit="AIC",
 
 fitAGAMCopula <- function(data, familyset = NA, selectioncrit = "AIC", 
                           SAtestOptions = "ERC", indeptest = FALSE, 
-                          level = 0.05, method = "FS", tol.rel = 0.001, 
-                          n.iters = 10) {
+                          level = 0.05, tau = TRUE, 
+                          method = "FS", tol.rel = 0.001, n.iters = 10) {
   out <- list()
   u1 <- data[,1]
   u2 <- data[,2]
@@ -586,10 +548,9 @@ fitAGAMCopula <- function(data, familyset = NA, selectioncrit = "AIC",
       fam <- out$model$family
       par2 <- out$model$par2
     } else {
-      tmp <- gamBiCopSel(data, familyset, selectioncrit, FALSE,
-                               method, tol.rel, n.iters, parallel = TRUE)
-      #tmp <- gamBiCopSel(data, 2, selectioncrit, FALSE,
-      #                   method, tol.rel, n.iters, parallel = TRUE)
+      #browser()
+      tmp <- gamBiCopSel(data, familyset, selectioncrit, tau,
+                               method, tol.rel, n.iters, parallel = FALSE)
       if (tmp$conv == 0) {
         out$model <- tmp$res
         par <- gamBiCopPred(out$model, target = "par")$par

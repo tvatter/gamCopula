@@ -5,18 +5,11 @@
 #' n <- 2e2  
 #' # Copula family
 #' familyset <- c(1:4,13,14,23,24,33,34)
-#' # Degrees of freedom (for the t-copula when fam <- 2)
-#' par2 <- 4 
-#' # Should the model be specified in terms of Kendall's tau (TRUE) or copula parameter
-#' tau <- FALSE
 #' # Define a 5-dimensional R-vine tree structure matrix
 #' d <- 4
 #' Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 #' Matrix <- matrix(Matrix,d,d)
 #' nnames <- paste("X", 1:d, sep = "")
-#' 
-#' ## Covariates distribution
-#' rho <- 0.5
 #' 
 #' # define gam-vine model list
 #' count <- 1

@@ -6,8 +6,8 @@
 \usage{
 gamVineStructureSelect(data, type = 0, familyset = NA, rotations = TRUE,
   selectioncrit = "AIC", SAtestOptions = "ERC", indeptest = TRUE,
-  level = 0.05, trunclevel = NA, method = "NR", tol.rel = 0.001,
-  n.iters = 10, verbose = FALSE)
+  level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
+  tol.rel = 0.001, n.iters = 10, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -53,6 +53,10 @@ hypothesis of independence cannot be rejected.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
+\item{tau}{\code{TRUE} (default) for a calibration fonction specified for
+Kendall's tau or \code{FALSE} for a calibration function specified
+for the Copula parameter.}
+
 \item{method}{\code{'NR'} for Newton-Raphson
 and  \code{'FS'} for Fisher-scoring (default).}
 
@@ -79,90 +83,57 @@ a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
-set.seed(1)
+require(VineCopula)
+set.seed(0)
 
-##  Simulation parameters
-# Sample size
-n <- 2e2
-# Copula family
-familyset <- c(1:4,13,14,23,24,33,34)
-# Degrees of freedom (for the t-copula when fam <- 2)
-par2 <- 4
-# Should the model be specified in terms of Kendall's tau (TRUE) or copula parameter
-tau <- FALSE
-# Define a 5-dimensional R-vine tree structure matrix
-d <- 4
-Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
+## A first example with a 3-dimensional GAM-Vine
+
+# Define a R-vine tree structure matrix
+d <- 3
+Matrix <- c(2,3,1,0,3,1,0,0,1)
 Matrix <- matrix(Matrix,d,d)
-nnames <- paste("X", 1:d, sep = "")
+nnames <- paste("x", 1:d, sep = "")
 
-## Covariates distribution
-rho <- 0.5
+# Copula families for each edge
+fam <- c(3,4,1)
 
-# define gam-vine model list
+# Parameters for the first tree (two unconditional copulas)
+par <- c(1,2)
+
+# Pre-allocate the GAM-Vine model list
 count <- 1
 model <- vector(mode = "list", length = d*(d-1)/2)
-par <- matrix(0,d,d)
-sel <- seq(d,d^2-d, by = d)
 
-# First tree
+# The first tree contains only the two unconditional copulas
 for (i in 1:(d-1)) {
-  # Select a copula family
-  family <- sample(familyset, 1)
-  model[[count]]$family <- family
-
-  # Use the canonical link and a randomly generated parameter
-  model[[count]]$par <- links(family)$par(rnorm(1))
-  if (family == 2) {
-    model[[count]]$par2 <- links(family)$par2(rnorm(1))
-  } else {
-    model[[count]]$par2 <- 0
-  }
+  model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
   count <- count + 1
 }
 
-# Create a dummy dataset
-data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
+# The second tree contains a unique conditional copula
+# In this first example, we take a linear calibration function (10*x-5)
 
-# Trees 2 to (d-1)
-for(j in 2:(d-1)){
-  for(i in 1:(d-j)){
-    # Select a copula family
-    family <- sample(familyset, 1)
+# Set-up a dummy dataset
+tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 
-    # Select the conditiong set and create a model formula
-    cond <- nnames[sort(Matrix[(d-j+2):d,i])]
-    form <- as.formula(paste("~",paste(paste("s(", cond, ", k=10, bs='cr')",
-                                             sep = ""), collapse=" + ")))
+# Set-up an arbitrary linear model for the calibration function
+model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
 
-    # Create a dummy gamBiCop object
-    tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+# Update the coefficients of the model
+attr(model[[count]],"model")$coefficients <- c(-5, 10)
 
-    # Update the copula family and the model coefficients to make them random
-    ll <- length(attr(tmp, "model")$coefficients)
-    attr(tmp, "model")$coefficients <- rnorm(ll)
-    attr(tmp, "family") <- family
-    if (family == 2) {
-      attr(tmp, "par2") <- links(family)$par2(rnorm(1))
-    }
-    model[[count]] <- tmp
-    count <- count+1
-  }
-}
+# Define gamVine object
+GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
+GVC
 
-# Create gamVineCopula object
-GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
-print(GVC)
-
-# simulate the gamVineMatrix
+# Simulate new data
 N <- 1e3
-sim <- gamVineSim(N, GVC)
-fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+simData <- data.frame(gamVineSim(N, GVC))
+colnames(simData) <- nnames
 
-par(mfrow=c(2,4))
-plot(GVC, se = F, ylim = c(-2.5,2.5))
-
-plot(fitGVC, ylim = c(-2.5,2.5))
+# Fit data
+summary(fitGVC <- gamVineSeqEst(simData, GVC))
+summary(fitGVC2 <- gamVineStructureSelect(simData, GVC))
 }
 \seealso{
 \code{\link{gamVine-class}}, \code{\link{gamVineSim}},

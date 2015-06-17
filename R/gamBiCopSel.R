@@ -194,7 +194,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
   } else {
     verbose <- as.logical(verbose)
   }
-  
+
   if (is.null(parallel) ||  is.na(parallel) || 
         !(is.logical(parallel) || (parallel == 0) || (parallel == 1))) {
     stop("parallel should takes 0/1 or FALSE/TRUE.")
@@ -202,7 +202,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
     parallel <- as.logical(parallel)
   }
   options(warn = 0)
-  
+
   if (parallel == FALSE) {
     res <- lapply(familyset,function(x) 
       gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
@@ -224,6 +224,12 @@ gamBiCopVarSel <- function(data, family,
                         tol.rel = 1e-3, n.iters = 10, 
                         verbose = FALSE, ...) {
   
+  if (verbose == TRUE) {
+    cat(paste("Model selection for family", family, "\n"))
+  }
+  
+  n <- dim(data)[1]
+  
   ## Create a list with formulas of smooth terms corresponding to the covariates
   get.formula <- function(x,k){
     paste("s(",x,", k=",k,", bs='cr')",sep = "")
@@ -233,9 +239,16 @@ gamBiCopVarSel <- function(data, family,
   formula.expr <- mapply(get.formula,nn,basis)
 
   ## Update the list by removing unsignificant predictors 
+  if (verbose == TRUE) {
+    cat("Remove unsignificant covariates.......\n")
+  }
   sel <- FALSE
   while(!all(sel)){
     formula.tmp <- as.formula(paste("~",paste(formula.expr,collapse = " + ")))
+    if (verbose == TRUE) {
+      cat("Model formula:\n")
+      print(formula.tmp)
+    }
     tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                        method, tol.rel, n.iters)
     sel <- summary(tmp$res@model)$s.pv < 5e-2
@@ -259,17 +272,31 @@ gamBiCopVarSel <- function(data, family,
   formula.tmp <- as.formula(paste("~",paste(c(formula.lin,
                                         formula.expr),
                                         collapse = " + ")))
+  if (verbose == TRUE) {
+    cat("Remove by setting as linear the predictors with EDF < 1.5....... \n")
+    cat("Updated model formula:\n")
+    print(formula.tmp)
+  }
   tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                      method, tol.rel, n.iters)
 
   ## Increasing the basis size appropriately
   sel <- summary(tmp$res@model)$edf > (basis-1)/2 
-  while(any(sel)){
+  if (verbose == TRUE) {
+    cat(paste("For the other predictors,", 
+        "increase the basis size appropriately.......\n"))
+  }
+  while(any(sel) && all(basis < n/30)) {
     basis[sel] <- 2*basis[sel]
+    #browser()
     formula.expr[sel] <- mapply(get.formula,nn[sel],basis[sel])
     formula.tmp <- as.formula(paste("~",paste(c(formula.lin,
                                               formula.expr),
                                               collapse = " + ")))
+    if (verbose == TRUE) {
+      cat("Updated model formula:\n")
+      print(formula.tmp)
+    }
     tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                        method, tol.rel, n.iters)
     sel <- summary(tmp$res@model)$edf > (basis-1)/2

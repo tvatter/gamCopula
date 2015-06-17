@@ -258,8 +258,9 @@ plot.gamVine <- function(x, ...) {
       }
       con1 <- paste(nn[M[rr,cc]],nn[M[which(M[,cc] != 0)[1],cc]], 
                     sep = ",", collapse = "")
-      con2 <- paste(nn[M[(rr+1):d,cc]], sep = ",", collapse = "")
-      plot(x@model[[j]], main = paste(con1,con2,sep = "|", collapse = ""), ...)
+      con2 <- paste(nn[M[(rr+1):d,cc]], sep = "", collapse = ",")
+      plot(x@model[[j]], main = paste(con1,con2,sep = "|", collapse = ""), 
+           se = F, ...)
     }
   }
 }

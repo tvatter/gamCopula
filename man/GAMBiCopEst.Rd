@@ -6,7 +6,7 @@
 for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopEst(data, formula = ~1, family = 1, tau = FALSE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE, ...)
+  tol.rel = 0.001, n.iters = 10, verbose = TRUE, ...)
 }
 \arguments{
 \item{data}{A list, data frame or matrix containing the model responses,
