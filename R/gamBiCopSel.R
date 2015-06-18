@@ -86,17 +86,17 @@
 #' data <- data.frame(U$data,X)
 #' names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
 #' 
-#' ## Parallel family selection using AIC (may take about 3mn on single core 
-#' ## computers... or for windows users as the parallelization is handled by 
-#' ## mclapply)
-#' system.time(best <- gamBiCopSel(data, parallel = TRUE))
+#' ## Selection using AIC (take about 3mn on single core) 
+#' ## Use parallel = TRUE to speed-up.... currently unavailable for windows 
+#' ## users as the parallelization is handled by mclapply!
+#' system.time(best <- gamBiCopSel(data))
 #' print(best$res)
 #' EDF(best$res)
 #' @export
 gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
                         tau = FALSE, method = "FS", 
                         tol.rel = 1e-3, n.iters = 10, 
-                        parallel = TRUE, verbose = FALSE, ...) {
+                        parallel = FALSE, verbose = FALSE, ...) {
   
   if (!(is.list(data) || is.data.frame(data))) {
     stop("data has to be either a list or a data frame")

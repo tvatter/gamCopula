@@ -51,7 +51,7 @@
 #' # The second tree contains a unique conditional copula
 #' # In this first example, we take a linear calibration function (10*x-5)
 #' 
-#' # Set-up a dummy dataset
+#' # Set-up a dummy data
 #' tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 #' 
 #' # Set-up an arbitrary linear model for the calibration function
@@ -97,24 +97,24 @@
 #' plot(fitGVC)
 #' @seealso \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #' \code{\link{gamBiCopEst}}.
-gamVineSeqEst <- function(dataset, GVC, 
+gamVineSeqEst <- function(data, GVC, 
                           method = "NR", tol.rel = 0.001, n.iters = 10, 
                           verbose = FALSE) {
   
-  chk <- valid.gamVineSeqEst(dataset, GVC, method, tol.rel, n.iters, verbose)
+  chk <- valid.gamVineSeqEst(data, GVC, method, tol.rel, n.iters, verbose)
   if (chk != TRUE) {
     return(chk)
   }
   
-  dataset <- data.frame(dataset)
-  n <- dim(dataset)[1]
-  d <- dim(dataset)[2] 
+  data <- data.frame(data)
+  n <- dim(data)[1]
+  d <- dim(data)[2] 
   
-  if (is.null(colnames(dataset))) {
+  if (is.null(colnames(data))) {
     nn <- paste("V",1:d,sep="") 
-    colnames(dataset) <- nn
+    colnames(data) <- nn
   } else {
-    nn <- colnames(dataset)
+    nn <- colnames(data)
   }  
   
   oldGVC <- GVC
@@ -123,7 +123,7 @@ gamVineSeqEst <- function(dataset, GVC,
   oo <- o[length(o):1]
   if (any(o != length(o):1)) {
     GVC <- gamVineNormalize(GVC)
-    dataset <- dataset[,oo]
+    data <- data[,oo]
   }
   
   Mat <- GVC@Matrix
@@ -134,7 +134,7 @@ gamVineSeqEst <- function(dataset, GVC,
   V <- list()
   V$direct <- array(NA, dim = c(d, d, n))
   V$indirect <- array(NA, dim = c(d, d, n))
-  V$direct[d, , ] <- t(dataset[, d:1])
+  V$direct[d, , ] <- t(data[, d:1])
   
   model.count <- get.modelCount(d)
   
@@ -167,7 +167,7 @@ gamVineSeqEst <- function(dataset, GVC,
         par2 <- temp$par2
       } else {
         cond <- Mat[(k +1):d, i]
-        data <- data.frame(cbind(zr2, zr1, dataset[,cond]))
+        data <- data.frame(cbind(zr2, zr1, data[,cond]))
         names(data) <- c("u1","u2",nn[oo[cond]])
         GVC@model[[mki]] <- gamBiCopEst(data, GVC@model[[mki]]@model$formula, 
                                         fam[k, i], GVC@model[[mki]]@tau, method,
@@ -200,20 +200,20 @@ gamVineSeqEst <- function(dataset, GVC,
   return(oldGVC)
 } 
 
-valid.gamVineSeqEst <- function(dataset, GVC, 
+valid.gamVineSeqEst <- function(data, GVC, 
                                    method = "NR", tol.rel = 0.001, n.iters = 10, 
                                    verbose = FALSE) {
   
-  if (!is.matrix(dataset) && !is.data.frame(dataset)) {
-    return("Dataset has to be either a matrix or a data frame")
+  if (!is.matrix(data) && !is.data.frame(data)) {
+    return("data has to be either a matrix or a data frame")
   } 
   
-  n <- dim(dataset)[1]
-  d <- dim(dataset)[2]
+  n <- dim(data)[1]
+  d <- dim(data)[2]
   
   if (n < 2) 
     return("Number of observations has to be at least 2.")
-  if (any(dataset > 1) || any(dataset < 0)) 
+  if (any(data > 1) || any(data < 0)) 
     return("Data has be in the interval [0,1].")
   
   if (!valid.gamVine(GVC))
@@ -226,7 +226,7 @@ valid.gamVineSeqEst <- function(dataset, GVC,
   oldGVC <- GVC
   if (any(o != length(o):1)) {
     GVC <- gamVineNormalize(GVC)
-    dataset <- dataset[, o[length(o):1]]
+    data <- data[, o[length(o):1]]
   }
   
   options(warn = -1)

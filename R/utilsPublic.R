@@ -149,7 +149,7 @@ BiCopPar2Eta <- function(family, par) {
   return(out)
 }
 
-## Fisher information for the Gumbel copula See Schepsmeier & Stöber (2012)
+## Fisher information for the Gumbel copula See Schepsmeier & Stober (2012)
 ## (contains several typos)
 "FisherGumbel" <- function(par) {
   k0 <- 5/6 - pi^2/18
@@ -163,7 +163,7 @@ BiCopPar2Eta <- function(family, par) {
 
 
 ## Fisher information for the Clayton copula See Oakes (1982) or Schepsmeier &
-## Stöber (2012) (the latter contains several typos)
+## Stober (2012) (the latter contains several typos)
 "FisherClayton" <- function(par) {
   # browser()
   par <- par + 1

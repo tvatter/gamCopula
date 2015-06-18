@@ -4,10 +4,12 @@
 \alias{gamVineSeqEst}
 \title{Sequential maximum penalized likelihood estimation of a GAM-Vine model.}
 \usage{
-gamVineSeqEst(dataset, GVC, method = "NR", tol.rel = 0.001, n.iters = 10,
+gamVineSeqEst(data, GVC, method = "NR", tol.rel = 0.001, n.iters = 10,
   verbose = FALSE)
 }
 \arguments{
+\item{data}{A matrix or data frame containing the data in [0,1]^d.}
+
 \item{GVC}{\code{\link{gamVine-class}} object.}
 
 \item{method}{\code{'NR'} for Newton-Raphson
@@ -20,8 +22,6 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.}
-
-\item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
 \item{...}{Additional parameters to be passed to \code{\link{gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
@@ -69,7 +69,7 @@ for (i in 1:(d-1)) {
 # The second tree contains a unique conditional copula
 # In this first example, we take a linear calibration function (10*x-5)
 
-# Set-up a dummy dataset
+# Set-up a dummy data
 tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 
 # Set-up an arbitrary linear model for the calibration function

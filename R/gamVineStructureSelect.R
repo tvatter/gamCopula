@@ -118,10 +118,10 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
                                    tol.rel = 0.001, n.iters = 10, 
                                    verbose = FALSE) {
   
-  chk <- valid.gamVineStructureSelect(TODO)
-  if (chk != TRUE) {
-    return(chk)
-  } 
+  #chk <- valid.gamVineStructureSelect(TODO)
+  #if (chk != TRUE) {
+  #  return(chk)
+  #} 
   
   if (type == 0) {
     type <- "RVine"
@@ -612,7 +612,7 @@ as.GVC <- function(GVC){
   
   correspondingModel[[n-1]] <- E(GVC$Tree[[n-1]])$model
   
-  model.count <- get.modelCount(d)  
+  model.count <- get.modelCount(n)  
   model <- vector("list", n*(n-1)/2)
   M <- matrix(NA,n,n)
   

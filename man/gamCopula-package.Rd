@@ -4,7 +4,8 @@
 \alias{gamCopula.package}
 \docType{package}
 \title{
-Generalized additive models for bivariate dependence structures and vine copulas
+Generalized Additive Models for Bivariate Conditional Dependence Structures and 
+Vine Copulas
 }
 \description{
 This package implements various inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.

@@ -6,7 +6,7 @@
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopSel(data, familyset = NA, selectioncrit = "AIC", tau = FALSE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = TRUE,
+  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
   verbose = FALSE, ...)
 }
 \arguments{
@@ -107,10 +107,10 @@ U <- CondBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
 data <- data.frame(U$data,X)
 names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
 
-## Parallel family selection using AIC (may take about 3mn on single core
-## computers... or for windows users as the parallelization is handled by
-## mclapply)
-system.time(best <- gamBiCopSel(data, parallel = TRUE))
+## Selection using AIC (take about 3mn on single core)
+## Use parallel = TRUE to speed-up.... currently unavailable for windows
+## users as the parallelization is handled by mclapply!
+system.time(best <- gamBiCopSel(data))
 print(best$res)
 EDF(best$res)
 }
