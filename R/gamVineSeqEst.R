@@ -167,9 +167,9 @@ gamVineSeqEst <- function(data, GVC,
         par2 <- temp$par2
       } else {
         cond <- Mat[(k +1):d, i]
-        data <- data.frame(cbind(zr2, zr1, data[,cond]))
-        names(data) <- c("u1","u2",nn[oo[cond]])
-        GVC@model[[mki]] <- gamBiCopEst(data, GVC@model[[mki]]@model$formula, 
+        tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
+        names(tmp) <- c("u1","u2",nn[oo[cond]])
+        GVC@model[[mki]] <- gamBiCopEst(tmp, GVC@model[[mki]]@model$formula, 
                                         fam[k, i], GVC@model[[mki]]@tau, method,
                                         tol.rel, n.iters)$res
         par <- gamBiCopPred(GVC@model[[mki]], target = "par")$par
