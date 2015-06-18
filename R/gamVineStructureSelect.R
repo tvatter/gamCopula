@@ -166,9 +166,7 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
     if(trunclevel == i-1) {
       familyset <- 0
     }
-    if (i == 3) {
-      browser()
-    }
+
     graph <- buildNextGraph(tree, data, SAtestOptions)
     mst <- findMST(graph, type) 
     tree <- fitTree(mst, tree, data, familyset, selectioncrit, SAtestOptions,
@@ -300,16 +298,16 @@ fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit,
     }
     
     if(is.list(zr1)){
-      zr1a=as.vector(zr1[[1]])
-      zr2a=as.vector(zr2[[1]])
-      n1a=as.vector(n1[[1]])
-      n2a=as.vector(n2[[1]])
+      zr1a <- as.vector(zr1[[1]])
+      zr2a <- as.vector(zr2[[1]])
+      n1a <- as.vector(n1[[1]])
+      n2a <- as.vector(n2[[1]])
     }
     else{
-      zr1a=zr1
-      zr2a=zr2
-      n1a=n1
-      n2a=n2
+      zr1a <- zr1
+      zr2a <- zr2
+      n1a <- n1
+      n2a <- n2
     }
     
     if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
@@ -322,7 +320,8 @@ fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit,
     
     tmp <- E(mst)$conditioningSet[[i]]
     #print(names(data)[tmp])
-    parameterForACopula[[i]] <- data.frame(u1 = zr1a, u2 = zr2a, data[,tmp])
+    parameterForACopula[[i]] <- data.frame(u1 = as.numeric(zr1a), 
+                                           u2 = as.numeric(zr2a), data[,tmp])
     names(parameterForACopula[[i]])[-c(1,2)] <- names(data)[tmp]
   }
 
@@ -393,11 +392,6 @@ buildNextGraph <- function(graph, data, SAtestOptions) {
       }
       noNAs <- !(is.na(zr1a) | is.na(zr2a))
       
-      #browser()
-      E(g)[i]$weight <- SAtest(cbind(zr1a[noNAs], zr2a[noNAs]), 
-                               data[noNAs, same], SAtestOptions)$pValue
-      #E(g)[i]$weight <- cor(zr1a[noNAs], zr2a[noNAs], method="kendall")
-      
       name.node1 <- strsplit(V(g)[con[1]]$name,split=" *[,|] *")[[1]]
       name.node2 <- strsplit(V(g)[con[2]]$name,split=" *[,|] *")[[1]]   
       intersection <- c()
@@ -442,6 +436,12 @@ buildNextGraph <- function(graph, data, SAtestOptions) {
       
       suppressWarnings({E(g)$conditionedSet[i] <- list(out$difference)})
       suppressWarnings({E(g)$conditioningSet[i]  <- list(out$intersection)})
+      
+      E(g)[i]$weight <- SAtest(cbind(as.numeric(zr1a[noNAs]), 
+                                     as.numeric(zr2a[noNAs])), 
+                               data[noNAs, out$intersection], 
+                               SAtestOptions)$pValue
+      #E(g)[i]$weight <- cor(zr1a[noNAs], zr2a[noNAs], method="kendall")
     }
     
     E(g)[i]$todel <- !ok
