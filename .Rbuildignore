@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^cran-comments\.md$
+^.*\.Rprofile$
+^README\.Rmd$
+^NEWS\.md$
+^README-.*\.png$
+^\.travis\.yml$

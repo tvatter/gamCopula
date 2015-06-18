@@ -54,15 +54,15 @@ BiCopEta2Par <- function(family, eta) {
     stop("Eta should be real.")
   
   if (is.element(family, c(1, 2))) {
-    return(tanh(eta/2))
+    return((1-1e-12)*tanh(eta/2))
   } else if (is.element(family, c(3, 13))) {
     return(exp(eta))
   } else if (is.element(family, c(4, 14))) {
-    return(1 + exp(eta))
+    return(1 + 1e-12 + exp(eta))
   } else if (is.element(family, c(23, 33))) {
-    return(-exp(eta))
+    return(-1e-12-exp(eta))
   } else if (is.element(family, c(24, 34))) {
-    return(-1 - exp(eta))
+    return(-1 -1e-12 - exp(eta))
   } else {
     return(eta)
   }

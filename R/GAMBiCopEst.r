@@ -238,13 +238,13 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     cat(paste("gam iteration", 1, "\n"))
   }
 
-  temp <- derivatives.par(u, new.pars, family, method, tau)
-  temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
-  temp <- cbind(temp, data)
   par.formula <- update(formula, z ~ .)
   
   w <- NULL
   res <- tryCatch({
+    temp <- derivatives.par(u, new.pars, family, method, tau)
+    temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
+    temp <- cbind(temp, data)
     mm <- gam(par.formula, data = temp, weights = w, ...)
   }, error = function(err) {
     cat(paste("A problem occured at the first iteration of the ", 

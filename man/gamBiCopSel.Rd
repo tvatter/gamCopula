@@ -6,7 +6,7 @@
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopSel(data, familyset = NA, selectioncrit = "AIC", tau = FALSE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
+  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = TRUE,
   verbose = FALSE, ...)
 }
 \arguments{

@@ -143,14 +143,20 @@ gamBiCopPred <- function(object, newdata = NULL,
   } else if (is.element(family, c(14, 24, 34))) {
     rotated <- 4
   }
+  
+  # Define links between Kendall's tau, copula parameter and calibration 
+  # function... the cst/cstinv make sure that the boundaries are never attained
   if (rotated %in% c(3, 4)) {
-    par2tau.fun <- function(x) BiCopPar2Tau(rotated, x)
-    tau2par.fun <- function(x) BiCopTau2Par(rotated, x)
-    eta2par.fun <- function(x) BiCopEta2Par(rotated, x)
+    cst <- function(x) (1-1e-8)*(1e-8+x)
+    cstinv <- function(x) 1e-8+x
+    par2tau.fun <- function(x) cst(BiCopPar2Tau(rotated, cstinv(x)))
+    tau2par.fun <- function(x) cstinv(BiCopTau2Par(rotated, cst(x)))
+    eta2par.fun <- function(x) cstinv(BiCopEta2Par(rotated, x))
   }else{
-    par2tau.fun <- function(x) BiCopPar2Tau(1, x)
-    tau2par.fun <- function(x) BiCopTau2Par(1, x)
-    eta2par.fun <- function(x) BiCopEta2Par(1, x)
+    cst <- (1-1e-8)
+    par2tau.fun <- function(x) BiCopPar2Tau(1, x*cst)*cst
+    tau2par.fun <- function(x) BiCopTau2Par(1, x*cst)*cst
+    eta2par.fun <- function(x) BiCopEta2Par(1, x)*cst
   }
 
   out <- list()
@@ -180,17 +186,18 @@ gamBiCopPred <- function(object, newdata = NULL,
   } else {
     calib <- NULL
   }
-  
+
   if (any(is.element(target, "par"))) {
+    tanhsp <- function(x) tanh(x/2)
     if (object@tau) {
-      tmp <- tanh(out$calib/2)
+      tmp <- tanhsp(out$calib)
       if (rotated %in% c(3, 4)) {
         out$par <- sapply((1 + tmp)/2, tau2par.fun)
         if (family %in% c(23, 24, 33, 34)) {
           out$par <- -out$par
         }
         if (!is.null(calib)) {
-          tmp <- apply((1 + tanh(calib/2))/2, 2, tau2par.fun)
+          tmp <- apply((1 + tanhsp(calib))/2, 2, tau2par.fun)
           out$par.CI <- t(apply(tmp, 2, quantile.fun))
           if (family %in% c(23, 24, 33, 34)) {
           out$par.CI <- -out$par.CI
@@ -199,7 +206,7 @@ gamBiCopPred <- function(object, newdata = NULL,
       } else {
         out$par <- sapply(tmp, tau2par.fun)
         if (!is.null(calib)) {
-          tmp <- apply(tanh(calib/2), 2, tau2par.fun)
+          tmp <- apply(tanhsp(calib), 2, tau2par.fun)
           out$par.CI <- t(apply(tmp, 2, quantile.fun))
         }
       }
@@ -219,8 +226,9 @@ gamBiCopPred <- function(object, newdata = NULL,
   }
   
   if (any(is.element(target, "tau"))) {
+    tanhsp <- function(x) tanh(x/2)*(1-1e-8)
     if (object@tau) {
-      out$tau <- tanh(out$calib/2)
+      out$tau <- tanhsp(out$calib)
       if (rotated %in% c(3, 4)) {
         out$tau <- (1 + out$tau)/2
         if (family %in% c(23, 24, 33, 34)) {
@@ -228,7 +236,7 @@ gamBiCopPred <- function(object, newdata = NULL,
         }
       }
       if (!is.null(calib)) {
-        out$tau.CI <- t(apply(tanh(calib/2), 2, quantile.fun))
+        out$tau.CI <- t(apply(tanhsp(calib), 2, quantile.fun))
         if (rotated %in% c(3, 4)) {
           out$tau.CI <- (1 + out$tau.CI)/2
           if (family %in% c(23, 24, 33, 34)) {

@@ -96,7 +96,7 @@
 gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
                         tau = FALSE, method = "FS", 
                         tol.rel = 1e-3, n.iters = 10, 
-                        parallel = FALSE, verbose = FALSE, ...) {
+                        parallel = TRUE, verbose = FALSE, ...) {
   
   if (!(is.list(data) || is.data.frame(data))) {
     stop("data has to be either a list or a data frame")
@@ -211,7 +211,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
       gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...), 
       mc.cores = parallel::detectCores() - 1)
   }
-  
+
   if (selectioncrit == "AIC") {
     return(res[[which.min(sapply(res, function(x) AIC(x$res)))]])
   } else {

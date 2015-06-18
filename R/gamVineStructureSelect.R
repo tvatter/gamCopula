@@ -166,7 +166,9 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
     if(trunclevel == i-1) {
       familyset <- 0
     }
-    
+    if (i == 3) {
+      browser()
+    }
     graph <- buildNextGraph(tree, data, SAtestOptions)
     mst <- findMST(graph, type) 
     tree <- fitTree(mst, tree, data, familyset, selectioncrit, SAtestOptions,
@@ -319,7 +321,7 @@ fitTree <- function(mst, oldVineGraph, data, familyset, selectioncrit,
     E(mst)[i]$CondName1 <- n2a
     
     tmp <- E(mst)$conditioningSet[[i]]
-    print(names(data)[tmp])
+    #print(names(data)[tmp])
     parameterForACopula[[i]] <- data.frame(u1 = zr1a, u2 = zr2a, data[,tmp])
     names(parameterForACopula[[i]])[-c(1,2)] <- names(data)[tmp]
   }
@@ -557,7 +559,12 @@ fitAGAMCopula <- function(data, familyset = NA, selectioncrit = "AIC",
         fam <- out$model@family
         par2 <- out$model@par2
       } else {
-        browser()
+        #browser()
+        out$model <- BiCopSelect(u1, u2, familyset, selectioncrit,
+                                 indeptest = FALSE, rotations = FALSE)
+        par <- rep(out$model$par, length(u1))
+        fam <- out$model$family
+        par2 <- out$model$par2
       }
     }
   }
@@ -573,12 +580,12 @@ fitAGAMCopula <- function(data, familyset = NA, selectioncrit = "AIC",
   } else {
     out$model$family <- fam
   }
-  
+
   ## store pseudo-observations for estimation in next tree
   tmp <- t(sapply(1:length(par), function(x) 
     BiCopHfunc(u1[x], u2[x], fam, par[x], par2)))
-  out$CondOn1 <- tmp$hfunc2
-  out$CondOn2 <- tmp$hfunc1
+  out$CondOn1 <- tmp[,2]
+  out$CondOn2 <- tmp[,1]
   
   return(out)
 }
