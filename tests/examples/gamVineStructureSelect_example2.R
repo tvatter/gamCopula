@@ -46,6 +46,8 @@
 #' simData <- data.frame(gamVineSim(N, GVC))
 #' colnames(simData) <- nnames
 #' 
-#' # Fit data
+#' # Fit data using sequential estimation assuming true model known
 #' summary(fitGVC <- gamVineSeqEst(simData, GVC))
-#' summary(fitGVC2 <- gamVineStructureSelect(simData, GVC))
+#' 
+#' # Fit data using structure selection and sequential estimation
+#' summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))

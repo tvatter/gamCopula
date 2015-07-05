@@ -73,7 +73,7 @@
 #' colnames(X) <- paste("x",1:3,sep="")
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
-#' U <- CondBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
+#' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
 #'   f(x), calib.surf, c(x1,x2,x3)))}, X[,1:3], par2 = 6, return.par = TRUE)
 #' 
 #' ## Merge U and X
@@ -96,44 +96,9 @@
 gamBiCopPred <- function(object, newdata = NULL, 
                          target = "calib", alpha = 0, type = "link") {
   
-  if (!valid.gamBiCop(object)) {
-    stop("gamBiCopPred can only be used to predict from gamBiCop objects")
-  }
-  if (!is.character(target) || !is.null(dim(target))) {
-    targerr <- TRUE
-  } else if (length(target) == 1 && 
-               !is.element(target, c("calib", "par", "tau"))) {
-    targerr <- TRUE
-  } else if (length(target) > 1 && 
-               !all(is.element(target, c("calib", "par", "tau")))) {
-    targerr <- TRUE
-  } else if (length(target) > 3) {
-    targerr <- TRUE
-  } else {
-    targerr <- FALSE
-  }
-  if (targerr) {
-    warning("Unknown target, reset to calib.")
-    target <- "calib"
-  }
-  
-  if (target == "calib" && type != "link" 
-      && type != "terms" && type != "lpmatrix") {
-    warning("Unknown type, reset to terms.")
-    type <- "terms"
-  }
-  
-  options(warn = -1)
-  if (!is.na(as.double(alpha))) {
-    if ((as.double(alpha) < 0) || (as.double(alpha) > 1)) {
-      stop("Alpha should be a real number in [0,1]!")
-    } else {
-      alpha <- as.double(alpha)
-    }
-  } else {
-    stop("Alpha should be a real number in [0,1]!")
-  }
-  options(warn = 0)
+  tmp <- valid.gamBiCopPred(object, newdata, target, alpha, type)
+  if (tmp != TRUE)
+    stop(tmp)
   
   mm <- object@model
   
@@ -176,7 +141,7 @@ gamBiCopPred <- function(object, newdata = NULL,
   }
 
   quantile.fun <- function(x) quantile(x, c((1 - alpha)/2, 1 - (1 - alpha)/2))
-  if (!(type == "lpmatrix") && (alpha != 0) && (alpha != 1)) {
+  if (!sel && (alpha != 0) && (alpha != 1)) {
     Xp <- mgcv::predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
     b <- coef(mm)
     Vp <- vcov(mm)
@@ -263,3 +228,40 @@ gamBiCopPred <- function(object, newdata = NULL,
   
   return(out)
 } 
+
+
+valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
+  
+  if (!valid.gamBiCop(object)) {
+    return("gamBiCopPred can only be used to predict from gamBiCop objects")
+  }
+  if (!is.character(target) || !is.null(dim(target))) {
+    targerr <- TRUE
+  } else if (length(target) == 1 && 
+               !is.element(target, c("calib", "par", "tau"))) {
+    targerr <- TRUE
+  } else if (length(target) > 1 && 
+               !all(is.element(target, c("calib", "par", "tau")))) {
+    targerr <- TRUE
+  } else if (length(target) > 3) {
+    targerr <- TRUE
+  } else {
+    targerr <- FALSE
+  }
+  if (targerr) {
+    return(paste("Target should be either 'calib', 'par', 'tau', or a",
+                 "vector containing two or three of those."))
+  }
+  
+  if (target == "calib" && type != "link" 
+      && type != "terms" && type != "lpmatrix") {
+    return(paste("When target is 'calib', then type should be either", 
+                 "'link', 'terms' or 'lpmatrix'."))
+  }
+  
+  if (is.na(alpha) || !is.numeric(alpha) || alpha < 0 || alpha > 1) {
+    return("Alpha should be a real number in [0,1].")
+  }
+  
+  return(TRUE)
+}

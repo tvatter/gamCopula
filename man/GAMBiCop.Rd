@@ -2,31 +2,43 @@
 % Please edit documentation in R/gamBiCop.R
 \name{gamBiCop}
 \alias{gamBiCop}
-\title{Constructor of the \code{\link{gamBiCop-class}}}
+\title{Construction of a gamBiCop Class Object}
 \usage{
 gamBiCop(family, model, par2 = 0, tau = FALSE)
 }
 \arguments{
-\item{family}{A copula family: \code{1} Gaussian, \code{2} Student t,
-\code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton, \code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton, \code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and \code{34} Rotated (270 degrees) Gumbel.}
+\item{family}{A copula family: \code{1} Gaussian,
+\code{2} Student t,
+\code{3} Clayton,
+\code{4} Gumbel,
+\code{13} Survival Clayton,
+\code{14} Survival Gumbel,
+\code{23} Rotated (90 degrees) Clayton,
+\code{24} Rotated (90 degrees) Gumbel,
+\code{33} Rotated (270 degrees) Clayton and
+ \code{34} Rotated (270 degrees) Gumbel.}
 
-\item{model}{A \code{\link{gamObject}} as return by the \code{\link{gam}} function
+\item{model}{A \code{\link{gamObject}} as return by the
+\code{\link{gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{par2}{Second parameter for the Studen t-copula.}
 
-\item{tau}{\code{FALSE} (default) for a calibration fonction specified for the Copula parameter
+\item{tau}{\code{FALSE} (default) for a calibration fonction specified
+for the Copula parameter
 or \code{TRUE} for a calibration function specified for Kendall's tau.}
 }
 \value{
-A \code{\link{gamBiCop-class}} object.
+An object of the class
+ \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 }
 \description{
-A constructor for objects of the \code{\link{gamBiCop-class}}.
+Constructs an object of the class
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 }
 \seealso{
-\code{\link{gamBiCop-class}}, \code{\link{gamBiCopEst}} and \code{\link{gamBiCopPred}}.
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}},
+\code{\link{gamBiCopEst}}, \code{\link{gamBiCopPred}} and
+\code{\link{gamBiCopSim}}.
 }
 

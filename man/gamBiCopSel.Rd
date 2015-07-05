@@ -100,7 +100,7 @@ covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 6),
 X <- copula::rMvdc(n, covariates.distr)
 
 ## U in [0,1]x[0,1] depending on the four first columns of X
-U <- CondBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
+U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
   f(x), calib.surf, c(x1,x2,x3,x4)))}, X[,1:4], par2 = 4, return.par = TRUE)
 
 ## Merge U and X

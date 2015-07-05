@@ -95,7 +95,7 @@
 #' X <- copula::rMvdc(n, covariates.distr)
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
-#' U <- CondBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
+#' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
 #'   f(x), calib.surf, c(x1,x2,x3)))}, X[,1:3], par2 = 6, return.par = TRUE)
 #' 
 #' ## Merge U and X
@@ -168,6 +168,14 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   if (tmp != TRUE)
     stop(tmp)
   
+  if (is.list(data)){
+    if(!is.null(data$xt)){
+      xt <- data$xt
+      data <- data[-which(names(data) == "xt")]
+    }
+    data <- as.data.frame(data)
+  }
+  
   n <- dim(data)[1]
   m <- dim(data)[2]
   u1 <- data$u1
@@ -175,7 +183,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   u <- cbind(u1,u2)
 
   rotated <- family
-  
+
   if (is.element(family, c(13, 14))) {
     u <- rotate.data(u, 180)    
     if (family == 13) {
@@ -203,7 +211,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     cat(paste("Initialization with the MLE\n"))
     t <- Sys.time()
   }
-  init <- BiCopEst(u1, u2, family = family, method = "mle")
+  init <- BiCopEst(u[,1], u[,2], family = family, method = "mle")
   if (verbose == 1) {
     cat(paste(Sys.time() - t,"\n"))
   }
@@ -395,21 +403,22 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
                               family) {
   if (!(is.list(data) || is.data.frame(data) || is.matrix(data))) {
     return("data has to be either a list, a data frame or a matrix.")
-  } else {
-    if(is.list(data)){
-      if(!is.null(data$xt)){
-        xt <- data$xt
-        data <- as.data.frame(data[-which(names(data) == "xt")])
-      }else{
-        data <- as.data.frame(data)
-      }     
+  } 
+  
+  if (is.list(data)){
+    if(!is.null(data$xt)){
+      data <- data[-which(names(data) == "xt")]
     }
-    n <- dim(data)[1]
-    m <- dim(data)[2]
-    u1 <- data$u1
-    u2 <- data$u2
-    u <- cbind(u1,u2)
+    data <- tryCatch(as.data.frame(data), error = function(e) e$message)
+    if (is.character(data)) {
+      return(data)
+    }
   }
+  n <- dim(data)[1]
+  m <- dim(data)[2]
+  u1 <- data$u1
+  u2 <- data$u2
+  u <- cbind(u1,u2)
   
   if (is.null(u1) == TRUE || is.null(u2) == TRUE) 
     return("u1 and/or u2 are missing.")
@@ -419,7 +428,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     return("(u1, u2) have to be in [0,1]x[0,1].")
   
   options(warn = -1)
-  if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
+  if (is.null(n.iters) || is.na(as.integer(n.iters)) || !is.numeric(n.iters) ||
         (as.integer(n.iters) < 1) || 
         (as.integer(n.iters) !=  as.numeric(n.iters))) {
     return("N.iters should be a positive integer.")
@@ -431,7 +440,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
            the copula parameter/Kendall's tau.")
   }
   
-  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || 
+  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || !is.numeric(tol.rel) ||
         (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
     return("Tol.rel should be a real number in [0,1].")
   } 
@@ -445,7 +454,6 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
         !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
     return("Verbose should takes 0/1 or FALSE/TRUE.")
   } 
-  options(warn = 0)
   
   temp <- fasttau(u1, u2)
   rotated <- family
@@ -457,6 +465,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   } else if (is.element(family, c(23, 24, 33, 34)) && (temp > 0)) {
     return("This copula family cannot be used for positively dependent data.")
   }
+  options(warn = 0)
   
   return(TRUE)
 }

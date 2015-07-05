@@ -2,7 +2,7 @@
 % Please edit documentation in R/gamVine.R
 \name{gamVine}
 \alias{gamVine}
-\title{Constructor of the \code{\link{gamVine-class}}}
+\title{Construction of a gamVine Class Object}
 \usage{
 gamVine(Matrix, model, names = NA)
 }
@@ -10,18 +10,23 @@ gamVine(Matrix, model, names = NA)
 \item{Matrix}{lower triangular d x d matrix that defines the tree structure.}
 
 \item{model}{list containing d x (d-1)/2 lists with three numeric items
-(family, par and par2) and/or \code{\link{gamBiCop-class}} objects.}
+(family, par and par2) and/or objects of the class
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
 \item{names}{vector of d names.}
 }
 \value{
-A \code{\link{gamVine-class}} object.
+An object of the class
+ \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \description{
-A constructor for objects of the \code{\link{gamVine-class}}.
+Constructs an object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \seealso{
-\code{\link{gamVine-class}}, \code{\link{RVineMatrix}} and
-\code{\link{gamBiCop-class}}.
+\code{\link[gamCopula:gamVine-class]{gamVine}},
+\code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
+\code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}},
+\code{\link{gamVinePred}} and \code{\link{gamVineSim}}.
 }
 

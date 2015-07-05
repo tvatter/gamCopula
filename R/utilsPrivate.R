@@ -1,3 +1,84 @@
+
+## Fisher information with respect to the Copula parameter for a
+## bivariate copula
+"FisherBiCop" <- function(family, par, par2 = NULL) {
+  
+  if (family == 1) {
+    out <- FisherGaussian(par)
+  } else if (family == 2) {
+    out <- FisherStudentRho(par, par2)
+  } else if (family == 3) {
+    out <- FisherClayton(par)
+  } else if (family == 4) {
+    out <- FisherGumbel(par)
+  }
+  
+  return(out)
+}
+
+
+## Fisher information with respect to Kendall's tau for a bivariate copula
+"FisherBiCop2" <- function(family, tau, par2 = NULL) {
+  
+  if (family == 1) {
+    par <- sin(pi/2 * tau)
+    out <- FisherGaussian(par) * (pi * cos(pi * tau/2)/2)^2
+  } else if (family == 2) {
+    par <- sin(pi/2 * tau)
+    out <- FisherStudentRho(par, par2) * (pi * cos(pi * tau/2)/2)^2
+  } else if (family == 3) {
+    par <- 2 * tau/(1 - tau)
+    out <- FisherClayton(par) * (2/(tau - 1)^2)^2
+  } else if (family == 4) {
+    par <- 1/(1 - tau)
+    out <- FisherGumbel(par) * (1/(tau - 1)^2)^2
+  }
+  
+  return(out)
+}
+
+## Fisher information for the Gumbel copula See Schepsmeier & Stober (2012)
+## (contains several typos)
+"FisherGumbel" <- function(par) {
+  k0 <- 5/6 - pi^2/18
+  E1 <- sapply(par - 1, gsl::expint_E1)
+  
+  out <- (1/par^4) * (par^2 * (-2/3 + pi^2/9) - par + 2 * k0/par + 
+                        (par^3 + par^2 + (k0 - 1) * par - 2 * k0 + k0/par) *
+                        E1 * exp(par - 1))
+  
+  return(out)
+}
+## Fisher information for the Clayton copula See Oakes (1982) or Schepsmeier &
+## Stober (2012) (the latter contains several typos)
+"FisherClayton" <- function(par) {
+  # browser()
+  par <- par + 1
+  v1 <- trigamma(1/(2 * (par - 1)))
+  v2 <- trigamma(par/(2 * (par - 1)))
+  v3 <- trigamma((2 * par - 1)/(2 * (par - 1)))
+  pp <- 1/((3 * par - 2) * (2 * par - 1)) * 
+    (1 + par/(2 * (par - 1)) * (v1 - v2) + 1/(2 * (par - 1)) * (v2 - v3))
+  out <- 1/par^2 + 2/(par * (par - 1) * (2 * par - 1)) + 4 * par/(3 * par - 2) - 
+    2 * (2 * par - 1) * pp/(par - 1)
+  
+  return(out)
+}
+
+## Fisher information for the Gaussian copula
+"FisherGaussian" <- function(par) {
+  
+  out <- (1 + par^2)/(1 - par^2)^2
+  return(out)
+}
+
+## Fisher information for the Student copula
+"FisherStudentRho" <- function(par, par2) {
+  
+  out <- (2 + par2 + par2 * par^2)/((4 + par2) * (1 - par^2)^2)
+  return(out)
+}
+
 ## Update parameters with respect to fited gam model
 "pars.update" <- function(mm, family, data, tau = TRUE) {
   
@@ -132,8 +213,8 @@
   return(out)
 }
 
-## Compute first derivatives of the copula, copula parameters transformations and
-## dependence measure transformations
+## Compute first derivatives of the copula, copula parameters transformations
+## and dependence measure transformations
 "derivatives.par" <- function(data, new.pars, family, method, tau = TRUE) {
   
   #cat(paste(paste(range(data[,3]),collapse = ""), "\n"))
@@ -148,11 +229,13 @@
       dp <- rbind(dp, temp)
     }
   } else {
-    dp <- apply(data, 1, function(x) c(BiCopPDF(x[1], x[2], family = family, 
-      x[3]), BiCopDeriv(x[1], x[2], family = family, x[3], deriv = "par", log = TRUE)))
+    dp <- apply(data, 1, function(x) 
+      c(BiCopPDF(x[1], x[2], family = family, x[3]), 
+        BiCopDeriv(x[1], x[2], family = family, x[3], 
+                   deriv = "par", log = TRUE)))
     if (method == "NR") {
-      temp <- apply(data, 1, function(x) BiCopDeriv2(x[1], x[2], family = family, 
-        x[3], deriv = "par"))
+      temp <- apply(data, 1, function(x) 
+        BiCopDeriv2(x[1], x[2], family = family, x[3], deriv = "par"))
       dp <- rbind(dp, temp)
     }
   }
@@ -165,8 +248,8 @@
       dp[2, sel] <- apply(data[sel, ], 1, function(x) derivGumbel(x[3], x[1], 
         x[2]))/dp[1, sel]
     } else if (sum(sel) == 1) {
-      dp[2, sel] <- derivGumbel(data[sel, 3], data[sel, 1], data[sel, 2])/dp[1, 
-        sel]
+      dp[2, sel] <- derivGumbel(data[sel, 3], data[sel, 1], 
+                                data[sel, 2])/dp[1,sel]
     }
   }
   
@@ -214,7 +297,8 @@
     if (is.element(family, c(1, 2))) {
       dpar <- 1/(1 + cosh(new.pars$partrans))
       if (method == "NR") {
-        dpar2 <- -4 * sinh(new.pars$partrans/2)^4 * (1/sinh(new.pars$partrans))^3
+        dpar2 <- -4 * sinh(new.pars$partrans/2)^4 * 
+          (1/sinh(new.pars$partrans))^3
       }
     } else if (is.element(family, c(3, 4))) {
       dpar <- exp(new.pars$partrans)
@@ -249,11 +333,12 @@ derivGumbel <- function(s, u, v) {
   temp <- 1/(u * v * s^2) * exp(-A^(1/s))
   temp <- (a^(x/y) * A * b^(x/y))^y * temp
   
-  temp2 <- s * (-a^s * ((-1 + s)^2 + (-3 + 2 * s) * A^(1/s) + A^(2/s)) + s * (-1 + 
-    s + A^(1/s)) * b^s) * log(a)
+  temp2 <- s * (-a^s * ((-1 + s)^2 + (-3 + 2 * s) * A^(1/s) + A^(2/s)) + 
+                  s * (-1 +  s + A^(1/s)) * b^s) * log(a)
   temp2 <- c(temp2, (1 - s + (-3 + s) * A^(1/s) + A^(2/s)) * A * log(A))
-  temp2 <- c(temp2, s * (s * a^s * (1 + (-1 + s + A^(1/s)) * log(b)) + b^s * (s - 
-    ((-1 + s)^2 + (-3 + 2 * s) * A^(1/s) + A^(2/s)) * log(b))))
+  temp2 <- c(temp2, s * (s * a^s * (1 + (-1 + s + A^(1/s)) * log(b)) + 
+                           b^s * (s -  ((-1 + s)^2 + (-3 + 2 * s) * A^(1/s) +
+                                          A^(2/s)) * log(b))))
   
   return(temp * sum(temp2))
 }
@@ -263,17 +348,21 @@ family.check <- function(family, par, par2 = 0) {
   if (!(family %in% c(0, 1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {
     return("Copula family not yet implemented.")
   } else if ((family == 1 || family == 2) && abs(par) >= 1) {
-    return("The parameter of the Gaussian and t-copula has to be in the interval (-1,1).")
+    return(paste("The parameter of the Gaussian and",
+                 "t-copula has to be in the interval (-1,1)."))
   } else if (family == 2 && par2 <= 2) {
-    return("The degrees of freedom parameter of the t-copula has to be larger than 2.")
+    return(paste("The degrees of freedom parameter of the", 
+                 "t-copula has to be larger than 2."))
   } else if ((family == 3 || family == 13) && par <= 0) {
     return("The parameter of the Clayton copula has to be positive.")
   } else if ((family == 4 || family == 14) && par < 1) {
-    return("The parameter of the Gumbel copula has to be in the interval [1,oo).")
+    return(paste("The parameter of the Gumbel copula",
+                 "has to be in the interval [1,oo)."))
   } else if ((family == 23 || family == 33) && par >= 0) {
     return("The parameter of the rotated Clayton copula has to be negative.")
   } else if ((family == 24 || family == 34) && par > -1) {
-    return("The parameter of the rotated Gumbel copula has to be in the interval (-oo,-1].")
+    return(paste("The parameter of the rotated Gumbel",
+                 "copula has to be in the interval (-oo,-1]."))
   } else {
     return(TRUE)
   }
@@ -302,33 +391,67 @@ getRotations <- function (i) {
   out
 }
 
+
+
+## Rotate data
+rotate.data <- function(data, angle = 0) {
+  
+  valid <- c(0, 90, 180, 270)
+  if (!is.element(angle, valid)) {
+    print("Angle must be 0, 90, 180 or 270.")
+    return(data)
+  }
+  
+  n <- dim(data)
+  if (n[2] != 2) {
+    print("Data must be bivariate.")
+    return(data)
+  }
+  
+  if (angle == 90) {
+    return(cbind(1 - data[, 1], data[, 2]))
+  } else if (angle == 180) {
+    return(cbind(1 - data[, 1], 1 - data[, 2]))
+  } else if (angle == 270) {
+    return(cbind(data[, 1], 1 - data[, 2]))
+  } else {
+    return(data)
+  }
+}
+
+## Rotate copula parameter
+rotate.param <- function(param, angle = 0) {
+  
+  valid <- c(0, 90, 180, 270)
+  if (!is.element(angle, valid)) {
+    print("Angle must be 0, 90, 180 or 270.")
+    return(param)
+  }
+  
+  if (angle == 90) {
+    return(-param)
+  } else if (angle == 180) {
+    return(param)
+  } else if (angle == 270) {
+    return(-param)
+  } else {
+    return(param)
+  }
+}
+
+
 withRotations <- function(nums) {
   unique(unlist(lapply(nums, getRotations)))
 }
 
 fasttau <- function(x, y, weights = NA) {
-  if (any(is.na(weights))) {
-    m <- length(x)
-    n <- length(y)
-    if (m == 0 || n == 0) 
-      stop("both 'x' and 'y' must be non-empty")
-    if (m != n) 
-      stop("'x' and 'y' must have the same length")
-    out <- .C("ktau",
-              x = as.double(x),
-              y = as.double(y),
-              N = as.integer(n),
-              tau = as.double(0),
-              S = as.double(0),
-              D = as.double(0),
-              T = as.integer(0), 
-              U = as.integer(0), 
-              V = as.integer(0), 
-              PACKAGE = "VineCopula")
-    ktau <- out$tau
-  } else {
-    ktau <- TauMatrix(matrix(c(x, y), length(x), 2), weights)[2, 1]
-  }
+  m <- length(x)
+  n <- length(y)
+  if (m == 0 || n == 0) 
+    stop("both 'x' and 'y' must be non-empty")
+  if (m != n) 
+    stop("'x' and 'y' must have the same length")
+  ktau <- TauMatrix(matrix(c(x, y), length(x), 2), weights)[2, 1]
   return(ktau)
 }
 
@@ -345,57 +468,71 @@ get.modelCount <- function(d) {
   model.count <- matrix(model.count, d, d)
 }
 
-# 
-# ## mclapply.hack Nathan VanHoudnos nathanvan AT northwestern FULL STOP edu July
-# ## 14, 2014 A script to implement a hackish version of parallel:mclapply() on
-# ## Windows machines.  On Linux or Mac, the script has no effect.
-# 
-# ## Define the hack
-# mclapply.hack <- function(...) {
-#   ## Create a cluster
-#   size.of.list <- length(list(...)[[1]])
-#   cl <- parallel::makeCluster(min(size.of.list, parallel::detectCores()))
-#   
-#   ## Find out the names of the loaded packages
-#   loaded.package.names <- c(
-#     ## Base packages
-#     sessionInfo()$basePkgs,
-#     ## Additional packages
-#     names( sessionInfo()$otherPkgs ))
-#   
-#   tryCatch({
-#     
-#     ## Copy over all of the objects within scope to all clusters.
-#     this.env <- environment()
-#     while (identical(this.env, globalenv()) == FALSE) {
-#       parallel::clusterExport(cl, ls(all.names = TRUE, env = this.env), envir = this.env)
-#       this.env <- parent.env(environment())
-#     }
-#     parallel::clusterExport(cl, ls(all.names = TRUE, env = globalenv()), envir = globalenv())
-#     
-#     ## Load the libraries on all the clusters N.B. length(cl) returns the number of
-#     ## clusters
-#     parallel::parLapply(cl, 1:length(cl), function(xx) {
-#       lapply(loaded.package.names, function(yy) {
-#         require(yy, character.only = TRUE)
-#       })
-#     })
-#     
-#     ## Run the lapply in parallel
-#     return(parallel::parLapply(cl, ...))
-#   }, finally = {
-#     ## Stop the cluster
-#     parallel::stopCluster(cl)
-#   })
-# }
-# 
-# 
-# ## If the OS is Windows, set mclapply to the hackish version. Otherwise, leave
-# ## the definition alone.
-# mclapply <- switch(Sys.info()[["sysname"]], Windows = {
-#   mclapply.hack
-# }, Linux = {
-#   parallel::mclapply
-# }, Darwin = {
-#   parallel::mclapply
-# })
+
+## Link and inverse link functions for all VineCopula package's copula families
+links <- function(family, inv = FALSE) {
+  if (!inv) {
+    f1 <- function(x) tanh(x/2)
+    f2 <- function(x) exp(x)
+    f3 <- function(x) 1 + f2(x)
+    f4 <- function(x) (tanh(x/2)+1)/2
+    f5 <- function(x) 2 + f2(x)    
+    f2r <- function(x) -f2(x)
+    f3r <- function(x) -f3(x)
+    f4r <- function(x) -f4(x)
+    id <- function(x) x
+  } else {
+    f1 <- function(x) 2*atanh(x)
+    f2 <- function(x) log(x)
+    f3 <- function(x) f2(x-1)
+    f4 <- function(x) 2*atanh(2*x-1)
+    f5 <- function(x) f2(x-2)
+    f2r <- function(x) -f2(x)
+    f3r <- function(x) -f3(x)
+    f4r <- function(x) -f4(x)
+    id <- function(x) x
+  }
+  
+  switch(BiCopName(family),
+         N = list(par = f1, par2 = NULL),
+         t = list(par = f1, par2 = f5),
+         C = list(par = f2, par2 = NULL),
+         G = list(par = f3, par2 = NULL),
+         F = list(par = id, par2 = NULL),
+         J = list(par = f3, par2 = NULL),
+         BB1 = list(par = f2, par2 = f3),
+         BB6 = list(par = f3, par2 = f3),
+         BB7 = list(par = f3, par2 = f2),
+         BB8 = list(par = f3, par2 = f4),
+         SC = list(par = f2, par2 = NULL),
+         SG = list(par = f3, par2 = NULL),
+         SJ = list(par = f3, par2 = NULL),
+         SBB1 = list(par = f2, par2 = f3),
+         SBB6 = list(par = f3, par2 = f3),
+         SBB7 = list(par = f3, par2 = f2),
+         SBB8 = list(par = f3, par2 = f4),
+         C90 = list(par = f2r, par2 = NULL),
+         G90 = list(par = f3r, par2 = NULL),
+         F90 = list(par = f3r, par2 = NULL),
+         J90 = list(par = f3r, par2 = NULL),
+         BB1_90 = list(par = f2r, par2 = f3r),
+         BB6_90 = list(par = f3r, par2 = f3r),
+         BB7_90 = list(par = f3r, par2 = f2r),
+         BB8_90 = list(par = f3r, par2 = f4r),
+         C270 = list(par = f2r, par2 = NULL),
+         G270 = list(par = f3r, par2 = NULL),
+         F270 = list(par = f3r, par2 = NULL),
+         J270 = list(par = f3r, par2 = NULL),
+         BB1_270 = list(par = f2r, par2 = f3r),
+         BB6_270 = list(par = f3r, par2 = f3r),
+         BB7_270 = list(par = f3r, par2 = f2r),
+         BB8_270 = list(par = f3r, par2 = f4r),
+         Tawn = list(par = f3, par2 = f4),
+         Tawn180 = list(par = f3, par2 = f4),
+         Tawn90 = list(par = f3r, par2 = f4),
+         Tawn270 = list(par = f3r, par2 = f4),
+         Tawn2 = list(par = f3, par2 = f4),
+         Tawn2_180 = list(par = f3, par2 = f4),
+         Tawn2_90 = list(par = f3r, par2 = f4),
+         Tawn2_270 = list(par = f3r, par2 = f4))
+}

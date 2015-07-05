@@ -49,7 +49,7 @@
 #' colnames(X) <- paste("x",1:3,sep="")
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
-#' U <- CondBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
+#' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
 #'   f(x), calib.surf, c(x1,x2,x3)))}, X[,1:3], par2 = 6, return.par = TRUE)
 #' 
 #' ## Merge U and X
@@ -68,11 +68,17 @@
 #' EDF(res)
 #' sim <- gamBiCopSim(fit$res, X)
 #' @export
-gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, return.par = FALSE, 
-  return.tau = FALSE) {
+gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, 
+                        return.par = FALSE, return.tau = FALSE) {
   
-  if (!valid.gamBiCop(object)) {
-    stop("gamBiCopPred can only be used to predict from gamBiCop objects")
+  tmp <- valid.gamBiCopSim(object, newdata, N, return.calib, 
+                           return.par, return.tau)
+  if (tmp != TRUE)
+    stop(tmp)
+
+  
+  if (is.null(newdata)) {
+    newdata <- object@model$data
   }
   
   if (is.null(N)) {
@@ -82,40 +88,7 @@ gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, 
       N <- dim(object@model$data)[1]
     }
   }
-  if (!is.na(as.integer(N))) {
-    if ((as.integer(N) < 1) || (as.integer(N) != as.numeric(N))) {
-      stop("N should be a positive integer!")
-    } else {
-      N <- as.integer(N)
-    }
-  } else {
-    stop("N should be a positive integer!")
-  }
-  if (!(is.logical(return.calib) || (return.calib == 0) || (return.calib == 1))) {
-    warning("Return.calib should takes 0/1 or FALSE/TRUE.")
-    return.calib <- FALSE
-  }
-  if (!(is.logical(return.par) || (return.par == 0) || (return.par == 1))) {
-    warning("Return.par should takes 0/1 or FALSE/TRUE.")
-    return.par <- FALSE
-  }
-  if (!(is.logical(return.tau) || (return.tau == 0) || (return.tau == 1))) {
-    warning("Return.tau should takes 0/1 or FALSE/TRUE.")
-    return.tau <- FALSE
-  }
-  if (!is.na(as.integer(N))) {
-    if ((as.integer(N) < 1) || (as.integer(N) != as.numeric(N))) {
-      stop("N should be a positive integer!")
-    } else {
-      N <- as.integer(N)
-    }
-  } else {
-    stop("N should be a positive integer!")
-  }
-
-  if (is.null(newdata)) {
-    newdata <- object@model$data
-  }
+  
   dd <- dim(newdata)[1]
   if ((N < dd) || (N > dd)) {
     newdata <- newdata[sample.int(dd, N, replace = TRUE), ]
@@ -141,3 +114,36 @@ gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, 
   
   return(out)
 } 
+
+valid.gamBiCopSim <- function(object, newdata, N, return.calib, 
+                              return.par, return.tau) {
+  if (!valid.gamBiCop(object)) {
+    return("gamBiCopPred can only be used to predict from gamBiCop objects")
+  }
+  
+  if (is.null(N)) {
+    if (!is.null(newdata)) {
+      N <- dim(newdata)[1]
+    } else {
+      N <- dim(object@model$data)[1]
+    }
+  } 
+  if (is.na(N) || !is.numeric(N) || (as.integer(N) < 1) || 
+        (as.integer(N) != as.numeric(N))) {
+    return("N should be a positive integer!")
+  }
+  
+  mycheck <- function(L) is.na(L) || !(is.logical(L) || (L == 0) || (L == 1))
+  
+  if (mycheck(return.calib)) {
+    return("Return.calib should take 0/1 or FALSE/TRUE.")
+  }
+  if (mycheck(return.par)) {
+    return("Return.par should take 0/1 or FALSE/TRUE.")
+  }
+  if (mycheck(return.tau)) {
+    return("Return.tau should take 0/1 or FALSE/TRUE.")
+  }
+
+  return(TRUE)
+}

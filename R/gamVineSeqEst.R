@@ -201,8 +201,8 @@ gamVineSeqEst <- function(data, GVC,
 } 
 
 valid.gamVineSeqEst <- function(data, GVC, 
-                                   method = "NR", tol.rel = 0.001, n.iters = 10, 
-                                   verbose = FALSE) {
+                                method, tol.rel, n.iters, 
+                                verbose) {
   
   if (!is.matrix(data) && !is.data.frame(data)) {
     return("data has to be either a matrix or a data frame")
@@ -223,45 +223,28 @@ valid.gamVineSeqEst <- function(data, GVC,
   if (length(o) != d)
     return("The dimension of the gamVine object is incorrect.")
   
-  oldGVC <- GVC
-  if (any(o != length(o):1)) {
-    GVC <- gamVineNormalize(GVC)
-    data <- data[, o[length(o):1]]
-  }
-  
   options(warn = -1)
-  if (!is.na(as.integer(n.iters))) {
-    if ((as.integer(n.iters) < 1) || 
-          (as.integer(n.iters) != as.numeric(n.iters))) {
-      return("N.iters should be a positive integer!")
-    } else {
-      n.iters <- as.integer(n.iters)
-    }
-  } else {
-    return("N.iters should be a positive integer!")
+  if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
+        !is.numeric(n.iters) || (as.integer(n.iters) < 1) || 
+        (as.integer(n.iters) !=  as.numeric(n.iters))) {
+    return("N.iters should be a positive integer.")
+  } 
+  
+  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || 
+        !is.numeric(tol.rel) ||
+        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
+    return("Tol.rel should be a real number in [0,1].")
+  } 
+  
+  if (is.null(method) || !is.element(method, c("FS", "NR"))) {
+    return("Method should be a string, either NR (Newton-Raphson) 
+         or FS (Fisher-scoring, faster but unstable).")
   }
   
-  if (!is.na(as.numeric(tol.rel))) {
-    if ((as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-      return("Tol.rel should be a real number in [0,1]!")
-    } else {
-      tol.rel <- as.numeric(tol.rel)
-    }
-  } else {
-    return("Tol.rel should be a real number in [0,1]!")
-  }
-  
-  if (!is.element(method, c("FS", "NR"))) {
-    msg <- paste("Method should be a string, either FS (Fisher-scoring)",
-    "or NR (Newton-Raphson)!")
-    return(msg)
-  }
-  
-  if (!(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
+  if (is.null(verbose) ||  is.na(verbose) || 
+        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
     return("Verbose should takes 0/1 or FALSE/TRUE.")
-  } else {
-    verbose <- as.logical(verbose)
-  }
+  } 
   options(warn = 0)
   
   return(TRUE)

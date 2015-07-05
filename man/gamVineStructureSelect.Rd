@@ -5,9 +5,10 @@
 \title{Structure selection and estimation of a GAM-Vine model.}
 \usage{
 gamVineStructureSelect(data, type = 0, familyset = NA, rotations = TRUE,
-  selectioncrit = "AIC", SAtestOptions = "ERC", indeptest = TRUE,
-  level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE)
+  familycrit = "AIC", treecrit = "Kendall", SAtestOptions = "ERC",
+  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
+  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = TRUE,
+  verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -32,10 +33,17 @@ possible families is performed. Coding of pair-copula families:
 \item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
 
-\item{selectioncrit}{Character indicating the criterion for bivariate copula
-selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or
+\item{familycrit}{Character indicating the criterion for bivariate copula
+selection. Possible choices: \code{familycrit = 'AIC'} (default) or
 \code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
+
+\item{treecrit}{Character indicating how pairs are selected in each tree.
+\code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau
+(i.e., the tree of maximal overall dependence), and
+\code{treecrit = "SAtest"} builds the minimum spanning tree of p-values of a
+test of the simplifying assumption (i.e., the tree of maximal variability
+in conditional dependence).}
 
 \item{SAtestOptions}{TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!}
 
@@ -64,6 +72,10 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{n.iters}{Maximal number of iterations for
 \code{'FS'}/\code{'NR'} algorithm.}
+
+\item{parallel}{\code{TRUE} (default) for parallel selection of copula
+family at each edge or \code{FALSE} for the sequential version.
+for the Copula parameter.}
 
 \item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.
@@ -131,9 +143,11 @@ N <- 1e3
 simData <- data.frame(gamVineSim(N, GVC))
 colnames(simData) <- nnames
 
-# Fit data
+# Fit data using sequential estimation assuming true model known
 summary(fitGVC <- gamVineSeqEst(simData, GVC))
-summary(fitGVC2 <- gamVineStructureSelect(simData, GVC))
+
+# Fit data using structure selection and sequential estimation
+summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))
 }
 \seealso{
 \code{\link{gamVine-class}}, \code{\link{gamVineSim}},

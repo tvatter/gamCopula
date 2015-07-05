@@ -64,9 +64,10 @@
 #' simplify2array(attr(fitGVC, "model")))
 #' @export
 gamVineSim <- function(N, GVC, U = NULL) {
-  stopifnot(N >= 1)
-  if (any(!isS4(GVC), !is(GVC, "gamVine"))) {
-    stop("'GVC' has to be an gamVine object.")
+  
+  chk <- valid.gamVineSim(N, GVC, U)
+  if (chk != TRUE) {
+    return(chk)
   }
   
   o <- diag(GVC@Matrix)
@@ -165,3 +166,27 @@ gamVineSim <- function(N, GVC, U = NULL) {
   
   return(out)
 } 
+
+valid.gamVineSim <- function(N, GVC, U) {
+  
+  if (is.null(N) && is.null(U)) {
+    return("When U is null, N can't be.")
+  } 
+  
+  if (is.na(N) || !is.numeric(N) || (as.integer(N) < 1) || 
+        (as.integer(N) != as.numeric(N))) {
+    return("N should be a positive integer.")
+  }
+  
+  if (any(!isS4(GVC), !is(GVC, "gamVine"))) {
+    return("GVC should be an gamVine object.")
+  }
+  
+  if (!is.null(U) && (!is.numeric(U) || any(is.na(U)) || 
+                        dim(U)[2] != dim(GVC) || any(U <= 0) || any(U >= 1))) {
+    return("If not null, U should be a matrix of the same dimension as GVC,
+           containing only data in (0,1).")
+  }
+  
+  return(TRUE)
+}

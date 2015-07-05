@@ -1,205 +1,279 @@
-## Rotate data
-rotate.data <- function(data, angle = 0) {
-  
-  valid <- c(0, 90, 180, 270)
-  if (!is.element(angle, valid)) {
-    print("Angle must be 0, 90, 180 or 270.")
-    return(data)
-  }
-  
-  n <- dim(data)
-  if (n[2] != 2) {
-    print("Data must be bivariate.")
-    return(data)
-  }
-  
-  if (angle == 90) {
-    return(cbind(1 - data[, 1], data[, 2]))
-  } else if (angle == 180) {
-    return(cbind(1 - data[, 1], 1 - data[, 2]))
-  } else if (angle == 270) {
-    return(cbind(data[, 1], 1 - data[, 2]))
-  } else {
-    return(data)
-  }
-}
-
-## Rotate copula parameter
-rotate.param <- function(param, angle = 0) {
-  
-  valid <- c(0, 90, 180, 270)
-  if (!is.element(angle, valid)) {
-    print("Angle must be 0, 90, 180 or 270.")
-    return(param)
-  }
-  
-  if (angle == 90) {
-    return(-param)
-  } else if (angle == 180) {
-    return(param)
-  } else if (angle == 270) {
-    return(-param)
-  } else {
-    return(param)
-  }
-}
-
-## From calibration function to copula parameter
+#' Copula Parameter of a Bivariate Copula for a Given Value of the Calibration
+#' Function
+#' 
+#' Computes the (first) copula parameter of a bivariate copula for a given 
+#' value of the calibration function (eta).
+#'
+#' @param family A copula family: 
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{3} Clayton, 
+#' \code{4} Gumbel, 
+#' \code{13} Survival Clayton, 
+#' \code{14} Survival Gumbel, 
+#' \code{23} Rotated (90 degrees) Clayton, 
+#' \code{24} Rotated (90 degrees) Gumbel, 
+#' \code{33} Rotated (270 degrees) Clayton and
+#'  \code{34} Rotated (270 degrees) Gumbel.
+#' @param par The (first) copula parameter
+#' @return The value of the calibration function, depending on the copula
+#' parameter and family as:
+#' \itemize{
+#' \item \code{1} Gaussian, \code{f(x) = tanh(x/2)}
+#' \item \code{2} Student t, \code{f(x) = tanh(x/2)}
+#' \item \code{3} Clayton, \code{f(x) = exp(x)}
+#' \item \code{4} Gumbel, \code{f(x) = 1+exp(x)}
+#' \item \code{13} Survival Clayton, \code{f(x) = exp(x)}
+#' \item \code{14} Survival Gumbel, \code{f(x) = 1+exp(x)}
+#' \item \code{23} Rotated (90 degrees) Clayton, \code{f(x) = -exp(x)}
+#' \item \code{24} Rotated (90 degrees) Gumbel, \code{f(x) = -1-exp(x)}
+#' \item \code{33} Rotated (270 degrees) Clayton, \code{f(x) = -exp(x)}
+#' \item \code{34} Rotated (270 degrees) Gumbel, \code{f(x) = -1-exp(x)}
+#' } 
+#' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
+#' \code{\link{BiCopTau2Par}} from 
+#' \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+#' @name BiCopEta2Par
+#' @rdname BiCopEta2Par
+#' @export
 BiCopEta2Par <- function(family, eta) {
   
+  if (length(family) != 1) {
+    stop("Family has to be a scalar/integer.")
+  }
+  
   if (!is.element(family, c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34))) 
     stop("Copula family not yet implemented.")
   
-  if (!is.double(eta)) 
-    stop("Eta should be real.")
-  
-  if (is.element(family, c(1, 2))) {
-    return((1-1e-12)*tanh(eta/2))
-  } else if (is.element(family, c(3, 13))) {
-    return(exp(eta))
-  } else if (is.element(family, c(4, 14))) {
-    return(1 + 1e-12 + exp(eta))
-  } else if (is.element(family, c(23, 33))) {
-    return(-1e-12-exp(eta))
-  } else if (is.element(family, c(24, 34))) {
-    return(-1 -1e-12 - exp(eta))
-  } else {
-    return(eta)
+  if (missing(eta)) {
+    stop("Eta not set.")
   }
+  
+  if (!is.double(eta)) {
+    stop("Eta should be real.")
+  }    
+  
+  ll <- links(family)
+  return(ll$par(eta))
 }
 
-## From copula parameter to calibration function
+#' Calibration Function of a Bivariate Copula for a Given Parameter's Value
+#' 
+#' Computes the calibration function (eta) of a bivariate copula for a given 
+#' value of the (first) copula parameter.
+#'
+#' @param family A copula family: 
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{3} Clayton, 
+#' \code{4} Gumbel, 
+#' \code{13} Survival Clayton, 
+#' \code{14} Survival Gumbel, 
+#' \code{23} Rotated (90 degrees) Clayton, 
+#' \code{24} Rotated (90 degrees) Gumbel, 
+#' \code{33} Rotated (270 degrees) Clayton and
+#'  \code{34} Rotated (270 degrees) Gumbel.
+#' @param par The (first) copula parameter
+#' @return The value of the calibration function, depending on the copula
+#' parameter and family as:
+#' \itemize{
+#' \item \code{1} Gaussian, \code{f(x) = 2*atanh(x)}
+#' \item \code{2} Student t, \code{f(x) = 2*atanh(x)}
+#' \item \code{3} Clayton, \code{f(x) = log(x)}
+#' \item \code{4} Gumbel, \code{f(x) = log(x-1)}
+#' \item \code{13} Survival Clayton, \code{f(x) = log(x)}
+#' \item \code{14} Survival Gumbel, \code{f(x) = log(x-1)}
+#' \item \code{23} Rotated (90 degrees) Clayton, \code{f(x) = -log(x)}
+#' \item \code{24} Rotated (90 degrees) Gumbel, \code{f(x) = -log(x-1)}
+#' \item \code{33} Rotated (270 degrees) Clayton, \code{f(x) = -log(x)}
+#' \item \code{34} Rotated (270 degrees) Gumbel, \code{f(x) = -log(x-1)}
+#' } 
+#' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
+#' \code{\link{BiCopTau2Par}} from 
+#' \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+#' @name BiCopPar2Eta
+#' @rdname BiCopPar2Eta
+#' @export
 BiCopPar2Eta <- function(family, par) {
   
-  if (!is.element(family, c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34))) 
+  if (length(family) != 1) {
+    stop("Input for family has to be a scalar/integer.")
+  }
+  
+  if (!is.element(family, c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34))) {
     stop("Copula family not yet implemented.")
+  }
   
-  if (!is.double(par)) 
+  if (missing(par)) {
+    stop("Par not set.")
+  }
+  
+  if (!is.double(par)) {
     stop("Par should be real.")
+  }    
   
-  if (is.element(family, c(1, 2))) {
-    if (any(abs(par) >= 1)) {
-      stop("Par should be in (-1,1) for the Gaussian and t copulas.")
-    } else {
-      return(2 * atanh(par))
-    }
-  } else if (is.element(family, c(3, 13))) {
-    if (any(par <= 0)) {
-      stop("Par should be greater than zero for the Clayton and survival Clayton copulas.")
-    } else {
-      return(log(par))
-    }
-  } else if (is.element(family, c(4, 14))) {
-    if (any(par <= 1)) {
-      stop("Par should be greater than one for the Gumbel and survival Gumbel copulas.")
-    } else {
-      return(log(par - 1))
-    }
-  } else if (is.element(family, c(23, 33))) {
-    if (any(par >= 0)) {
-      stop("Par should be SMALLER than zero for the 90 and 270 rotated Clayton copulas.")
-    } else {
-      return(log(-par))
-    }
-  } else if (is.element(family, c(24, 34))) {
-    if (any(par >= -1)) {
-      stop("Par should be smaller than minus one for the 90 and 270 Gumbel copulas.")
-    } else {
-      return(log(-1 - par))
-    }
-  } else {
-    return(par)
+  if (is.element(family, c(1, 2)) && any(abs(par) >= 1)) {
+    stop("Par should be in (-1,1) for the Gaussian and t copulas.")
+  } 
+  
+  if (is.element(family, c(3, 13)) && any(par <= 0)) {
+    stop(paste("Par should be greater than zero for the Clayton",
+               "and survival Clayton copulas."))
   }
-}
-
-
-## Fisher information with respect to the Copula parameter for a bivariate copula
-"FisherBiCop" <- function(family, par, par2 = NULL) {
-  
-  if (family == 1) {
-    out <- FisherGaussian(par)
-  } else if (family == 2) {
-    out <- FisherStudentRho(par, par2)
-  } else if (family == 3) {
-    out <- FisherClayton(par)
-  } else if (family == 4) {
-    out <- FisherGumbel(par)
+    
+  if (is.element(family, c(4, 14)) && any(par <= 1)) {
+    stop(paste("Par should be greater than one for the Gumbel",
+               "and survival Gumbel copulas."))
   }
   
-  return(out)
-}
-
-## Fisher information with respect to Kendall's tau for a bivariate copula
-"FisherBiCop2" <- function(family, tau, par2 = NULL) {
-  
-  if (family == 1) {
-    par <- sin(pi/2 * tau)
-    out <- FisherGaussian(par) * (pi * cos(pi * tau/2)/2)^2
-  } else if (family == 2) {
-    par <- sin(pi/2 * tau)
-    out <- FisherStudentRho(par, par2) * (pi * cos(pi * tau/2)/2)^2
-  } else if (family == 3) {
-    par <- 2 * tau/(1 - tau)
-    out <- FisherClayton(par) * (2/(tau - 1)^2)^2
-  } else if (family == 4) {
-    par <- 1/(1 - tau)
-    out <- FisherGumbel(par) * (1/(tau - 1)^2)^2
+  if (is.element(family, c(23, 33)) && any(par >= 0)) {
+    stop(paste("Par should be smaller than zero for",
+               "the 90 and 270 rotated Clayton copulas."))
   }
   
-  return(out)
-}
-
-## Fisher information for the Gumbel copula See Schepsmeier & Stober (2012)
-## (contains several typos)
-"FisherGumbel" <- function(par) {
-  k0 <- 5/6 - pi^2/18
-  E1 <- sapply(par - 1, gsl::expint_E1)
+  if (is.element(family, c(24, 34)) && any(par >= -1)) {
+    stop(paste("Par should be smaller than minus one",
+               "for the 90 and 270 Gumbel copulas."))
+  }
   
-  out <- (1/par^4) * (par^2 * (-2/3 + pi^2/9) - par + 2 * k0/par + (par^3 + par^2 + 
-    (k0 - 1) * par - 2 * k0 + k0/par) * E1 * exp(par - 1))
-  
-  return(out)
+  ll <- links(family, TRUE)
+  return(ll$par(par))
 }
 
 
-## Fisher information for the Clayton copula See Oakes (1982) or Schepsmeier &
-## Stober (2012) (the latter contains several typos)
-"FisherClayton" <- function(par) {
-  # browser()
-  par <- par + 1
-  v1 <- trigamma(1/(2 * (par - 1)))
-  v2 <- trigamma(par/(2 * (par - 1)))
-  v3 <- trigamma((2 * par - 1)/(2 * (par - 1)))
-  pp <- 1/((3 * par - 2) * (2 * par - 1)) * (1 + par/(2 * (par - 1)) * (v1 - v2) + 
-    1/(2 * (par - 1)) * (v2 - v3))
-  out <- 1/par^2 + 2/(par * (par - 1) * (2 * par - 1)) + 4 * par/(3 * par - 2) - 
-    2 * (2 * par - 1) * pp/(par - 1)
-  
-  return(out)
-}
-
-## Fisher information for the Gaussian copula
-"FisherGaussian" <- function(par) {
-  
-  out <- (1 + par^2)/(1 - par^2)^2
-  return(out)
-}
-
-## Fisher information for the Student copula
-"FisherStudentRho" <- function(par, par2) {
-  
-  out <- (2 + par2 + par2 * par^2)/((4 + par2) * (1 - par^2)^2)
-  return(out)
-}
-
-
-## Simulation from a conditional copula given a calibration function of covariates
-## (modified from Elif Acar's code)
-CondBiCopSim <- function(family, calib.fnc, X, 
+#' Simulation from a Conditional Bivariate Copula
+#' 
+#' Simulates from a conditional bivariate copula, where each copula parameter
+#' takes a different value, depending on the calibration 
+#' function and covariates.
+#'
+#' @param family  family A copula family: 
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{3} Clayton, 
+#' \code{4} Gumbel, 
+#' \code{5} Frank, 
+#' \code{13} Survival Clayton, 
+#' \code{14} Survival Gumbel, 
+#' \code{23} Rotated (90 degrees) Clayton, 
+#' \code{24} Rotated (90 degrees) Gumbel, 
+#' \code{33} Rotated (270 degrees) Clayton and
+#'  \code{34} Rotated (270 degrees) Gumbel.
+#' @param calib.fnc A calibration function.
+#' @param X A vector (if \code{calib.fnc} takes a single argument) or matrix 
+#' (if \code{calib.fnc} takes multiple arguments) of covariates values.
+#' @param par2 The second copula parameter (for the Student t), default 
+#' \code{par2 = 0}.
+#' @param return.par Should the parameter (and calibration function) be returned
+#' as well (default \code{return.par = TRUE})?
+#' @param tau Should the calibration function (and the model) be specified for
+#' the copula parameter or Kendall's tau (default \code{tau = FALSE})?
+#' @return If \code{return.par = TRUE}, then the function returns a list with:
+#' \itemize{
+#' \item \code{data}, a matrix with two columns containing the simulated data,
+#' \item \code{par}, a vector containing the values of the copula parameter,
+#' \item and \code{eta}, a vector containing the values of the 
+#' calibration function.
+#' }
+#' If \code{return.par = FALSE}, then the function simply returns \code{data}, 
+#' a matrix with two columns containing the simulated data.
+#' @seealso \code{\link{gamBiCopEst}} and \code{\link{gamBiCopSim}}.
+#' @examples
+#' set.seed(0)
+#' 
+#' ## Simulation parameters (sample size, correlation between covariates,
+#' ## Clayton copula family)
+#' n <- 2e2
+#' rho <- 0.5
+#' fam <- 3
+#' 
+#' 
+#' ## A calibration surface depending on three variables
+#' eta0 <- 1
+#' calib.surf <- list(
+#'   calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
+#'     Tm <- (Tf - Ti)/2
+#'     a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
+#'   return(a + b * (t - Tm)^2)},
+#'   calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
+#'     a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
+#'                                  cos(2 * f * pi * (Tf - Ti))
+#'                                - cos(2 * f * pi * Ti)))
+#'     return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
+#'   calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
+#'     Tm <- (Tf - Ti)/2
+#'     a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
+#'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
+#' 
+#' ## Display the calibration surface
+#' par(mfrow = c(1, 3), pty = "s", mar = c(1, 1, 4, 1))
+#' u <- seq(0, 1, length.out = 100)
+#' sel <- matrix(c(1, 1, 2, 2, 3, 3), ncol = 2)
+#' jet.colors <- colorRamp(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", 
+#'                           "yellow", "#FF7F00", "red", "#7F0000"))
+#' jet <- function(x) rgb(jet.colors(exp(x/3)/(1 + exp(x/3))), 
+#'                        maxColorValue = 255)
+#' for (k in 1:3) {
+#'     tmp <- outer(u, u, function(x, y) 
+#'       eta0 + calib.surf[[sel[k,1]]](x) + calib.surf[[sel[k, 2]]](y))
+#'     persp(u, u, tmp, border = NA, theta = 60, phi = 30, zlab = "", 
+#'           col = matrix(jet(tmp), nrow = 100), 
+#'           xlab = paste("X", sel[k, 1], sep = ""), 
+#'           ylab = paste("X", sel[k,2], sep = ""), 
+#'           main = paste("eta0+f", sel[k, 1], 
+#'                        "(X", sel[k, 1], ") +f",sel[k, 2], 
+#'                        "(X", sel[k, 2], ")", sep = ""))
+#' }
+#' 
+#' ## 3-dimensional matrix X of covariates
+#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#'                                  c("unif"), list(list(min = 0, max = 1)),
+#'                                  marginsIdentical = TRUE)
+#' X <- copula::rMvdc(n, covariates.distr)
+#' 
+#' ## U in [0,1]x[0,1] with copula parameter depending on X
+#' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
+#'   f(x), calib.surf, c(x1,x2,x3)))}, X[,1:3], par2 = 6, return.par = TRUE)
+#' 
+#' ## Merge U and X
+#' data <- data.frame(U$data,X)
+#' names(data) <- c(paste("u",1:2,sep=""),paste("x",1:3,sep=""))
+#' 
+#' ## Display the data
+#' dev.off()
+#' plot(data[, "u1"], data[, "u2"], xlab = "U1", ylab = "U2")
+#' @name CondBiCopSim
+#' @rdname CondBiCopSim
+#' @export
+condBiCopSim <- function(family, calib.fnc, X, 
                          par2 = 0, return.par = TRUE, tau = FALSE) {
   
-  if (!(family %in% c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) 
+  if (!is.numeric(family) || length(family) != 1) {
+    stop("Input for family has to be a scalar/integer.")
+  }
+  
+  if (!(family %in% c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34))) 
     stop("Copula family not yet implemented.")
+  
+  if (!is.function(calib.fnc)) {
+    stop("The calibration function should be a function.")
+  }
+  
+  if (!is.numeric(X)) {
+    stop("The covariates should be reals.")
+  }
+  
+  if (!is.numeric(par2) && length(par2) != 1) {
+    stop("par2 should be a real of length 1.")
+  }
+  
+  if (!is.logical(return.par) || is.na(return.par)) {
+    stop("return.par should be TRUE or FALSE.")
+  }
+  
+  if (!is.logical(tau) || is.na(tau)) {
+    stop("tau should be TRUE or FALSE.")
+  }
   
   ## univariate covariate:
   if (is.vector(X)) {
@@ -242,71 +316,3 @@ CondBiCopSim <- function(family, calib.fnc, X,
     return(data)
   }
 } 
-
-## Link and inverse link functions for all VineCopula package's copula families
-links <- function(family, inv = FALSE) {
-  if (!inv) {
-    f1 <- function(x) tanh(x/2)
-    f2 <- function(x) exp(x)
-    f3 <- function(x) 1 + f2(x)
-    f4 <- function(x) (tanh(x/2)+1)/2
-    f5 <- function(x) 2 + f2(x)    
-    f2r <- function(x) -f2(-x)
-    f3r <- function(x) -f3(-x)
-    f4r <- function(x) -f4(-x)
-    id <- function(x) x
-  } else {
-    f1 <- function(x) 2*atanh(x)
-    f2 <- function(x) log(x)
-    f3 <- function(x) f2(x-1)
-    f4 <- function(x) 2*atanh(2*x-1)
-    f5 <- function(x) f2(x-2)
-    f2r <- function(x) -f2(-x)
-    f3r <- function(x) -f3(-x)
-    f4r <- function(x) -f4(-x)
-    id <- function(x) x
-  }
-
-  switch(BiCopName(family),
-         N = list(par = f1, par2 = NULL),
-         t = list(par = f1, par2 = f5),
-         C = list(par = f2, par2 = NULL),
-         G = list(par = f3, par2 = NULL),
-         F = list(par = id, par2 = NULL),
-         J = list(par = f3, par2 = NULL),
-         BB1 = list(par = f2, par2 = f3),
-         BB6 = list(par = f3, par2 = f3),
-         BB7 = list(par = f3, par2 = f2),
-         BB8 = list(par = f3, par2 = f4),
-         SC = list(par = f2, par2 = NULL),
-         SG = list(par = f3, par2 = NULL),
-         SJ = list(par = f3, par2 = NULL),
-         SBB1 = list(par = f2, par2 = f3),
-         SBB6 = list(par = f3, par2 = f3),
-         SBB7 = list(par = f3, par2 = f2),
-         SBB8 = list(par = f3, par2 = f4),
-         C90 = list(par = f2r, par2 = NULL),
-         G90 = list(par = f3r, par2 = NULL),
-         F90 = list(par = f3r, par2 = NULL),
-         J90 = list(par = f3r, par2 = NULL),
-         BB1_90 = list(par = f2r, par2 = f3r),
-         BB6_90 = list(par = f3r, par2 = f3r),
-         BB7_90 = list(par = f3r, par2 = f2r),
-         BB8_90 = list(par = f3r, par2 = f4r),
-         C270 = list(par = f2r, par2 = NULL),
-         G270 = list(par = f3r, par2 = NULL),
-         F270 = list(par = f3r, par2 = NULL),
-         J270 = list(par = f3r, par2 = NULL),
-         BB1_270 = list(par = f2r, par2 = f3r),
-         BB6_270 = list(par = f3r, par2 = f3r),
-         BB7_270 = list(par = f3r, par2 = f2r),
-         BB8_270 = list(par = f3r, par2 = f4r),
-         Tawn = list(par = f3, par2 = f4),
-         Tawn180 = list(par = f3, par2 = f4),
-         Tawn90 = list(par = f3r, par2 = f4),
-         Tawn270 = list(par = f3r, par2 = f4),
-         Tawn2 = list(par = f3, par2 = f4),
-         Tawn2_180 = list(par = f3, par2 = f4),
-         Tawn2_90 = list(par = f3r, par2 = f4),
-         Tawn2_270 = list(par = f3r, par2 = f4))
-}
