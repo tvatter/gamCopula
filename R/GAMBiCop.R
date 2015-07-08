@@ -50,7 +50,7 @@ valid.gamBiCop <- function(object) {
   } else if (d >= 2) {
     if (!is(object@model, "gam")) {
       return("Invalid mgcv model.")
-    } else if (!(object@family %in% c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {
+    } else if (!(object@family %in% get.familyset())) {
       return("Copula family not yet implemented.")
     }
   }

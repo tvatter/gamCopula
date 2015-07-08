@@ -128,21 +128,20 @@ valid.gamBiCopSim <- function(object, newdata, N, return.calib,
       N <- dim(object@model$data)[1]
     }
   } 
-  if (is.na(N) || !is.numeric(N) || (as.integer(N) < 1) || 
-        (as.integer(N) != as.numeric(N))) {
-    return("N should be a positive integer!")
+  if (!valid.posint(N)) {
+    return(msg.posint(var2char(N)))
   }
   
-  mycheck <- function(L) is.na(L) || !(is.logical(L) || (L == 0) || (L == 1))
+  if (!valid.logical(return.calib)) {
+    return(msg.logical(var2char(return.calib)))
+  }
   
-  if (mycheck(return.calib)) {
-    return("Return.calib should take 0/1 or FALSE/TRUE.")
+  if (!valid.logical(return.par)) {
+    return(msg.logical(var2char(return.par)))
   }
-  if (mycheck(return.par)) {
-    return("Return.par should take 0/1 or FALSE/TRUE.")
-  }
-  if (mycheck(return.tau)) {
-    return("Return.tau should take 0/1 or FALSE/TRUE.")
+  
+  if (!valid.logical(return.tau)) {
+    return(msg.logical(var2char(return.tau)))
   }
 
   return(TRUE)

@@ -233,9 +233,9 @@ gamBiCopPred <- function(object, newdata = NULL,
 valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
   
   if (!valid.gamBiCop(object)) {
-    return("gamBiCopPred can only be used to predict from gamBiCop objects")
+    return("'gamBiCopPred' can only be used to predict from 'gamBiCop' objects")
   }
-  if (!is.character(target) || !is.null(dim(target))) {
+  if (!is.character(target) || !is.vector(target)) {
     targerr <- TRUE
   } else if (length(target) == 1 && 
                !is.element(target, c("calib", "par", "tau"))) {
@@ -249,19 +249,19 @@ valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
     targerr <- FALSE
   }
   if (targerr) {
-    return(paste("Target should be either 'calib', 'par', 'tau', or a",
+    return(paste("'target' should be either 'calib', 'par', 'tau', or a",
                  "vector containing two or three of those."))
   }
   
-  if (target == "calib" && type != "link" 
-      && type != "terms" && type != "lpmatrix") {
-    return(paste("When target is 'calib', then type should be either", 
+  if (target == "calib" && (length(type) != 1 || 
+                              !is.element(type, c("link","terms","lpmatrix")))){
+    return(paste("When 'target' is 'calib', then 'type' should be either", 
                  "'link', 'terms' or 'lpmatrix'."))
   }
   
-  if (is.na(alpha) || !is.numeric(alpha) || alpha < 0 || alpha > 1) {
-    return("Alpha should be a real number in [0,1].")
-  }
+  if (!valid.unif(alpha)) {
+    return(msg.unif(var2char(alpha)))
+  } 
   
   return(TRUE)
 }

@@ -223,29 +223,9 @@ valid.gamVineSeqEst <- function(data, GVC,
   if (length(o) != d)
     return("The dimension of the gamVine object is incorrect.")
   
-  options(warn = -1)
-  if (is.null(n.iters) || is.na(as.integer(n.iters)) || 
-        !is.numeric(n.iters) || (as.integer(n.iters) < 1) || 
-        (as.integer(n.iters) !=  as.numeric(n.iters))) {
-    return("N.iters should be a positive integer.")
-  } 
-  
-  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || 
-        !is.numeric(tol.rel) ||
-        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-    return("Tol.rel should be a real number in [0,1].")
-  } 
-  
-  if (is.null(method) || !is.element(method, c("FS", "NR"))) {
-    return("Method should be a string, either NR (Newton-Raphson) 
-         or FS (Fisher-scoring, faster but unstable).")
-  }
-  
-  if (is.null(verbose) ||  is.na(verbose) || 
-        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
-    return("Verbose should takes 0/1 or FALSE/TRUE.")
-  } 
-  options(warn = 0)
+  tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
+  if (tmp != TRUE)
+    return(tmp)
   
   return(TRUE)
 }

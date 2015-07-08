@@ -722,33 +722,27 @@ valid.gamVineStructureSelect <- function(data, type,
     return("Vine model not implemented.")
   }
   
-  if (is.null(familyset)) {
-    return(paste("The familyset should be either NA or a numeric vector",
-                 "with elements in (1,2,3,4,13,14,23,24,33,34)"))
+  if (!valid.familyset) {
+    return(return(msg.familyset(var2char(familyset))))
   }
 
   if (is.na(familyset)) {
     familyset <- 1:4
   }
   
-  if (is.null(rotations) || length(rotations) != 1 || is.na(rotations) ||  
-        !(is.logical(rotations) || (rotations == 0) || (rotations == 1))) {
-    return(paste("rotations should takes 0/1 or FALSE/TRUE to specify whether",
-                 "rotations of the familyset should also be used."))
+  if (!valid.logical(rotations)) {
+    return(msg.logical(var2char(rotations)))
   }
   if (rotations) {
     familyset <- withRotations(familyset)
   }
   
-  if (!is.numeric(familyset)) {
-    return(paste("The familyset should be either NA or a numeric vector",
-                 "with elements in (1,2,3,4,13,14,23,24,33,34)"))
-  }  
-  if (!any(c(1,2,23,24,33,34) %in% familyset) ||
-        !any(c(1,2,3,4,13,14) %in% familyset)) {
-    return(paste("The familyset needs at least ",
-                 "one bivariate copula family for positive and", 
-                 "one bivariate copula family for negative dependence."))
+  if (!valid.familysetpos(familyset, 0.5)) {
+    return(msg.familysetpos(var2char(familyset)))
+  }
+  
+  if (!valid.familysetneg(familyset, -0.5)) {
+    return(msg.familysetneg(var2char(familyset)))
   }    
   
   if(length(familycrit) != 1 || (familycrit != "AIC" && familycrit != "BIC")) {
@@ -759,51 +753,22 @@ valid.gamVineStructureSelect <- function(data, type,
     return("Selection criterion for the pair selection not implemented.")
   } 
     
-  if(length(level) != 1 || !is.numeric(level)  || (level < 0 & level > 1) ) {
-    return("Significance level has to be between 0 and 1.")
+  if(!valid.unif(level)) {
+    return(msg.unif(var2char(level)))
   }   
   
-  if (is.null(trunclevel) || length(trunclevel) != 1 || 
-        (!is.na(trunclevel) && (!is.numeric(trunclevel) || 
-                                  (as.integer(trunclevel) < 1) || 
-                                  (as.integer(trunclevel) !=  
-                                     as.numeric(trunclevel))))) {
-    return("trunclevel should be a positive integer or NA.")
+  if (!is.na(trunclevel) && !valid.posint(trunclevel)) {
+    return("'trunclevel' should be a positive integer or NA.")
   }
     
-  if (is.null(n.iters) || length(n.iters) != 1 || is.na(as.integer(n.iters)) || 
-        !is.numeric(n.iters) || (as.integer(n.iters) < 1) || 
-        (as.integer(n.iters) !=  as.numeric(n.iters))) {
-    return("N.iters should be a positive integer.")
-  } 
-  
-  if (is.null(tau) || length(tau) != 1 || is.na(tau) ||  
-        !(is.logical(tau) || (tau == 0) || (tau == 1))) {
-    return("Tau should takes 0/1 or FALSE/TRUE to specify a model for 
-           the copula parameter/Kendall's tau.")
+  tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
+  if (tmp != TRUE) {
+    return(tmp)
   }
-  
-  if (is.null(tol.rel) ||  length(tol.rel) != 1 || is.na(as.numeric(tol.rel)) || 
-        !is.numeric(tol.rel) ||
-        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-    return("Tol.rel should be a real number in [0,1].")
-  } 
-  
-  if (is.null(method) || length(method) != 1 ||  
-        !is.element(method, c("FS", "NR"))) {
-    return("Method should be a string, either NR (Newton-Raphson) 
-         or FS (Fisher-scoring, faster but unstable).")
+      
+  if (!valid.logical(parallel)) {
+    return(msg.logical(var2char(parallel)))
   }
-  
-  if (is.null(parallel) ||  length(parallel) != 1 || is.na(parallel) || 
-        !(is.logical(parallel) || (parallel == 0) || (parallel == 1))) {
-    return("parallel should takes 0/1 or FALSE/TRUE.")
-  }
-  
-  if (is.null(verbose) ||  length(verbose) != 1 || is.na(verbose) || 
-        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
-    return("Verbose should takes 0/1 or FALSE/TRUE.")
-  } 
   
   options(warn = 0)
   

@@ -15,7 +15,8 @@ Imports:
     methods,
     copula,
     igraph,
-    parallel
+    foreach,
+    doParallel
 Description: Implementation of various inference and simulation tools to
     apply generalized additive models to bivariate dependence structures and
     non-simplified vine copulas.

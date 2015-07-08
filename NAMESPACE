@@ -10,7 +10,10 @@ importFrom(gsl, expint_E1)
 importFrom(copula, mvdc)
 importFrom(copula, normalCopula)
 importFrom(copula, rMvdc)
-importFrom(parallel, mclapply)
+import(foreach)
+import(doParallel)
+#importFrom(parallel, detectCores)
+#importFrom(parallel, mclapply)
 
 ## Classes
 export(gamBiCop)

@@ -13,9 +13,15 @@
 #' @param formula A gam formula (see \code{\link{gam}}, 
 #' \code{\link{formula.gam}} and \code{\link{gam.models}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
-#' @param family A copula family: \code{1} Gaussian, \code{2} Student t, 
-#' \code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel,  \code{23} Rotated (90 degrees) Clayton, 
+#' @param family A copula family: 
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{3} Clayton, 
+#' \code{4} Gumbel,
+#' \code{5} Frank, 
+#' \code{13} Survival Clayton, 
+#' \code{14} Survival Gumbel,  
+#' \code{23} Rotated (90 degrees) Clayton, 
 #' \code{24} Rotated (90 degrees) Gumbel, 
 #' \code{33} Rotated (270 degrees) Clayton and 
 #' \code{34} Rotated (270 degrees) Gumbel.
@@ -168,6 +174,12 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   if (tmp != TRUE)
     stop(tmp)
   
+  if (family == 5 && method == "FS") {
+    # We should put a warning here, but this is quite annoying...
+    #warning("'method' switched to 'NR' for the Frank copula.")
+    method <- "NR"
+  }
+  
   if (is.list(data)){
     if(!is.null(data$xt)){
       xt <- data$xt
@@ -253,7 +265,8 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     temp <- derivatives.par(u, new.pars, family, method, tau)
     temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
     temp <- cbind(temp, data)
-    mm <- gam(par.formula, data = temp, weights = w, ...)
+    mm <- gam(par.formula, data = temp, weights = w, 
+              control = gam.control(keepData = TRUE), ...)
   }, error = function(err) {
     cat(paste("A problem occured at the first iteration of the ", 
                 method, "algorithm. The ERROR comming from", 
@@ -426,45 +439,46 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     return("Number of observations has to be at least 2.")
   if (any(u > 1) || any(u < 0)) 
     return("(u1, u2) have to be in [0,1]x[0,1].")
-  
+
   options(warn = -1)
-  if (is.null(n.iters) || is.na(as.integer(n.iters)) || !is.numeric(n.iters) ||
-        (as.integer(n.iters) < 1) || 
-        (as.integer(n.iters) !=  as.numeric(n.iters))) {
-    return("N.iters should be a positive integer.")
-  } 
-  
-  if (is.null(tau) ||  is.na(tau) ||  
-        !(is.logical(tau) || (tau == 0) || (tau == 1))) {
-    return("Tau should takes 0/1 or FALSE/TRUE to specify a model for 
-           the copula parameter/Kendall's tau.")
+  if (!valid.posint(n.iters)) {
+    return(msg.posint(var2char(n.iters)))
   }
   
-  if (is.null(tol.rel) ||  is.na(as.numeric(tol.rel)) || !is.numeric(tol.rel) ||
-        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-    return("Tol.rel should be a real number in [0,1].")
+  if (!valid.logical(tau)) {
+    return(msg.logical(var2char(tau)))
+  }
+  
+  if (!valid.unif(tol.rel)) {
+    return(msg.unif(var2char(tol.rel)))
   } 
   
-  if (is.null(method) || !is.element(method, c("FS", "NR"))) {
+  if (is.null(method) || length(method) != 1 || 
+        !is.element(method, c("FS", "NR"))) {
     return("Method should be a string, either NR (Newton-Raphson) 
          or FS (Fisher-scoring, faster but unstable).")
   }
   
-  if (is.null(verbose) ||  is.na(verbose) || 
-        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
-    return("Verbose should takes 0/1 or FALSE/TRUE.")
+  if (!valid.logical(verbose)) {
+    return(msg.logical(var2char(verbose)))
   } 
   
   temp <- fasttau(u1, u2)
-  rotated <- family
   
-  if (!is.element(family, c(1, 2, 3, 4, 13, 14, 23, 24, 33, 34))) {
-    return("Copula family not yet implemented!")
-  } else if (is.element(family, c(3, 4, 13, 14)) && (temp < 0)) {
-    return("This copula family cannot be used for negatively dependent data.")
-  } else if (is.element(family, c(23, 24, 33, 34)) && (temp > 0)) {
-    return("This copula family cannot be used for positively dependent data.")
-  }
+  if (!valid.family(family)) {
+    return(msg.family(var2char(family)))
+  }  
+  
+  if (temp > 0) {
+    if (!valid.familypos(family, temp)) {
+      return(msg.familypos(var2char(family)))
+    }
+  } else {
+    if (!valid.familyneg(family, temp)) {
+      return(msg.familyneg(var2char(family)))
+    }
+  } 
+  
   options(warn = 0)
   
   return(TRUE)

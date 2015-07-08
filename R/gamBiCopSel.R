@@ -15,11 +15,18 @@
 #' at least one bivariate copula family that allows for positive and one that 
 #' allows for negative dependence. If \code{familyset = NA} (default), selection
 #' among all possible families is performed.   Coding of bivariate copula 
-#' families: \code{1} Gaussian, \code{2} Student t, \code{3} Clayton, 
-#' \code{4}Gumbel, \code{13} Survival Clayton, \code{14} Survival Gumbel, 
-#' \code{23} Rotated (90 degrees) Clayton, \code{24} Rotated (90 degrees) Gumbel
-#' , \code{33} Rotated (270 degrees) Clayton and \code{34} Rotated (270 degrees)
-#' Gumbel.  
+#' families:
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{3} Clayton, 
+#' \code{4} Gumbel,
+#' \code{5} Frank, 
+#' \code{13} Survival Clayton, 
+#' \code{14} Survival Gumbel,  
+#' \code{23} Rotated (90 degrees) Clayton, 
+#' \code{24} Rotated (90 degrees) Gumbel, 
+#' \code{33} Rotated (270 degrees) Clayton and 
+#' \code{34} Rotated (270 degrees) Gumbel.
 #' @param selectioncrit Character indicating the criterion for bivariate copula 
 #' selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or 
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
@@ -136,23 +143,28 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
   }
   familyset <- as.integer(todo[which(todo %in% familyset)])
 
+
   parallel <- as.logical(parallel)
   if (parallel == FALSE) {
-    res <- lapply(familyset,function(x) 
-      gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...))
-  } else {
-    res <- parallel::mclapply(familyset,function(x) 
+    res <- foreach(x=familyset) %do% 
       tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
-               error = function(e) e), 
-      mc.cores = parallel::detectCores() - 1)
+               error = function(e) e)
+  } else {
+    cl <- makeCluster(parallel::detectCores() - 1)
+    registerDoParallel(cl, cores = detectCores() - 1)
+    res <- foreach(x=familyset) %dopar% 
+      tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
+               error = function(e) e)
+    stopCluster(cl)
   }
   res <- res[sapply(res,length) == 6] 
-  if (length(res) == 0 || sum(sapply(res, function(x) x$conv) == 0) == 0) {
+  if (length(res) == 0 ) { #|| sum(sapply(res, function(x) x$conv) == 0) == 0) {
     return(paste("No convergence of the estimation for any copula family.",
                  "Try modifying the parameters (FS/NR, tol.rel, n.iters)..."))
-  } else {
-    res <- res[sapply(res, function(x) x$conv) == 0]
   }
+#   } else {
+#     res <- res[sapply(res, function(x) x$conv) == 0]
+#   }
 
   if (selectioncrit == "AIC") {
     return(res[[which.min(sapply(res, function(x) AIC(x$res)))]])
@@ -171,7 +183,7 @@ gamBiCopVarSel <- function(data, family,
   }
   
   n <- dim(data)[1]
-  
+
   ## Create a list with formulas of smooth terms corresponding to the covariates
   get.formula <- function(x,k){
     paste("s(",x,", k=",k,", bs='cr')",sep = "")
@@ -185,7 +197,7 @@ gamBiCopVarSel <- function(data, family,
     cat("Remove unsignificant covariates.......\n")
   }
   sel <- FALSE
-  while(!all(sel)){
+  while(!all(sel) && length(basis) > 0){
     formula.tmp <- as.formula(paste("~",paste(formula.expr,collapse = " + ")))
     if (verbose == TRUE) {
       cat("Model formula:\n")
@@ -197,6 +209,12 @@ gamBiCopVarSel <- function(data, family,
     nn <- nn[sel]
     basis <- rep(5,length(nn))
     formula.expr <- mapply(get.formula,nn,basis)
+  }
+  
+  if (length(basis) == 0) {
+    tmp <- gamBiCopEst(data, ~1, family, tau, 
+                       method, tol.rel, n.iters)
+    return(tmp)
   }
 
   ## Create a separate list by setting as linear the predictors with EDF < 1.5
@@ -228,7 +246,7 @@ gamBiCopVarSel <- function(data, family,
     cat(paste("For the other predictors,", 
         "increase the basis size appropriately.......\n"))
   }
-  while(any(sel) && all(basis < n/30)) {
+  while (any(sel) && all(basis < n/30)) {
     basis[sel] <- 2*basis[sel]
     #browser()
     formula.expr[sel] <- mapply(get.formula,nn[sel],basis[sel])
@@ -253,12 +271,10 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
   if (tmp != TRUE) {
     return(tmp)
   }
-
-  if (is.null(familyset) || (any(is.na(familyset)) && length(familyset) != 1) || 
-        any(sapply(familyset, function(x) 
-          !(x %in% c(NA,1,2,3,4,13,14,23,24,33,34))))) {
-    return("Copula family not implemented.")
-  } 
+  
+  if (!valid.familyset) {
+    return(return(msg.familyset(var2char(familyset))))
+  }
   
   if (is.list(data)){
     if(!is.null(data$xt)){
@@ -274,15 +290,15 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
   u2 <- data$u2
   u <- cbind(u1,u2)
   
-  k.tau <- fasttau(u1,u2)
+  tau <- fasttau(u1,u2) 
+  if (!valid.familysetpos(familyset, tau)) {
+    return(paste("Because Kendall's tau is positive", 
+                 msg.familysetpos(var2char(familyset))))
+  }
   
-  if ( k.tau < 0 && !any(c(1,2,23,24,33,34) %in% familyset) ) {
-    return(paste("Because Kendall's tau is negative, familyset needs at least ",
-               "one bivariate copula family for negative dependence."))
-  } 
-  if ( k.tau > 0 && !any(c(1,2,3,4,13,14) %in% familyset) ) { 
-    return(paste("Because Kendall's tau is positive, familyset needs at least ",
-               "one bivariate copula family for positive dependence."))
+  if (!valid.familysetneg(familyset, tau)) {
+    return(paste("Because Kendall's tau is negative,",
+                 msg.familysetneg(var2char(familyset))))
   }
   
   if(is.null(selectioncrit) || length(selectioncrit) != 1 || 
@@ -290,39 +306,9 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
     return("Selection criterion not implemented.")
   } 
   
-  if (is.null(n.iters) || length(n.iters) != 1 || is.na(as.integer(n.iters)) || 
-        !is.numeric(n.iters) || (as.integer(n.iters) < 1) || 
-        (as.integer(n.iters) !=  as.numeric(n.iters))) {
-    return("N.iters should be a positive integer.")
-  } 
-  
-  if (is.null(tau) || length(tau) != 1 || is.na(tau) ||  
-        !(is.logical(tau) || (tau == 0) || (tau == 1))) {
-    return("Tau should takes 0/1 or FALSE/TRUE to specify a model for 
-           the copula parameter/Kendall's tau.")
+  if (!valid.logical(parallel)) {
+    return(msg.logical(var2char(parallel)))
   }
-  
-  if (is.null(tol.rel) ||  length(tol.rel) != 1 || is.na(as.numeric(tol.rel)) || 
-        !is.numeric(tol.rel) ||
-        (as.numeric(tol.rel) < 0) || (as.numeric(tol.rel) > 1)) {
-    return("Tol.rel should be a real number in [0,1].")
-  } 
-  
-  if (is.null(method) || length(method) != 1 ||  
-        !is.element(method, c("FS", "NR"))) {
-    return("Method should be a string, either NR (Newton-Raphson) 
-         or FS (Fisher-scoring, faster but unstable).")
-  }
-  
-  if (is.null(parallel) ||  length(parallel) != 1 || is.na(parallel) || 
-        !(is.logical(parallel) || (parallel == 0) || (parallel == 1))) {
-    return("parallel should takes 0/1 or FALSE/TRUE.")
-  }
-  
-  if (is.null(verbose) ||  length(verbose) != 1 || is.na(verbose) || 
-        !(is.logical(verbose) || (verbose == 0) || (verbose == 1))) {
-    return("Verbose should takes 0/1 or FALSE/TRUE.")
-  } 
   options(warn = 0)
   
   
