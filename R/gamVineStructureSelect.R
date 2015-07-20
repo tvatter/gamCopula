@@ -206,7 +206,7 @@ initFirstGraph <- function(data) {
   E(g)$weight <- 1-abs(E(g)$weight)
   E(g)$name <- paste(get.edgelist(g)[,1], get.edgelist(g)[,2], sep=",")  
   for(i in 1:ecount(g)){
-    E(g)$conditionedSet[[i]] <- get.edges(g,i)
+    E(g)$conditionedSet[[i]] <- ends(g,i,FALSE)
   }
   
   return(g)
@@ -219,7 +219,7 @@ findMST <- function(g, mode = "RVine") {
   } else {
     M <- abs(get.adjacency(g, attr="weight", sparse=0))
     root <- which.min(rowSums(M))    
-    Ecken <- get.edges(g,1:ecount(g))
+    Ecken <- ends(g,1:ecount(g),FALSE)
     pos <- Ecken[,2] == root | Ecken[,1] == root
     return(delete.edges(g, E(g)[!pos]))
   }
@@ -236,8 +236,8 @@ fitFirstTree <- function(mst, data,
   for(i in 1:d) {
     parameterForACopula[[i]] <- list()
     
-    a <- get.edges(mst,i)
-  
+    a <- ends(mst,i,FALSE)
+
     parameterForACopula[[i]]$zr1 <- data[,a[1]]
     parameterForACopula[[i]]$zr2 <- data[,a[2]]
     
@@ -286,8 +286,8 @@ fitTree <- function(mst, oldVineGraph, data,
   parameterForACopula <- list()
   
   for(i in 1:d) {
-    con <- get.edge(mst,i)
-    tmp <- get.edges(oldVineGraph,con)
+    con <- ends(mst,i,FALSE)
+    tmp <- ends(oldVineGraph,con,FALSE)
     
     if ((tmp[1,1] == tmp[2,1])|| (tmp[1,2] == tmp[2,1])) {
       same <- tmp[2,1]
@@ -373,8 +373,8 @@ buildNextGraph <- function(graph, data, treecrit, SAtestOptions) {
   
   for(i in 1:ecount(g)){
     
-    con <- get.edge(g, i)
-    tmp <- get.edges(graph, con)
+    con <- ends(g, i, FALSE)
+    tmp <- ends(graph, con, FALSE)
     
     ok <- FALSE    
     if ((tmp[1,1] == tmp[2,1])|| (tmp[1,2] == tmp[2,1])) {
