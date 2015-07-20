@@ -711,8 +711,12 @@ valid.gamVineStructureSelect <- function(data, type,
   
     
   options(warn = -1)
-  if (n < 2) 
+  if (d < 2) {
+    return("Number of dimensions has to be at least 2.")
+  }
+  if (n < 2) {
     return("Number of observations has to be at least 2.")
+  }
   if (any(data > 1) || any(data < 0)) {
     return("Data has be in the interval [0,1].")
   }
@@ -721,8 +725,8 @@ valid.gamVineStructureSelect <- function(data, type,
   if (is.null(type) || length(type) != 1 || !is.element(type,c(0,1))) {
     return("Vine model not implemented.")
   }
-  
-  if (!valid.familyset) {
+
+  if (!valid.familyset(familyset)) {
     return(return(msg.familyset(var2char(familyset))))
   }
 
@@ -760,7 +764,12 @@ valid.gamVineStructureSelect <- function(data, type,
   if (!is.na(trunclevel) && !valid.posint(trunclevel)) {
     return("'trunclevel' should be a positive integer or NA.")
   }
-    
+
+  if (is.matrix(data)) {
+    data <- as.data.frame(data)
+  }
+  
+  names(data)[1:2] <- c("u1","u2")
   tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
     return(tmp)

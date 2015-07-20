@@ -211,10 +211,15 @@ valid.gamVineSeqEst <- function(data, GVC,
   n <- dim(data)[1]
   d <- dim(data)[2]
   
-  if (n < 2) 
+  if (d < 2) {
+    return("Number of dimensions has to be at least 2.")
+  }
+  if (n < 2) {
     return("Number of observations has to be at least 2.")
-  if (any(data > 1) || any(data < 0)) 
+  }
+  if (any(data > 1) || any(data < 0)) {
     return("Data has be in the interval [0,1].")
+  }
   
   if (!valid.gamVine(GVC))
     return("gamBiVineSeqEst can only be used to estimate from gamVine objects")
@@ -223,6 +228,11 @@ valid.gamVineSeqEst <- function(data, GVC,
   if (length(o) != d)
     return("The dimension of the gamVine object is incorrect.")
   
+  if (is.matrix(data)) {
+    data <- as.data.frame(data)
+  }
+  
+  names(data)[1:2] <- c("u1","u2")
   tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
   if (tmp != TRUE)
     return(tmp)

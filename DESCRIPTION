@@ -15,6 +15,7 @@ Imports:
     methods,
     copula,
     igraph,
+    parallel,
     foreach,
     doParallel
 Description: Implementation of various inference and simulation tools to

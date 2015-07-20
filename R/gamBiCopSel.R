@@ -272,10 +272,10 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
     return(tmp)
   }
   
-  if (!valid.familyset) {
+  if (!valid.familyset(familyset)) {
     return(return(msg.familyset(var2char(familyset))))
   }
-  
+
   if (is.list(data)){
     if(!is.null(data$xt)){
       xt <- data$xt
@@ -291,15 +291,17 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
   u <- cbind(u1,u2)
   
   tau <- fasttau(u1,u2) 
-  if (!valid.familysetpos(familyset, tau)) {
-    return(paste("Because Kendall's tau is positive", 
-                 msg.familysetpos(var2char(familyset))))
-  }
-  
-  if (!valid.familysetneg(familyset, tau)) {
-    return(paste("Because Kendall's tau is negative,",
-                 msg.familysetneg(var2char(familyset))))
-  }
+  if (tau > 0) {
+    if (!valid.familysetpos(familyset, tau)) {
+      return(paste("Because Kendall's tau is positive", 
+                   msg.familysetpos(var2char(familyset))))
+    }
+  } else {
+    if (!valid.familysetneg(familyset, tau)) {
+      return(paste("Because Kendall's tau is negative,",
+                   msg.familysetneg(var2char(familyset))))
+    }
+  } 
   
   if(is.null(selectioncrit) || length(selectioncrit) != 1 || 
        (selectioncrit != "AIC" && selectioncrit != "BIC")) {

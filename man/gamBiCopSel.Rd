@@ -19,11 +19,18 @@ Vector of bivariate copula families to select from. The vector has to include
 at least one bivariate copula family that allows for positive and one that
 allows for negative dependence. If \code{familyset = NA} (default), selection
 among all possible families is performed.   Coding of bivariate copula
-families: \code{1} Gaussian, \code{2} Student t, \code{3} Clayton,
-\code{4}Gumbel, \code{13} Survival Clayton, \code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton, \code{24} Rotated (90 degrees) Gumbel
-, \code{33} Rotated (270 degrees) Clayton and \code{34} Rotated (270 degrees)
-Gumbel.}
+families:
+\code{1} Gaussian,
+\code{2} Student t,
+\code{3} Clayton,
+\code{4} Gumbel,
+\code{5} Frank,
+\code{13} Survival Clayton,
+\code{14} Survival Gumbel,
+\code{23} Rotated (90 degrees) Clayton,
+\code{24} Rotated (90 degrees) Gumbel,
+\code{33} Rotated (270 degrees) Clayton and
+\code{34} Rotated (270 degrees) Gumbel.}
 
 \item{selectioncrit}{Character indicating the criterion for bivariate copula
 selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or
