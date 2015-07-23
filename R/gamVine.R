@@ -74,19 +74,23 @@ valid.gamVine <- function(object) {
   # Trees 2 to (d-1)
   for (j in 2:(d - 1)) {
     for (i in 1:(d - j)) {
+      #if (i == 2) {
+      #  browser()
+      #}
       mm <- model[[count]]
       if (valid.gamBiCop(mm) == TRUE) {
-        cond <- sort(all.vars(mm@model$pred.formula))
+        cond <- sort(unique(all.vars(mm@model$pred.formula)))
         cond2 <- names[sort(Matrix[(d - j + 2):d, i])]
-        if (!all(cond == cond2)) {
+        if (!all(is.element(cond,cond2))) {
           msg <- paste("The formula of element", count, "of model (tree",j, ")",
                        " does not not contain the correct conditioning",
                        " variables.")
           return(msg)
         }
       } else {
-        if (!is.list(mm) || any(names(mm) != c("family", "par", "par2")) || 
-          !is.numeric(unlist(mm))) {
+        if (!is.list(mm) || 
+              any(!is.element(names(mm),c("family", "par", "par2"))) || 
+              !is.numeric(unlist(mm))) {
           msg <- paste("Element", count, "of model, (tree", j, ") should be a",
                        " valid gamBiCop object or a list containing three",
                        " items (family, par, par2).")
@@ -226,7 +230,8 @@ summary.gamVine <- function(object) {
 }
 
 plot.gamVine <- function(x, ...) {
-  sel <- sapply(x@model,valid.gamBiCop) == "TRUE"
+  sel <- sapply(x@model,function(y) valid.gamBiCop(y) == "TRUE" && 
+                  length(summary(y@model)$s.pv) > 0)
   if (any(sel)) {
     d <- (1+sqrt(1+8*length(x@model)))/2
     model.count <- get.modelCount(d)

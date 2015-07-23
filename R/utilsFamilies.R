@@ -143,7 +143,7 @@ derivGumbel <- function(s, u, v) {
 
 # Check parameter(s) for a given copula family
 family.check <- function(family, par, par2 = 0) {
-  if (!(family %in% get.familyset())) {
+  if (!(family %in% c(0,get.familyset()))) {
     return("Copula family not yet implemented.")
   } else if ((family == 1 || family == 2) && abs(par) >= 1) {
     return(paste("The parameter of the Gaussian and",

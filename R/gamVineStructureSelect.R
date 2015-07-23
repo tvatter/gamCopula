@@ -287,6 +287,9 @@ fitTree <- function(mst, oldVineGraph, data,
   
   for(i in 1:d) {
     con <- ends(mst,i,FALSE)
+    if (length(con) > 2) {
+      browser()
+    }
     tmp <- ends(oldVineGraph,con,FALSE)
     
     if ((tmp[1,1] == tmp[2,1])|| (tmp[1,2] == tmp[2,1])) {
@@ -374,6 +377,9 @@ buildNextGraph <- function(graph, data, treecrit, SAtestOptions) {
   for(i in 1:ecount(g)){
     
     con <- ends(g, i, FALSE)
+    if (length(con) > 2) {
+      browser()
+    }
     tmp <- ends(graph, con, FALSE)
     
     ok <- FALSE    
@@ -571,27 +577,31 @@ fitAGAMCopula <- function(data, familyset, familycrit,
     par2 <- 0
   } else {
     if (!any(is.na(out$pValue)) && out$pValue[2] < level) {
-      out$model <- BiCopSelect(u1, u2, familyset, familycrit,
-                               indeptest = FALSE, rotations = FALSE)
-      par <- rep(out$model$par, length(u1))
-      fam <- out$model$family
-      par2 <- out$model$par2
+      tmp <- BiCopSelect(u1, u2, familyset, familycrit,
+                         indeptest = FALSE, rotations = FALSE)
+      par <- rep(tmp$par, length(u1))
+      out$model$par <- tmp$par
+      out$model$family <- fam <- tmp$family
+      out$model$par2 <- par2 <- tmp$par2
     } else {
       tmp <- gamBiCopSel(data, familyset, familycrit, tau,
                                method, tol.rel, n.iters, parallel)
-
       if (!is.character(tmp)) {
+        nvar <- unique(all.vars(tmp$res@model$pred.formula))
+      }
+
+      if (!is.character(tmp) && length(nvar) > 0) {
         out$model <- tmp$res
         par <- gamBiCopPred(out$model, target = "par")$par
         fam <- out$model@family
         par2 <- out$model@par2
       } else {
-        #browser()
-        out$model <- BiCopSelect(u1, u2, familyset, familycrit,
+        tmp <- BiCopSelect(u1, u2, familyset, familycrit,
                                  indeptest = FALSE, rotations = FALSE)
-        par <- rep(out$model$par, length(u1))
-        fam <- out$model$family
-        par2 <- out$model$par2
+        par <- rep(tmp$par, length(u1))
+        out$model$par <- tmp$par
+        out$model$family <- fam <- tmp$family
+        out$model$par2 <- par2 <- tmp$par2
       }
     }
   }
