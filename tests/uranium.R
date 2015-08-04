@@ -54,3 +54,5 @@ lines(x, tmp$CI[,2], lty = 2)
 U <- pobs(uranium)
 model <- gamVineStructureSelect(U, trunclevel = 3, verbose = TRUE)
 plot(model)
+
+## test comment
