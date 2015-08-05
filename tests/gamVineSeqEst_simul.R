@@ -7,14 +7,32 @@ set.seed(1)
 # Sample size
 n <- 1e3
 # Copula family
-familyset <- c(1:4,13,14,23,24,33,34)
+familyset <- c(1:4)
 # Define a 5-dimensional R-vine tree structure matrix
 d <- 4
 Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 Matrix <- matrix(Matrix,d,d)
 nnames <- paste("X", 1:d, sep = "")
 
-# define gam-vine model list
+## A function factory
+eta0 <- 1
+calib.surf <- list(
+  calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
+    Tm <- (Tf - Ti)/2
+    a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
+    return(a + b * (t - Tm)^2)},
+  calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
+    a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
+                                 cos(2 * f * pi * (Tf - Ti))
+                               - cos(2 * f * pi * Ti)))
+    return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
+  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
+    Tm <- (Tf - Ti)/2
+    a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
+    return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
+
+##  Create the model
+# Define gam-vine model list
 count <- 1
 model <- vector(mode = "list", length = d*(d-1)/2)
 sel <- seq(d,d^2-d, by = d)
@@ -35,25 +53,8 @@ for (i in 1:(d-1)) {
   count <- count + 1
 }
 
-# Create a dummy dataset
+# A dummy dataset
 data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
-
-## Create a function factory
-eta0 <- 1
-calib.surf <- list(
-  calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
-    Tm <- (Tf - Ti)/2
-    a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
-    return(a + b * (t - Tm)^2)},
-  calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
-    a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
-                                 cos(2 * f * pi * (Tf - Ti))
-                               - cos(2 * f * pi * Ti)))
-    return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
-  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
-    Tm <- (Tf - Ti)/2
-    a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
-    return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 
 # Trees 2 to (d-1)
 for(j in 2:(d-1)){
@@ -109,16 +110,20 @@ for(j in 2:(d-1)){
   } 
 }
 
-# Create gamVineCopula object
+# Create the gamVineCopula object
 GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 print(GVC)
 
-# simulate the gamVineMatrix
+## Simulate and fit the model
 sim <- gamVineSim(n, GVC)
 fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+fitGVC2 <- gamVineCopSelect(sim, Matrix, familyset = familyset, verbose = TRUE)
 
-par(mfrow=c(2,4))
+par(mfrow=c(3,4))
 plot(GVC, ylim = c(-2.5,2.5))
 
 plot(fitGVC, ylim = c(-2.5,2.5))
+
+plot(fitGVC2, ylim = c(-2.5,2.5))
+
 

@@ -17,8 +17,18 @@
 #' @name gamVine
 #' @rdname gamVine
 #' @export
-gamVine <- function(Matrix, model, names = NA) {
-  new("gamVine", Matrix = Matrix, model = model, names = as.character(names))
+gamVine <- function(Matrix, model, names = NA, covariates = NA) {
+  tmp <- tryCatch(as.character(names), error = function(e) e)
+  msg <- "should be or be coercisable to a character vector."
+  if (any(class(tmp) != "character")) {
+    stop(paste("names", msg))
+  }
+  tmp <- tryCatch(as.character(covariates), error = function(e) e)
+  if (any(class(tmp) != "character")) {
+    stop(paste("covariates", msg))
+  }
+  new("gamVine", Matrix = Matrix, model = model, 
+      names = as.character(names), covariates = as.character(covariates))
 } 
 
 valid.gamVine <- function(object) {
@@ -48,31 +58,14 @@ valid.gamVine <- function(object) {
   }
   
   model <- object@model
+  covariates <- object@covariates
   if (length(model) != d * (d - 1)/2) {
     return("Length of the list 'model' is not correct.")
   }
   count <- 1
-  # First tree
-  for (i in 1:(d - 1)) {
-    mm <- model[[count]]
-    
-    if (!is.list(mm) || any(names(mm) != c("family", "par", "par2")) || 
-          !is.numeric(unlist(mm))) {
-      msg <- paste("Element", count, "of model (first tree) should be",
-                   "a list with three numeric items (family, par and par2).")
-      return(msg)
-    }
-    
-    chk <- family.check(mm$family, mm$par, mm$par2)
-    if (chk != TRUE) {
-      msg <- paste("In element", count, "of model (first tree):", chk)
-      return(msg)
-    }
-    count <- count + 1
-  }
   
-  # Trees 2 to (d-1)
-  for (j in 2:(d - 1)) {
+  # Trees 1 to (d-1)
+  for (j in 1:(d - 1)) {
     for (i in 1:(d - j)) {
       #if (i == 2) {
       #  browser()
@@ -80,27 +73,34 @@ valid.gamVine <- function(object) {
       mm <- model[[count]]
       if (valid.gamBiCop(mm) == TRUE) {
         cond <- sort(unique(all.vars(mm@model$pred.formula)))
-        cond2 <- names[sort(Matrix[(d - j + 2):d, i])]
+        cond2 <- covariates
+        if (j != 1) {
+          cond2 <- c(cond2, names[sort(Matrix[(d - j + 2):d, i])])
+        }
+        
         if (!all(is.element(cond,cond2))) {
           msg <- paste("The formula of element", count, "of model (tree",j, ")",
                        " does not not contain the correct conditioning",
                        " variables.")
           return(msg)
         }
-      } else {
-        if (!is.list(mm) || 
-              any(!is.element(names(mm),c("family", "par", "par2"))) || 
+      } else if (is.list(mm)) {
+        if (any(!is.element(names(mm),c("family", "par", "par2"))) || 
               !is.numeric(unlist(mm))) {
           msg <- paste("Element", count, "of model, (tree", j, ") should be a",
                        " valid gamBiCop object or a list containing three",
                        " items (family, par, par2).")
           return(msg)
-        }
-        
+        }       
         chk <- family.check(mm$family, mm$par, mm$par2)
         if (chk != TRUE) {
-          return(paste("In element", count, "of model, (tree", j,"):", chk))
+          return(paste("In element", count, "of model (tree", j,"):", chk))
         }
+      } else {
+        msg <- paste("Element", count, "of model (tree", j, ") should be a",
+                     " valid gamBiCop object or a list containing three",
+                     " items (family, par, par2).")
+        return(msg)
       }
       count <- count + 1
     }

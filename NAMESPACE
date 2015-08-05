@@ -37,6 +37,7 @@ export(gamBiCopSel)
 ## gamVine related functions
 export(gamVineSim)
 export(gamVineSeqEst)
+export(gamVineCopSelect)
 export(gamVineStructureSelect)
 export(gamVineNormalize)
 export(gamVineFamily)

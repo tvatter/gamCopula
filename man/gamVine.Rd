@@ -4,7 +4,7 @@
 \alias{gamVine}
 \title{Construction of a gamVine Class Object}
 \usage{
-gamVine(Matrix, model, names = NA)
+gamVine(Matrix, model, names = NA, covariates = NA)
 }
 \arguments{
 \item{Matrix}{lower triangular d x d matrix that defines the tree structure.}

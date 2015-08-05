@@ -43,6 +43,7 @@ setClass("gamBiCop", slots = c(family = "integer", model = "gam",
 #' (family, par and par2) and/or 
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} objects.
 #' @slot names vector of d names.
+#' @slot covariates vector of names for the exogenous covariates.
 #' @seealso \code{\link{gamVine}}, 
 #' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
 #' \code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}}, 
@@ -51,4 +52,4 @@ setClass("gamBiCop", slots = c(family = "integer", model = "gam",
 #' @rdname gamVine-class
 #' @export
 setClass("gamVine", slots = c(Matrix = "matrix", model = "list", 
-                              names = "character"))
+                              names = "character", covariates = "character"))
