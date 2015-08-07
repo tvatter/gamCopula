@@ -5,9 +5,9 @@
 \title{Selection and Maximum penalized likelihood estimation of a Generalized
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
-gamBiCopSel(data, familyset = NA, selectioncrit = "AIC", tau = FALSE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
-  verbose = FALSE, ...)
+gamBiCopSel(data, familyset = NA, rotations = TRUE, selectioncrit = "AIC",
+  tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
+  parallel = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{data}{A list or data frame containing the model responses, (u1,u2) in
@@ -15,33 +15,35 @@ gamBiCopSel(data, familyset = NA, selectioncrit = "AIC", tau = FALSE,
 
 \item{familyset}{(Similar to \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package)
-Vector of bivariate copula families to select from. The vector has to include
-at least one bivariate copula family that allows for positive and one that
-allows for negative dependence. If \code{familyset = NA} (default), selection
+Vector of bivariate copula families to select from.
+If \code{familyset = NA} (default), selection
 among all possible families is performed.   Coding of bivariate copula
 families:
 \code{1} Gaussian,
 \code{2} Student t,
-\code{3} Clayton,
-\code{4} Gumbel,
 \code{5} Frank,
-\code{13} Survival Clayton,
-\code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton,
-\code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and
-\code{34} Rotated (270 degrees) Gumbel.}
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
+
+\item{rotations}{If \code{TRUE}, all rotations of the families in familyset
+are included.}
 
 \item{selectioncrit}{Character indicating the criterion for bivariate copula
 selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or
 \code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
-\item{tau}{\code{FALSE} (default) for a calibration fonction specified for
-the Copula parameter or \code{TRUE} for a calibration function specified for
-Kendall's tau.}
+\item{tau}{\code{FALSE} for a calibration fonction specified for
+the Copula parameter or \code{TRUE} (default) for a calibration function
+specified for Kendall's tau.}
 
-\item{method}{\code{'FS'} for Fisher-scoring and
+\item{method}{\code{'FS'} for Fisher-scoring (default) and
 \code{'NR'} for Newton-Raphson.}
 
 \item{tol.rel}{Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
@@ -75,6 +77,9 @@ where each Newton-Raphson iteration is reformulated as a generalized ridge
 regression solved using the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
+require(copula)
+set.seed(0)
+
 ## Simulation parameters (sample size, correlation between covariates,
 ## Student copula with 4 degrees of freedom)
 n <- 5e2
@@ -101,10 +106,10 @@ calib.surf <- list(calib.lin <- function(t, Ti = 0, Tf = 1, b = 2) {
     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 
 ## 6-dimensional matrix X of covariates
-covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 6),
+covariates.distr <- mvdc(normalCopula(rho, dim = 6),
                                  c("unif"), list(list(min = 0, max = 1)),
                                  marginsIdentical = TRUE)
-X <- copula::rMvdc(n, covariates.distr)
+X <- rMvdc(n, covariates.distr)
 
 ## U in [0,1]x[0,1] depending on the four first columns of X
 U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
@@ -114,12 +119,12 @@ U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
 data <- data.frame(U$data,X)
 names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
 
-## Selection using AIC (take about 3mn on single core)
-## Use parallel = TRUE to speed-up.... currently unavailable for windows
-## users as the parallelization is handled by mclapply!
+## Selection using AIC (take about 5mn on single core)
+## Use parallel = TRUE to speed-up....
 system.time(best <- gamBiCopSel(data))
 print(best$res)
 EDF(best$res)
+plot(best$res)
 }
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}.

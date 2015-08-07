@@ -16,13 +16,14 @@
 #' and/or \code{return.tau = TRUE}, then the list also contains respectively items
 #' \code{calib}, \code{par} and/or \code{tau}.
 #' @examples
+#' require(copula)
 #' set.seed(1)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
-#' ## Clayton copula family)
-#' n <- 2e2
+#' ## Gaussian copula family)
+#' n <- 5e2
 #' rho <- 0.5
-#' fam <- 3 
+#' fam <- 1 
 #' 
 #' ## A calibration surface depending on three variables
 #' eta0 <- 1
@@ -42,10 +43,10 @@
 #'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 #' 
 #' ## 3-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 3),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' colnames(X) <- paste("x",1:3,sep="")
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
@@ -61,7 +62,7 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam, method = "FS"))
+#' system.time(fit <- gamBiCopEst(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- fit$res)
@@ -94,22 +95,33 @@ gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE,
     newdata <- newdata[sample.int(dd, N, replace = TRUE), ]
   }
 
-  temp <- gamBiCopPred(object, as.data.frame(newdata), 
+  tmp <- gamBiCopPred(object, as.data.frame(newdata), 
                        target = c("par", "calib", "tau"))
-
-  data <- t(mapply(BiCopSim, 1, object@family, temp$par, object@par2))
+  par <- tmp$par
+  family <- object@family
+  if (family %in% c(1,2,5)) {
+    family <- rep(family,length(par))
+  } else {
+    fam <- getFams(family)
+    sel <- par > 0
+    family <- rep(0,length(par))
+    family[sel] <- fam[1]
+    family[!sel] <- fam[2]
+  }
+  
+  data <- t(mapply(BiCopSim, 1, family, par, object@par2))
   out <- list(data = data)
   
   if (return.calib == TRUE) {
-    out$calib <- temp$calib
+    out$calib <- tmp$calib
   }
   
   if (return.par == TRUE) {
-    out$par <- temp$par
+    out$par <- tmp$par
   }
   
   if (return.tau == TRUE) {
-    out$tau <- temp$tau
+    out$tau <- tmp$tau
   }
   
   return(out)

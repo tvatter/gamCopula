@@ -10,6 +10,7 @@
 #'
 #' @param data A matrix or data frame containing the data in [0,1]^d.
 #' @param GVC \code{\link{gamVine-class}} object.
+#' @param covariates vector of names for the covariates.
 #' @param method \code{'NR'} for Newton-Raphson
 #' and  \code{'FS'} for Fisher-scoring (default).
 #' @param tol.rel Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.
@@ -20,88 +21,154 @@
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
+#' @seealso \code{\link{gamVineCopSelect}} and 
+#' \code{\link{gamVineStructureSelect}}
 #' @examples
-#' require(VineCopula)
+#' require(mgcv)
 #' set.seed(0)
 #' 
-#' ## A first example with a 3-dimensional GAM-Vine
-#' 
-#' # Define a R-vine tree structure matrix
-#' d <- 3
-#' Matrix <- c(2,3,1,0,3,1,0,0,1)
+#' ##  Simulation parameters
+#' # Sample size
+#' n <- 1e3
+#' # Copula families
+#' familyset <- c(1:2,301:304,401:404)
+#' # Define a 4-dimensional R-vine tree structure matrix
+#' d <- 4
+#' Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 #' Matrix <- matrix(Matrix,d,d)
-#' nnames <- paste("x", 1:d, sep = "")
+#' nnames <- paste("X", 1:d, sep = "")
 #' 
-#' # Copula families for each edge
-#' fam <- c(3,4,1)
+#' ## A function factory
+#' eta0 <- 1
+#' calib.surf <- list(
+#'   calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
+#'     Tm <- (Tf - Ti)/2
+#'     a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
+#'     return(a + b * (t - Tm)^2)},
+#'   calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
+#'     a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
+#'                                  cos(2 * f * pi * (Tf - Ti))
+#'                                - cos(2 * f * pi * Ti)))
+#'     return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
+#'   calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
+#'     Tm <- (Tf - Ti)/2
+#'     a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
+#'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 #' 
-#' # Parameters for the first tree (two unconditional copulas)
-#' par <- c(1,2)
-#' 
-#' # Pre-allocate the GAM-Vine model list
+#' ##  Create the model
+#' # Define gam-vine model list
 #' count <- 1
 #' model <- vector(mode = "list", length = d*(d-1)/2)
+#' sel <- seq(d,d^2-d, by = d)
 #' 
-#' # The first tree contains only the two unconditional copulas
+#' # First tree
 #' for (i in 1:(d-1)) {
-#'   model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
+#'   # Select a copula family
+#'   family <- sample(familyset, 1)
+#'   model[[count]]$family <- family
+#'   
+#'   # Use the canonical link and a randomly generated parameter 
+#'   if (is.element(family,c(1,2))) {
+#'     model[[count]]$par <- tanh(rnorm(1)/2)
+#'     if (family == 2) {
+#'       model[[count]]$par2 <- 2+exp(rnorm(1))
+#'     }  
+#'   } else {
+#'     if (is.element(family,c(401:404))) {
+#'       rr <- rnorm(1)
+#'       model[[count]]$par <- sign(rr)*(1+abs(rr))
+#'     } else {
+#'       model[[count]]$par <- rnorm(1)
+#'     }
+#'     model[[count]]$par2 <- 0
+#'   }
 #'   count <- count + 1
 #' }
 #' 
-#' # The second tree contains a unique conditional copula
-#' # In this first example, we take a linear calibration function (10*x-5)
+#' # A dummy dataset
+#' data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
 #' 
-#' # Set-up a dummy data
-#' tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
+#' # Trees 2 to (d-1)
+#' for(j in 2:(d-1)){
+#'   for(i in 1:(d-j)){ 
+#'     # Select a copula family
+#'     family <- sample(familyset, 1)  
+#'     
+#'     # Select the conditiong set and create a model formula
+#'     cond <- nnames[sort(Matrix[(d-j+2):d,i])]
+#'     tmpform <- paste("~",paste(paste("s(", cond, ", k=10, bs='cr')",
+#'                                      sep = ""), collapse=" + "))
+#'     l <- length(cond)
+#'     temp <- sample(3, l, replace = TRUE)
+#'     
+#'     # Spline approximation of the true function
+#'     m <- 1e2
+#'     x <- matrix(seq(0,1,length.out=m), nrow = m, ncol = 1)
+#'     if(l != 1){  
+#'       tmp.fct <- paste("function(x){eta0+",
+#'                        paste(sapply(1:l, function(x) 
+#'                          paste("calib.surf[[",temp[x],"]](x[",x,"])",
+#'                                sep="")), collapse="+"),"}",sep="")
+#'       tmp.fct <- eval(parse(text = tmp.fct))
+#'       x <- eval(parse(text = paste0("expand.grid(",
+#'                                    paste0(rep("x",l), collapse = ","),")", 
+#'                                    collapse = "")))
+#'       y <- apply(x,1,tmp.fct)
+#'     }else{
+#'       tmp.fct <- function(x) eta0+calib.surf[[temp]](x)  
+#'       colnames(x) <- cond
+#'       y <- tmp.fct(x)
+#'     }
+#'     
+#'     # Estimate the gam model
+#'     form <- as.formula(paste0("y", tmpform))
+#'     dd <- data.frame(y, x)
+#'     names(dd) <- c("y", cond)
+#'     b <- gam(form, data = dd)
+#'     #plot(x[,1],(y-fitted(b))/y)
+#'     
+#'     # Create a dummy gamBiCop object
+#'     tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+#'     
+#'     # Update the copula family and the model coefficients
+#'     attr(tmp, "model")$coefficients <- coefficients(b)
+#'     attr(tmp, "model")$smooth <- b$smooth
+#'     attr(tmp, "family") <- family
+#'     if (family == 2) {
+#'       attr(tmp, "par2") <- 2+exp(rnorm(1))
+#'     }
+#'     model[[count]] <- tmp
+#'     count <- count+1  
+#'   } 
+#' }
 #' 
-#' # Set-up an arbitrary linear model for the calibration function
-#' model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
+#' # Create the gamVineCopula object
+#' GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
+#' print(GVC)
 #' 
-#' # Update the coefficients of the model
-#' attr(model[[count]],"model")$coefficients <- c(-5, 10)
+#' ## Simulate and fit the model
+#' sim <- gamVineSim(n, GVC)
+#' fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+#' fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 #' 
-#' # Define gamVine object
-#' GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
-#' GVC
+#' ## Plot the results
+#' dev.off()
+#' par(mfrow=c(3,4))
+#' plot(GVC, ylim = c(-2.5,2.5))
 #' 
-#' # Simulate new data
-#' N <- 1e3
-#' simData <- data.frame(gamVineSim(N, GVC))
-#' colnames(simData) <- nnames
+#' plot(fitGVC, ylim = c(-2.5,2.5))
 #' 
-#' # Fit data
-#' summary(fitGVC <- gamVineSeqEst(simData, GVC))
+#' plot(fitGVC2, ylim = c(-2.5,2.5))
 #' 
-#' # The second tree contains a unique conditional copula
-#' # In this second example, we take a smooth calibration function
-#' 
-#' # Set-up an arbitrary smooth model with 10 knots for the calibration function
-#' model[[count]] <- gamBiCopEst(tmp, ~ s(x1, k = 10, fx = T), 
-#'                               fam[count], n.iters = 1)$res
-#' 
-#' # Update the coefficients of the model
-#' attr(model[[count]],"model")$coefficients <- rnorm(11)
-#' plot(attr(model[[count]],"model"), se = F)
-#' 
-#' # Update the gamVine object
-#' GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
-#' summary(GVC)
-#' 
-#' # Simulate new data
-#' N <- 1e3
-#' simData <- data.frame(gamVineSim(N, GVC))
-#' colnames(simData) <- nnames
-#' 
-#' # Fit data
-#' summary(fitGVC <- gamVineSeqEst(simData, GVC))
-#' plot(fitGVC)
-#' @seealso \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
-#' \code{\link{gamBiCopEst}}.
-gamVineSeqEst <- function(data, GVC, 
-                          method = "NR", tol.rel = 0.001, n.iters = 10, 
+#' @seealso \code{\link{gamVineCopSelect}},\code{\link{gamVineStructureSelect}}, 
+#'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
+#'  \code{\link{gamBiCopEst}}.
+gamVineSeqEst <- function(data, GVC, covariates = NA,
+                          method = "FS", tol.rel = 0.001, n.iters = 10, 
                           verbose = FALSE) {
   
-  chk <- valid.gamVineSeqEst(data, GVC, method, tol.rel, n.iters, verbose)
+  chk <- valid.gamVineSeqEst(data, GVC, covariates, 
+                             method, tol.rel, n.iters, verbose)
   if (chk != TRUE) {
     return(chk)
   }
@@ -159,39 +226,45 @@ gamVineSeqEst <- function(data, GVC,
       }
       
       mki <- model.count[k, i]
-      if (k == d || valid.gamBiCop(GVC@model[[mki]]) != TRUE) {
-        temp <- BiCopEst(zr2, zr1, fam[k, i])
-        GVC@model[[mki]]$par <- temp$par
-        GVC@model[[mki]]$par2 <- temp$par2
-        par <- rep(temp$par, n)
-        par2 <- temp$par2
+      mm <- GVC@model[[mki]]
+      #if (mki == 5) {
+      #  browser()
+      #}
+      if (k == d || valid.gamBiCop(mm) != TRUE) {
+        tmp <- BiCopEst(zr2, zr1, famTrans(fam[k, i], FALSE, cor(zr1,zr2)))
+        mm$par <- tmp$par
+        mm$par2 <- tmp$par2
+        par <- rep(tmp$par, n)
+        par2 <- tmp$par2
       } else {
         cond <- Mat[(k +1):d, i]
         tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
         names(tmp) <- c("u1","u2",nn[oo[cond]])
-        GVC@model[[mki]] <- gamBiCopEst(tmp, GVC@model[[mki]]@model$formula, 
-                                        fam[k, i], GVC@model[[mki]]@tau, method,
-                                        tol.rel, n.iters)$res
-        par <- gamBiCopPred(GVC@model[[mki]], target = "par")$par
-        par2 <- GVC@model[[mki]]@par2
+        mm <- gamBiCopEst(tmp, mm@model$formula, fam[k, i], mm@tau, 
+                          method, tol.rel, n.iters)$res
+        par <- gamBiCopPred(mm, target = "par")$par
+        par2 <- mm@par2
       }
-      
+      GVC@model[[mki]] <- mm
+      #browser()
+      tmp <- bicoppd1d2(cbind(zr1, zr2, par, par2), fam[k, i],
+                         p = FALSE, h = TRUE)
       if (CondDistr$direct[k - 1, i]) {
-        tmp <- rep(0, n)
-        tmp <- sapply(1:n, function(x) .C("Hfunc1", as.integer(fam[k, i]), 
-          as.integer(1), as.double(zr1[x]), as.double(zr2[x]), 
-          as.double(par[x]), as.double(par2), as.double(tmp[x]), 
-          PACKAGE = "VineCopula")[[7]])
-        V$direct[k - 1, i, ] <- tmp
+        #         tmp <- rep(0, n)
+        #         tmp <- sapply(1:n, function(x) .C("Hfunc1", as.integer(4), 
+        #           as.integer(1), as.double(zr1[x]), as.double(zr2[x]), 
+        #           as.double(par[x]), as.double(par2), as.double(tmp[x]), 
+        #           PACKAGE = "VineCopula")[[7]])
+        V$direct[k - 1, i, ] <- tmp[2,]
       }
       
       if (CondDistr$indirect[k - 1, i]) {
-        tmp <- rep(0, n)
-        tmp <- sapply(1:n, function(x) .C("Hfunc2", as.integer(fam[k, i]), 
-          as.integer(1), as.double(zr2[x]), as.double(zr1[x]), 
-          as.double(par[x]), as.double(par2), as.double(tmp[x]), 
-          PACKAGE = "VineCopula")[[7]])
-        V$indirect[k - 1, i, ] <- tmp
+        #         tmp <- rep(0, n)
+        #         tmp <- sapply(1:n, function(x) .C("Hfunc2", as.integer(4), 
+        #           as.integer(1), as.double(zr2[x]), as.double(zr1[x]), 
+        #           as.double(par[x]), as.double(par2), as.double(tmp[x]), 
+        #           PACKAGE = "VineCopula")[[7]])
+        V$indirect[k - 1, i, ] <- tmp[1,]
       }
     }
   }
@@ -200,13 +273,23 @@ gamVineSeqEst <- function(data, GVC,
   return(oldGVC)
 } 
 
-valid.gamVineSeqEst <- function(data, GVC, 
+valid.gamVineSeqEst <- function(data, GVC, covariates,
                                 method, tol.rel, n.iters, 
                                 verbose) {
   
   if (!is.matrix(data) && !is.data.frame(data)) {
     return("data has to be either a matrix or a data frame")
   } 
+  
+  if (is.matrix(data)) {
+    data <- as.data.frame(data)
+  }
+  
+#   ### TODO
+#   tmp <- tryCatch(as.character(covariates), error = function(e) e)
+#   if (any(class(tmp) != "character")) {
+#     stop("covariates should be or be coercisable to a character vector.")
+#   }
   
   n <- dim(data)[1]
   d <- dim(data)[2]
@@ -227,10 +310,6 @@ valid.gamVineSeqEst <- function(data, GVC,
   o <- diag(GVC@Matrix)
   if (length(o) != d)
     return("The dimension of the gamVine object is incorrect.")
-  
-  if (is.matrix(data)) {
-    data <- as.data.frame(data)
-  }
   
   names(data)[1:2] <- c("u1","u2")
   tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)

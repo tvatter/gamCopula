@@ -15,14 +15,15 @@ gamBiCop is an S4 class to store
 \describe{
 \item{\code{family}}{A copula family: \code{1} Gaussian,
 \code{2} Student t,
-\code{3} Clayton,
-\code{4} Gumbel,
-\code{13} Survival Clayton,
-\code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton,
-\code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and
-\code{34} Rotated (270 degrees) Gumbel.}
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{\code{model}}{A \code{\link{gamObject}} as return by the
  \code{\link{gam}} function

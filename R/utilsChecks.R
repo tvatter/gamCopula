@@ -1,7 +1,3 @@
-get.familyset <- function() {
-  c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34)
-}
-
 var2char <- function(var) {
   deparse(substitute(var))
 }

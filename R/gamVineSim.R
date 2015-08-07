@@ -140,19 +140,16 @@ gamVineSim <- function(N, GVC, U = NULL) {
         par2 <- model$par2
       }
       
-      tmp <- rep(0, N)
-      tmp <- sapply(1:N, function(x) 
-        .C("Hinv1", as.integer(fam[k, i]), as.integer(1), 
-           as.double(Vdirect[k + 1, i, x]), as.double(zz[x]), as.double(par[x]), 
-           as.double(par2), as.double(tmp[x]), PACKAGE = "VineCopula")[[7]])
-      Vdirect[k, i, ] <- tmp
+      Vdirect[k, i, ] <- bicoppd1d2(cbind(Vdirect[k + 1, i, ],
+                                           zz, par, par2), fam[k, i],
+                                     p = FALSE, hinv = TRUE)[2,]
+      
       
       if (i < d) {
         if (conindirect[k + 1, i] == TRUE) {
-          tmp <- sapply(1:N, function(x) 
-            VineCopula::BiCopHfunc(Vdirect[k,i, x], zz[x], 
-                                   fam[k, i], par[x], par2)$hfunc1)
-          Vindirect[k + 1, i, ] <- tmp
+          Vindirect[k + 1, i, ] <- bicoppd1d2(cbind(Vdirect[k, i, ], zz, 
+                                                     par, par2), fam[k, i], 
+                                               p = FALSE, h = TRUE)[1,]
         }
       }
     }

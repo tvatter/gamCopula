@@ -25,7 +25,7 @@ gamVine is an S4 class to store a conditional and potentially
 \seealso{
 \code{\link{gamVine}},
 \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-\code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}},
-\code{\link{gamVinePred}} and \code{\link{gamVineSim}}.
+\code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}},
+\code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
 }
 

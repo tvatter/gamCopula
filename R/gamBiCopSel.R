@@ -11,30 +11,31 @@
 #' [0,1]x[0,1], and covariates required by the formula.
 #' @param familyset (Similar to \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package) 
-#' Vector of bivariate copula families to select from. The vector has to include
-#' at least one bivariate copula family that allows for positive and one that 
-#' allows for negative dependence. If \code{familyset = NA} (default), selection
+#' Vector of bivariate copula families to select from. 
+#' If \code{familyset = NA} (default), selection
 #' among all possible families is performed.   Coding of bivariate copula 
 #' families:
 #' \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel,
 #' \code{5} Frank, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel,  
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and 
-#' \code{34} Rotated (270 degrees) Gumbel.
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
+#' @param rotations If \code{TRUE}, all rotations of the families in familyset 
+#' are included.
 #' @param selectioncrit Character indicating the criterion for bivariate copula 
 #' selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or 
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.   
-#' @param tau \code{FALSE} (default) for a calibration fonction specified for 
-#' the Copula parameter or \code{TRUE} for a calibration function specified for 
-#' Kendall's tau.  
-#' @param method \code{'FS'} for Fisher-scoring and 
+#' @param tau \code{FALSE} for a calibration fonction specified for 
+#' the Copula parameter or \code{TRUE} (default) for a calibration function 
+#' specified for Kendall's tau.  
+#' @param method \code{'FS'} for Fisher-scoring (default) and 
 #' \code{'NR'} for Newton-Raphson.  
 #' @param tol.rel Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.  
 #' @param n.iters Maximal number of iterations for 
@@ -54,6 +55,9 @@
 #' \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}. 
 #' @examples
+#' require(copula)
+#' set.seed(0)
+#' 
 #' ## Simulation parameters (sample size, correlation between covariates,
 #' ## Student copula with 4 degrees of freedom)
 #' n <- 5e2
@@ -80,10 +84,10 @@
 #'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 #' 
 #' ## 6-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 6),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 6),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' 
 #' ## U in [0,1]x[0,1] depending on the four first columns of X
 #' U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
@@ -93,20 +97,20 @@
 #' data <- data.frame(U$data,X)
 #' names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
 #' 
-#' ## Selection using AIC (take about 3mn on single core) 
-#' ## Use parallel = TRUE to speed-up.... currently unavailable for windows 
-#' ## users as the parallelization is handled by mclapply!
+#' ## Selection using AIC (take about 5mn on single core) 
+#' ## Use parallel = TRUE to speed-up....
 #' system.time(best <- gamBiCopSel(data))
 #' print(best$res)
 #' EDF(best$res)
+#' plot(best$res)
 #' @export
-gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
-                        tau = FALSE, method = "FS", 
-                        tol.rel = 1e-3, n.iters = 10, 
+gamBiCopSel <- function(data, familyset = NA, rotations = TRUE, 
+                        selectioncrit = "AIC", tau = TRUE, 
+                        method = "FS", tol.rel = 1e-3, n.iters = 10, 
                         parallel = FALSE, verbose = FALSE, ...) {
 
-  tmp <- valid.gamBiCopSel(data, familyset, selectioncrit, tau, method, tol.rel, 
-                           n.iters, parallel, verbose)
+  tmp <- valid.gamBiCopSel(data, rotations, familyset, selectioncrit, tau, 
+                           method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
     stop(tmp)
   
@@ -123,34 +127,22 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
   u1 <- data$u1
   u2 <- data$u2
   u <- cbind(u1,u2)
-
-  k.tau <- fasttau(u1,u2)
   
   if (length(familyset) == 1 && is.na(familyset)) {
-    if ( k.tau < 0) {
-      familyset <- c(1,2,23,24,33,34)
-    } else { 
-      familyset <- c(1,2,3,4,13,14)
-    }  
+    familyset <- get.familyset()
   }
-  
-  ## find families for which estimation is required (only families that allow for
-  ## the empirical kendall's tau)
-  if ( k.tau < 0 ) {
-    todo <- c(1, 2, 5, 23, 24, 26:30, 33, 34, 36:40, 124, 134, 224, 234)
-  } else {
-    todo <- c(1:10, 13, 14, 16:20, 104, 114, 204, 214)
+  if (rotations) {
+    familyset <- withRotations(familyset)
   }
-  familyset <- as.integer(todo[which(todo %in% familyset)])
-
 
   parallel <- as.logical(parallel)
+  x <- NULL
   if (parallel == FALSE) {
     res <- foreach(x=familyset) %do% 
       tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
                error = function(e) e)
   } else {
-    cl <- makeCluster(parallel::detectCores() - 1)
+    cl <- makeCluster(detectCores() - 1)
     registerDoParallel(cl, cores = detectCores() - 1)
     res <- foreach(x=familyset) %dopar% 
       tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
@@ -174,7 +166,7 @@ gamBiCopSel <- function(data, familyset = NA, selectioncrit = "AIC",
 } 
 
 gamBiCopVarSel <- function(data, family,
-                        tau = FALSE, method = "FS", 
+                        tau = TRUE, method = "FS", 
                         tol.rel = 1e-3, n.iters = 10, 
                         verbose = FALSE, ...) {
   
@@ -264,8 +256,8 @@ gamBiCopVarSel <- function(data, family,
   return(tmp)
 }
 
-valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method, 
-                              tol.rel, n.iters, parallel, verbose) {
+valid.gamBiCopSel <- function(data, rotations, familyset, selectioncrit, tau, 
+                              method, tol.rel, n.iters, parallel, verbose) {
   
   tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
@@ -275,33 +267,10 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
   if (!valid.familyset(familyset)) {
     return(return(msg.familyset(var2char(familyset))))
   }
-
-  if (is.list(data)){
-    if(!is.null(data$xt)){
-      xt <- data$xt
-      data <- data[-which(names(data) == "xt")]
-    }
-    data <- as.data.frame(data)
+  
+  if (!valid.logical(rotations)) {
+    return(msg.logical(var2char(rotations)))
   }
-  
-  n <- dim(data)[1]
-  m <- dim(data)[2]
-  u1 <- data$u1
-  u2 <- data$u2
-  u <- cbind(u1,u2)
-  
-  tau <- fasttau(u1,u2) 
-  if (tau > 0) {
-    if (!valid.familysetpos(familyset, tau)) {
-      return(paste("Because Kendall's tau is positive", 
-                   msg.familysetpos(var2char(familyset))))
-    }
-  } else {
-    if (!valid.familysetneg(familyset, tau)) {
-      return(paste("Because Kendall's tau is negative,",
-                   msg.familysetneg(var2char(familyset))))
-    }
-  } 
   
   if(is.null(selectioncrit) || length(selectioncrit) != 1 || 
        (selectioncrit != "AIC" && selectioncrit != "BIC")) {
@@ -311,7 +280,6 @@ valid.gamBiCopSel <- function(data, familyset, selectioncrit, tau, method,
   if (!valid.logical(parallel)) {
     return(msg.logical(var2char(parallel)))
   }
-  options(warn = 0)
   
   
   return(TRUE)

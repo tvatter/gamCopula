@@ -2,19 +2,23 @@
 import(VineCopula)
 import(mgcv)
 import(methods)
-import(MASS)
-import(igraph)
 
 ## Import selected functions
+importFrom(numDeriv, grad)
+importFrom("igraph", "E", "E<-", "V", "V<-", "gsize", "get.edgelist", "ecount",
+           "minimum.spanning.tree", "delete.edges", "graph.adjacency", "ends",
+           "graph.full", "get.adjacency")
+importFrom(MASS, mvrnorm)
 importFrom(gsl, expint_E1)
-importFrom(copula, mvdc)
-importFrom(copula, normalCopula)
-importFrom(copula, rMvdc)
-import(parallel)
-import(foreach)
-import(doParallel)
-#importFrom(parallel, detectCores)
-#importFrom(parallel, mclapply)
+importFrom(copula, safeUroot)
+importFrom(copula, debye1)
+importFrom(parallel, makeCluster)
+importFrom(parallel, detectCores)
+importFrom(parallel, stopCluster)
+importFrom(foreach, foreach)
+importFrom(foreach, "%do%")
+importFrom(foreach, "%dopar%")
+importFrom(doParallel, registerDoParallel)
 
 ## Classes
 export(gamBiCop)
@@ -44,7 +48,7 @@ export(gamVineFamily)
 export(RVM2GVC)
 
 ## Others
-export(links)
+#export(links)
 export(BiCopEta2Par)
 export(BiCopPar2Eta)
 export(condBiCopSim)

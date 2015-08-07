@@ -18,17 +18,21 @@ C-Vine}
 
 \item{familyset}{An integer vector of pair-copula families to select from
 (the independence copula MUST NOT be specified in this vector unless one
-wants to fit an independence vine!). The vector has to include at least one
-pair-copula family that allows for positive and one that allows for negative
-dependence. Not listed copula families might be included to better handle
+wants to fit an independence vine!).
+Not listed copula families might be included to better handle
 limit cases. If \code{familyset = NA} (default), selection among all
 possible families is performed. Coding of pair-copula families:
-\code{1} Gaussian, \code{2} Student t,
-\code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton,
-\code{14} Survival Gumbel,  \code{23} Rotated (90 degrees) Clayton,
-\code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and
-\code{34} Rotated (270 degrees) Gumbel.}
+\code{1} Gaussian,
+\code{2} Student t,
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
@@ -95,62 +99,11 @@ a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
-require(VineCopula)
-set.seed(0)
-
-## A first example with a 3-dimensional GAM-Vine
-
-# Define a R-vine tree structure matrix
-d <- 3
-Matrix <- c(2,3,1,0,3,1,0,0,1)
-Matrix <- matrix(Matrix,d,d)
-nnames <- paste("x", 1:d, sep = "")
-
-# Copula families for each edge
-fam <- c(3,4,1)
-
-# Parameters for the first tree (two unconditional copulas)
-par <- c(1,2)
-
-# Pre-allocate the GAM-Vine model list
-count <- 1
-model <- vector(mode = "list", length = d*(d-1)/2)
-
-# The first tree contains only the two unconditional copulas
-for (i in 1:(d-1)) {
-  model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
-  count <- count + 1
-}
-
-# The second tree contains a unique conditional copula
-# In this first example, we take a linear calibration function (10*x-5)
-
-# Set-up a dummy dataset
-tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
-
-# Set-up an arbitrary linear model for the calibration function
-model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
-
-# Update the coefficients of the model
-attr(model[[count]],"model")$coefficients <- c(-5, 10)
-
-# Define gamVine object
-GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
-GVC
-
-# Simulate new data
-N <- 1e3
-simData <- data.frame(gamVineSim(N, GVC))
-colnames(simData) <- nnames
-
-# Fit data using sequential estimation assuming true model known
-summary(fitGVC <- gamVineSeqEst(simData, GVC))
-
-# Fit data using structure selection and sequential estimation
-summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))
+print(12)
 }
 \seealso{
-\code{\link{gamVine-class}}, \code{\link{gamVineSim}},
-\code{\link{gamVineSeqEst}} and \code{\link{gamBiCopEst}}.
+\code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}},
+ \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and
+ \code{\link{gamBiCopEst}}.
 }
 

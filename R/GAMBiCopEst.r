@@ -13,18 +13,17 @@
 #' @param formula A gam formula (see \code{\link{gam}}, 
 #' \code{\link{formula.gam}} and \code{\link{gam.models}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
-#' @param family A copula family: 
-#' \code{1} Gaussian, 
+#' @param family A copula family: \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel,
 #' \code{5} Frank, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel,  
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and 
-#' \code{34} Rotated (270 degrees) Gumbel.
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param tau \code{FALSE} (default) for a calibration fonction specified for 
 #' the Copula parameter or \code{TRUE} for a calibration function specified 
 #' for Kendall's tau.
@@ -39,7 +38,7 @@
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamBiCopEst} returns a list consisting of
 #' \item{res}{S4 \code{\link{gamBiCop-class}} object.}
-#' \item{method}{\code{'FS'} for Fisher-scoring and 
+#' \item{method}{\code{'FS'} for Fisher-scoring (default) and 
 #' \code{'NR'} for Newton-Raphson.}
 #' \item{tol.rel}{relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
 #' \item{n.iters}{maximal number of iterations for 
@@ -48,13 +47,15 @@
 #' \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopSim}}.
 #' @examples
+#' require(copula)
+#' require(mgcv)
 #' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
-#' ## Clayton copula family)
-#' n <- 2e2
+#' ## Gaussian copula family)
+#' n <- 5e2
 #' rho <- 0.5
-#' fam <- 3
+#' fam <- 1
 #' 
 #' 
 #' ## A calibration surface depending on three variables
@@ -95,10 +96,10 @@
 #' }
 #' 
 #' ## 3-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 3),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
 #' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
@@ -119,7 +120,7 @@
 #' formula <- ~s(x1, k = basis0[1], bs = "cr", fx = !pen) + 
 #'   s(x2, k = basis0[2], bs = "cr", fx = !pen) + 
 #'   s(x3, k = basis0[3], bs = "cr", fx = !pen)
-#' system.time(fit0 <- gamBiCopEst(data, formula, fam, method = "FS"))
+#' system.time(fit0 <- gamBiCopEst(data, formula, fam))
 #' 
 #' ## Model fit with a better basis size and penalized cubic splines (via min GCV)
 #' pen <- TRUE
@@ -127,7 +128,7 @@
 #' formula <- ~s(x1, k = basis1[1], bs = "cr", fx = !pen) + 
 #'   s(x2, k = basis1[2], bs = "cr", fx = !pen) + 
 #'   s(x3, k = basis1[3], bs = "cr", fx = !pen)
-#' system.time(fit1 <- gamBiCopEst(data, formula, fam, method = "FS"))
+#' system.time(fit1 <- gamBiCopEst(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- sapply(list(fit0,fit1), function(fit){fit$res}))
@@ -143,10 +144,10 @@
 #' for (i in 1:3) {
 #'     y <- eta0+calib.surf[[i]](u)   
 #'     true[[i]]$true <- y - eta0   
-#'     temp <- mgcv::gam(y ~ s(u, k = basis0[i], bs = "cr", fx = T))
-#'     true[[i]]$approx <- mgcv::predict.gam(temp, type = "terms")
-#'     temp <- mgcv::gam(y ~s(u, k = basis1[i], bs = "cr", fx = F))
-#'     true[[i]]$approx2 <- mgcv::predict.gam(temp, type = "terms")
+#'     temp <- gam(y ~ s(u, k = basis0[i], bs = "cr", fx = TRUE))
+#'     true[[i]]$approx <- predict.gam(temp, type = "terms")
+#'     temp <- gam(y ~s(u, k = basis1[i], bs = "cr", fx = FALSE))
+#'     true[[i]]$approx2 <- predict.gam(temp, type = "terms")
 #' }
 #' 
 #' ## Display results
@@ -165,11 +166,10 @@
 #'          col = c("black", "red", "red", "green", "green"))
 #' }
 #' @export
-gamBiCopEst <- function(data, formula = ~1, family = 1, 
-                        tau = FALSE, method = "FS", 
-                        tol.rel = 0.001, n.iters = 10, 
+gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE, 
+                        method = "FS", tol.rel = 0.001, n.iters = 10, 
                         verbose = FALSE, ...) {
-
+  
   tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, family)
   if (tmp != TRUE)
     stop(tmp)
@@ -193,37 +193,24 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   u1 <- data$u1
   u2 <- data$u2
   u <- cbind(u1,u2)
-
-  rotated <- family
-
-  if (is.element(family, c(13, 14))) {
-    u <- rotate.data(u, 180)    
-    if (family == 13) {
-      family <- 3
-    } else {
-      family <- 4
-    }
-  } else if (is.element(family, c(23, 24))) {
-    u <- rotate.data(u, 90)
-    if (family == 23) {
-      family <- 3
-    } else {
-      family <- 4
-    }
-  } else if (is.element(family, c(33, 34))) {
-    u <- rotate.data(u, 270)
-    if (family == 33) {
-      family <- 3
-    } else {
-      family <- 4
-    }
-  } 
-
+  
   if (verbose == 1) {
-    cat(paste("Initialization with the MLE\n"))
+    if (family %in% c(1,2)) {
+      cat(paste("Initialization with the MLE\n"))
+    } else {
+      cat(paste("Initialization with the empirical Kendall's tau\n"))
+    }
     t <- Sys.time()
   }
-  init <- BiCopEst(u[,1], u[,2], family = family, method = "mle")
+  
+  
+  if (family %in% c(1,2)) {
+    init <- BiCopEst(u1, u2, family, method = "mle")
+  } else {
+    init <- list()
+    init$par <- tau2par(fasttau(u1, u2),family)
+  }
+  
   if (verbose == 1) {
     cat(paste(Sys.time() - t,"\n"))
   }
@@ -235,19 +222,14 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   if (family == 2) {
     new.pars$par2 <- rep(init$par2, n)
     u <- cbind(u, new.pars$par2)
+  } else {
+    new.pars$par2 <- rep(0, n)
   }
   
   if (tau == FALSE) {
-    new.pars$partrans <- sapply(new.pars$par, function(x) 
-      BiCopPar2Eta(family, x))
+    new.pars$partrans <- par2eta(new.pars$par,family)
   } else {
-    if (family == 2) {
-      new.pars$tau <- sapply(new.pars$par, function(x) 
-        BiCopPar2Tau(family, x, init$par2))
-    } else {
-      new.pars$tau <- sapply(new.pars$par, function(x) 
-        BiCopPar2Tau(family, x))
-    }
+    new.pars$tau <- par2tau(new.pars$par,family)
     new.pars$partrans <- 2 * atanh(new.pars$tau)
   }
   
@@ -257,20 +239,20 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     t <- Sys.time()
     cat(paste("gam iteration", 1, "\n"))
   }
-
-  par.formula <- update(formula, z ~ .)
   
+  par.formula <- update(formula, z ~ .)
+
   w <- NULL
   res <- tryCatch({
-    temp <- derivatives.par(u, new.pars, family, method, tau)
-    temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
-    temp <- cbind(temp, data)
-    mm <- gam(par.formula, data = temp, weights = w, 
+    tmp <- derivatives.par(u, new.pars, family, method, tau)
+    tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+    tmp <- cbind(tmp, data)
+    mm <- gam(par.formula, data = tmp, weights = w, 
               control = gam.control(keepData = TRUE), ...)
   }, error = function(err) {
     cat(paste("A problem occured at the first iteration of the ", 
-                method, "algorithm. The ERROR comming from", 
-                "mgcv's gam function is:\n"))
+              method, "algorithm. The ERROR comming from", 
+              "mgcv's gam function is:\n"))
     stop(err)
     cat("......The results should not be trusted!\n")
     return(NULL)
@@ -280,12 +262,12 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   }
   stopifnot(!is.null(res))
   
-  temp <- pars.update(mm, family, temp, tau)
+  tmp <- pars.update(mm, family, tmp, tau)
   
-  new.pars$par <- u[, 3] <- temp$par
-  new.pars$partrans <- temp$partrans
+  new.pars$par <- u[, 3] <- tmp$par
+  new.pars$partrans <- tmp$partrans
   if (tau) {
-    new.pars$tau <- temp$tau
+    new.pars$tau <- tmp$tau
   }
   
   if (family == 2) {
@@ -318,7 +300,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
   trace <- numeric(n.iters)
   tt <- trace.update(old.pars$partrans, new.pars$partrans)
   trace[1] <- tt$trace
-
+  
   eps <- tt$eps
   k <- 1
   conv <- 0
@@ -328,6 +310,9 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     if(k == n.iters){
       conv <- 1
     }
+    #if (k == 19) {
+    #  browser()
+    #}
     old.pars <- new.pars
     
     if (verbose == 1) {
@@ -336,15 +321,12 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
     }
     
     res <- tryCatch({
-      temp <- derivatives.par(u, new.pars, family, method, tau)
-      temp <- as.data.frame(wz.update(temp, new.pars, family, method, tau))
-      temp <- cbind(temp, data)
-      mm <- gam(par.formula, data = temp, weights = w, 
+      tmp <- derivatives.par(u, new.pars, family, method, tau)
+      tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+      tmp <- cbind(tmp, data)
+      mm <- gam(par.formula, data = tmp, weights = w, 
                 control = gam.control(keepData = TRUE), ...)
     }, error = function(err) {
-      #cat(paste("A problem occured at the ", k, "th iteration of the ", 
-      #            method, "algorithm. The ERROR comming from", 
-      #            "mgcv's gam function is:\n"))
       cat(paste("A problem occured at the ", k, "th iteration of the ", 
                 method, "algorithm:\n"))
       cat(paste(err, "\n"))
@@ -359,32 +341,32 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       cat(paste(Sys.time() - t, "\n"))
     }
     
-    temp2 <- pars.update(mm, family, temp, tau)
-    new.pars$par <- u[, 3] <- temp2$par
-    new.pars$partrans <- temp2$partrans
+    tmp2 <- pars.update(mm, family, tmp, tau)
+    new.pars$par <- u[, 3] <- tmp2$par
+    new.pars$partrans <- tmp2$partrans
     if (tau) {
-      new.pars$tau <- temp2$tau
+      new.pars$tau <- tmp2$tau
     }
     
-#     if ((family == 2)) {
-#       # && (k %% 2 == 0)){
-#       if (verbose == 1) {
-#         print(paste("DF iteration", k))
-#         t <- Sys.time()
-#       }
-#       
-#       nu <- optimize(nllvec, c(log(2), log(30)))
-#       u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
-#       
-#       if (verbose == 1) {
-#         print(u[1, 4])
-#         print(Sys.time() - t)
-#       }
-#     }
+    #     if ((family == 2)) {
+    #       # && (k %% 2 == 0)){
+    #       if (verbose == 1) {
+    #         print(paste("DF iteration", k))
+    #         t <- Sys.time()
+    #       }
+    #       
+    #       nu <- optimize(nllvec, c(log(2), log(30)))
+    #       u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
+    #       
+    #       if (verbose == 1) {
+    #         print(u[1, 4])
+    #         print(Sys.time() - t)
+    #       }
+    #     }
     tt <- trace.update(old.pars$partrans, new.pars$partrans)
     if (is.na(tt$eps)) {
       cat(paste("A problem occured at the ", k, "th iteration of the ", 
-                  method, "algorithm... The results should not be trusted!\n"))
+                method, "algorithm... The results should not be trusted!\n"))
       conv <- 1
       break
     } else {
@@ -403,11 +385,13 @@ gamBiCopEst <- function(data, formula = ~1, family = 1,
       cat(paste(Sys.time() - t, "\n"))
     }
     u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
-    res <- gamBiCop(rotated, mm, u[1, 4], tau)
+    par2 <- u[1, 4]
   } else {
-    res <- gamBiCop(rotated, mm, 0, tau)
+    par2 <- 0
   }
-  out <- list(res = res, method = method, tol.rel = tol.rel, 
+
+  out <- list(res = gamBiCop(family, mm, par2, tau), 
+              method = method, tol.rel = tol.rel, 
               n.iters = n.iters, trace = trace[1:k], conv = conv)
   return(out)
 } 
@@ -439,7 +423,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     return("Number of observations has to be at least 2.")
   if (any(u > 1) || any(u < 0)) 
     return("(u1, u2) have to be in [0,1]x[0,1].")
-
+  
   options(warn = -1)
   if (!valid.posint(n.iters)) {
     return(msg.posint(var2char(n.iters)))
@@ -456,30 +440,163 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   if (is.null(method) || length(method) != 1 || 
         !is.element(method, c("FS", "NR"))) {
     return("Method should be a string, either NR (Newton-Raphson) 
-         or FS (Fisher-scoring, faster but unstable).")
+           or FS (Fisher-scoring, faster but unstable).")
   }
   
   if (!valid.logical(verbose)) {
     return(msg.logical(var2char(verbose)))
   } 
   
-  temp <- fasttau(u1, u2)
+  #tmp <- fasttau(u1, u2)
   
   if (!valid.family(family)) {
     return(msg.family(var2char(family)))
   }  
   
-  if (temp > 0) {
-    if (!valid.familypos(family, temp)) {
-      return(msg.familypos(var2char(family)))
-    }
-  } else {
-    if (!valid.familyneg(family, temp)) {
-      return(msg.familyneg(var2char(family)))
-    }
-  } 
+  #   if (tmp > 0) {
+  #     if (!valid.familypos(family, tmp)) {
+  #       return(msg.familypos(var2char(family)))
+  #     }
+  #   } else {
+  #     if (!valid.familyneg(family, tmp)) {
+  #       return(msg.familyneg(var2char(family)))
+  #     }
+  #   } 
   
   options(warn = 0)
   
   return(TRUE)
+  }
+
+## Update parameters with respect to fited gam model
+"pars.update" <- function(mm, family, data, tau) {
+  
+  out <- list()
+  fitted <- predict(mm, data)
+  
+  out$partrans <- as.numeric(fitted)
+  
+  # Define links between Kendall's tau, copula parameter and calibration 
+  # function... the cst/cstinv make sure that the boundaries are never attained
+  if (family %in% c(1, 2)) {
+    cstpar <- csttau <- function(x) x*(1-1e-8) 
+  } else {
+    csttau <- function(x) x*(1-1e-8)
+    cstpar <- function(x) x
+  }
+  
+  par2tau.fun <- function(x) csttau(par2tau(cstpar(x),family))
+  tau2par.fun <- function(x) cstpar(tau2par(csttau(x),family))
+  eta2par.fun <- function(x) cstpar(eta2par(x, family))
+  par2eta.fun <- function(x) par2eta(cstpar(x),family)
+  eta2tau.fun <- function(x) csttau(eta2par(x, 1))
+  tau2eta.fun <- function(x) par2eta(csttau(x),1)
+  
+  if (tau == TRUE) {
+    # From transformed parameters to Kendall's tau and 
+    # from Kendall's tau to copula parameter
+    out$tau <- eta2tau.fun(out$partrans)
+    out$partrans <- tau2eta.fun(out$tau)
+    out$par <- tau2par.fun(out$tau)
+  } else {
+    # From transformed parameters to copula parameter
+    out$par <- eta2par.fun(out$partrans)
+    out$partrans <- par2eta.fun(out$par)
+  }
+  out$par <- pmin(out$par, 1e5)
+  out$par <- pmax(out$par, -1e5)
+  
+  return(out)
+}
+
+## Update trace
+"trace.update" <- function(old.par, new.par) {
+  
+  traces <- max(abs((old.par - new.par)/old.par))
+  eps <- traces
+  
+  out <- list()
+  out$traces <- traces
+  out$eps <- eps
+  
+  return(out)
+}
+
+## Newton-Raphson/Fisher-scoring step
+"wz.update" <- function(dd, new.pars, family, method, tau) {
+  
+  u <- dd$d1 * dd$dpar
+  if (tau == TRUE) {
+    u <- u * dd$dtau
+  }
+  if (method == "NR") {
+    if (tau == TRUE) {
+      w <- dd$dtau^2 * (dd$dpar^2 * (dd$d2/dd$p - dd$d1^2) + dd$dpar2 * dd$d1) + 
+        dd$dtau2 * dd$d1 * dd$dpar * dd$dtau2
+    } else {
+      w <- dd$dpar^2 * (dd$d2/dd$p - dd$d1^2) + dd$dpar2 * dd$d1
+    }
+    #w <- abs(w)
+    w <- -w
+    w[w<0] <- median(w[w>0])
+  } else {
+    w <- FisherBiCop(family, new.pars$par, new.pars$par2)
+    if (tau == TRUE) {
+      w <- (dd$dpar * dd$dtau)^2 * w
+    } else {
+      w <- dd$dpar^2 * w
+    }
+  }
+  
+  z <- new.pars$partrans + u/w
+  
+  out <- list()
+  out$w <- w
+  out$z <- z
+  
+  return(out)
+}
+
+## Compute first derivatives of the copula, copula parameters transformations
+## and dependence measure transformations
+"derivatives.par" <- function(data, new.pars, family, method, tau) {
+  
+  # Derivatives of the copula with respect to its own parameter
+  if (method == "NR") {
+    tmp <- bicoppd1d2(data, family, d1 = TRUE, d2 = TRUE)
+  } else {
+    tmp <- bicoppd1d2(data, family, d1 = TRUE)
+  } 
+  tmp[1, which(tmp[1, ] == 0)] <- 1e-16
+  
+  out <- list()
+  out$p <- tmp[1, ]
+  out$d1 <- tmp[2, ] 
+  if (method == "NR") {
+    out$d2 <- tmp[3, ]
+  }
+  
+  if (tau == TRUE) {
+    # Derivatives of the copula parameter with respect to the dependence measure
+    tmp <- dpardtau(new.pars$tau,family)     
+    out$dtau <- tmp$d1
+    if (method == "NR") {
+      out$dtau2 <- tmp$d2
+    }
+    
+    # Derivatives of the dependence measure with respect to the model parameters
+    # (equivalent to the derivative of the copula parameter with respect to
+    # the calibration function in the Gaussian case, as the link is the same)
+    tmp <- dpardeta(new.pars$partrans, 1)
+  } else {
+    # Derivatives of the copula parameter with respect to the model parameters
+    tmp <- dpardeta(new.pars$partrans, family)   
+  }
+  
+  out$dpar <- tmp$d1
+  if (method == "NR") {
+    out$dpar2 <- tmp$d2
+  }
+  
+  return(out)
 }

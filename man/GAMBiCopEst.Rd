@@ -5,7 +5,7 @@
 \title{Maximum penalized likelihood estimation of a Generalized Additive model
 for the copula parameter or Kendall's tau.}
 \usage{
-gamBiCopEst(data, formula = ~1, family = 1, tau = FALSE, method = "FS",
+gamBiCopEst(data, formula = ~1, family = 1, tau = TRUE, method = "FS",
   tol.rel = 0.001, n.iters = 10, verbose = FALSE, ...)
 }
 \arguments{
@@ -16,18 +16,17 @@ gamBiCopEst(data, formula = ~1, family = 1, tau = FALSE, method = "FS",
 \code{\link{formula.gam}} and \code{\link{gam.models}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}).}
 
-\item{family}{A copula family:
-\code{1} Gaussian,
+\item{family}{A copula family: \code{1} Gaussian,
 \code{2} Student t,
-\code{3} Clayton,
-\code{4} Gumbel,
 \code{5} Frank,
-\code{13} Survival Clayton,
-\code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton,
-\code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and
-\code{34} Rotated (270 degrees) Gumbel.}
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{tau}{\code{FALSE} (default) for a calibration fonction specified for
 the Copula parameter or \code{TRUE} for a calibration function specified
@@ -50,7 +49,7 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 \value{
 \code{gamBiCopEst} returns a list consisting of
 \item{res}{S4 \code{\link{gamBiCop-class}} object.}
-\item{method}{\code{'FS'} for Fisher-scoring and
+\item{method}{\code{'FS'} for Fisher-scoring (default) and
 \code{'NR'} for Newton-Raphson.}
 \item{tol.rel}{relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
 \item{n.iters}{maximal number of iterations for
@@ -67,13 +66,15 @@ a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
+require(copula)
+require(mgcv)
 set.seed(0)
 
 ## Simulation parameters (sample size, correlation between covariates,
-## Clayton copula family)
-n <- 2e2
+## Gaussian copula family)
+n <- 5e2
 rho <- 0.5
-fam <- 3
+fam <- 1
 
 
 ## A calibration surface depending on three variables
@@ -114,10 +115,10 @@ for (k in 1:3) {
 }
 
 ## 3-dimensional matrix X of covariates
-covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+covariates.distr <- mvdc(normalCopula(rho, dim = 3),
                                  c("unif"), list(list(min = 0, max = 1)),
                                  marginsIdentical = TRUE)
-X <- copula::rMvdc(n, covariates.distr)
+X <- rMvdc(n, covariates.distr)
 
 ## U in [0,1]x[0,1] with copula parameter depending on X
 U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
@@ -138,7 +139,7 @@ basis0 <- c(3, 4, 4)
 formula <- ~s(x1, k = basis0[1], bs = "cr", fx = !pen) +
   s(x2, k = basis0[2], bs = "cr", fx = !pen) +
   s(x3, k = basis0[3], bs = "cr", fx = !pen)
-system.time(fit0 <- gamBiCopEst(data, formula, fam, method = "FS"))
+system.time(fit0 <- gamBiCopEst(data, formula, fam))
 
 ## Model fit with a better basis size and penalized cubic splines (via min GCV)
 pen <- TRUE
@@ -146,7 +147,7 @@ basis1 <- c(3, 10, 10)
 formula <- ~s(x1, k = basis1[1], bs = "cr", fx = !pen) +
   s(x2, k = basis1[2], bs = "cr", fx = !pen) +
   s(x3, k = basis1[3], bs = "cr", fx = !pen)
-system.time(fit1 <- gamBiCopEst(data, formula, fam, method = "FS"))
+system.time(fit1 <- gamBiCopEst(data, formula, fam))
 
 ## Extract the gamBiCop objects and show various methods
 (res <- sapply(list(fit0,fit1), function(fit){fit$res}))
@@ -162,10 +163,10 @@ true <- vector("list", 3)
 for (i in 1:3) {
     y <- eta0+calib.surf[[i]](u)
     true[[i]]$true <- y - eta0
-    temp <- mgcv::gam(y ~ s(u, k = basis0[i], bs = "cr", fx = T))
-    true[[i]]$approx <- mgcv::predict.gam(temp, type = "terms")
-    temp <- mgcv::gam(y ~s(u, k = basis1[i], bs = "cr", fx = F))
-    true[[i]]$approx2 <- mgcv::predict.gam(temp, type = "terms")
+    temp <- gam(y ~ s(u, k = basis0[i], bs = "cr", fx = TRUE))
+    true[[i]]$approx <- predict.gam(temp, type = "terms")
+    temp <- gam(y ~s(u, k = basis1[i], bs = "cr", fx = FALSE))
+    true[[i]]$approx2 <- predict.gam(temp, type = "terms")
 }
 
 ## Display results

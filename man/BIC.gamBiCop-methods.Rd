@@ -2,6 +2,7 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{BIC.gamBiCop}
+\alias{BIC,gamBiCop-method}
 \alias{BIC.gamBiCop}
 \title{Schwarz's Bayesian Information Criterion for a gamBiCop Object}
 \usage{

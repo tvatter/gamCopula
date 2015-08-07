@@ -14,17 +14,21 @@
 #' C-Vine 
 #' @param familyset An integer vector of pair-copula families to select from 
 #' (the independence copula MUST NOT be specified in this vector unless one 
-#' wants to fit an independence vine!). The vector has to include at least one 
-#' pair-copula family that allows for positive and one that allows for negative 
-#' dependence. Not listed copula families might be included to better handle 
+#' wants to fit an independence vine!). 
+#' Not listed copula families might be included to better handle 
 #' limit cases. If \code{familyset = NA} (default), selection among all 
 #' possible families is performed. Coding of pair-copula families:  
-#' \code{1} Gaussian, \code{2} Student t, 
-#' \code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel,  \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and 
-#' \code{34} Rotated (270 degrees) Gumbel.
+#' \code{1} Gaussian, 
+#' \code{2} Student t, 
+#' \code{5} Frank, 
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param rotations If \code{TRUE}, all rotations of the families in familyset 
 #' are included.
 #' @param familycrit Character indicating the criterion for bivariate copula 
@@ -77,7 +81,7 @@
 #' nnames <- paste("x", 1:d, sep = "")
 #' 
 #' # Copula families for each edge
-#' fam <- c(3,4,1)
+#' fam <- c(301,401,1)
 #' 
 #' # Parameters for the first tree (two unconditional copulas)
 #' par <- c(1,2)
@@ -119,8 +123,9 @@
 #' # Fit data using structure selection and sequential estimation
 #' summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))
 #' 
-#' @seealso \code{\link{gamVine-class}}, \code{\link{gamVineSim}}, 
-#' \code{\link{gamVineSeqEst}} and \code{\link{gamBiCopEst}}.
+#' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}}, 
+#'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
+#'  \code{\link{gamBiCopEst}}.
 gamVineStructureSelect <- function(data, type = 0, familyset = NA, 
                                    rotations = TRUE, familycrit = "AIC", 
                                    treecrit = "Kendall", SAtestOptions = "ERC",
@@ -161,8 +166,8 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
   if (trunclevel == 0) {
     familyset <- 0
   }
-  if (is.na(familyset)) {
-    familyset <- 1:4
+  if (length(familyset) == 1 && is.na(familyset)) {
+    familyset <- get.familyset()
   }
   if (rotations) {
     familyset <- withRotations(familyset)
@@ -521,41 +526,51 @@ intersectDifference <- function(liste1, liste2) {
 }
 
 fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC", 
-                        indeptest=FALSE,level=0.05) {
+                        indeptest=FALSE,level=0.05,rotation=TRUE) {
   
-
+  ## transform the familyset to codes for the VineCopula package
+  fams <- famTrans(familyset, inv = FALSE, set = TRUE)
+  
   ## select family and estimate parameter(s) for the pair copula
   out <- BiCopSelect(u1, u2,
-                     familyset,
+                     fams,
                      familycrit,
                      indeptest,
                      level,
                      rotations = FALSE)
-  
-  if (out$family %in% c(23,24)) {
-    out$family <- out$family+10
-  } else if(out$family %in% c(33,34)) {
-    out$family <- out$family-10
+  fam <- famTrans(out$family, inv = TRUE, cor(u1,u2))
+  if (rotation == TRUE) {
+    if (fam %in% c(301,303,401,403)) {
+      fam <- fam+1
+    } else if (fam %in% c(302,304,402,404)) {
+      fam <- fam-1
+    } 
   }
+  out$family <- fam
   
   ## store pseudo-observations for estimation in next tree
+  tmp <- bicoppd1d2(cbind(u1,u2,out$par,out$par2), out$family, p=FALSE, h=TRUE)
+  
+  ## save the model and pseudo-observations
   model <- list(family = out$family, par = out$par, par2 = out$par2)
-  tmp <- BiCopHfunc(u1, u2, out$family, out$par, out$par2)
-  out <- list(model = model, CondOn1 = tmp$hfunc2, CondOn2 = tmp$hfunc1)
+  out <- list(model = model, CondOn1 = tmp[2,], CondOn2 = tmp[1,])
   
   return(out)
 }
 
 fitAGAMCopula <- function(data, familyset, familycrit, 
                           treecrit, SAtestOptions, indeptest, level, 
-                          tau, method, tol.rel, n.iters, parallel) {
+                          tau, method, tol.rel, n.iters, parallel, 
+                          rotation = TRUE) {
   out <- list()
   u1 <- data[,1]
   u2 <- data[,2]
-
+  
+  ## transform the familyset to codes for the VineCopula package
+  fams <- famTrans(familyset, inv = FALSE, set = TRUE)
+  
   ## perform independence test (if asked for)
   if (indeptest == TRUE && familyset != 0) {
-    
     if (treecrit == "SAtest") {
       p1 <- SAtest(data[,1:2], data[,-c(1,2)], SAtestOptions)$pValue
     } else {
@@ -571,32 +586,38 @@ fitAGAMCopula <- function(data, familyset, familycrit,
     out$pValue <- rep(NA, 2)
   }  
   if (familyset == 0 || (!any(is.na(out$pValue)) && out$pValue[2] >= level)) {
+    ## independence copula
+    
     out$model <- list(family = 0, par = 0, par2 = 0)    
     par <- rep(0, length(u1))
     fam <- 0
     par2 <- 0
   } else {
     if (!any(is.na(out$pValue)) && out$pValue[2] < level) {
-      tmp <- BiCopSelect(u1, u2, familyset, familycrit,
+      ## unconditional copula
+      
+      ## select family and estimate parameter(s) for the pair copula
+      tmp <- BiCopSelect(u1, u2, fams, familycrit,
                          indeptest = FALSE, rotations = FALSE)
       par <- rep(tmp$par, length(u1))
       out$model$par <- tmp$par
       out$model$family <- fam <- tmp$family
       out$model$par2 <- par2 <- tmp$par2
     } else {
-      tmp <- gamBiCopSel(data, familyset, familycrit, tau,
+      ## conditional copula
+      tmp <- gamBiCopSel(data, familyset, FALSE, familycrit, tau,
                                method, tol.rel, n.iters, parallel)
       if (!is.character(tmp)) {
         nvar <- unique(all.vars(tmp$res@model$pred.formula))
       }
-
+      
       if (!is.character(tmp) && length(nvar) > 0) {
         out$model <- tmp$res
         par <- gamBiCopPred(out$model, target = "par")$par
         fam <- out$model@family
         par2 <- out$model@par2
       } else {
-        tmp <- BiCopSelect(u1, u2, familyset, familycrit,
+        tmp <- BiCopSelect(u1, u2, fams, familycrit,
                                  indeptest = FALSE, rotations = FALSE)
         par <- rep(tmp$par, length(u1))
         out$model$par <- tmp$par
@@ -605,11 +626,14 @@ fitAGAMCopula <- function(data, familyset, familycrit,
       }
     }
   }
-  
-  if (fam %in% c(23,24)) {
-    fam <- fam+10
-  } else if (fam %in% c(33,34)) {
-    fam <- fam-10
+
+  fam <- famTrans(fam, inv = TRUE, cor(u1,u2))
+  if (rotation == TRUE) {
+    if (fam %in% c(301,303,401,403)) {
+      fam <- fam+1
+    } else if (fam %in% c(302,304,402,404)) {
+      fam <- fam-1
+    } 
   }
 
   if (isS4(out$model)) {
@@ -619,10 +643,9 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   }
 
   ## store pseudo-observations for estimation in next tree
-  tmp <- t(sapply(1:length(par), function(x) 
-    BiCopHfunc(u1[x], u2[x], fam, par[x], par2)))
-  out$CondOn1 <- tmp[,2]
-  out$CondOn2 <- tmp[,1]
+  tmp <- bicoppd1d2(cbind(u1,u2,par,par2), family = fam, p = FALSE, h = TRUE)
+  out$CondOn1 <- tmp[2,]
+  out$CondOn2 <- tmp[1,]
   
   return(out)
 }
@@ -678,11 +701,10 @@ as.GVC <- function(GVC){
             } else {
               fam <- tmp$family
             }
-            
-            if (fam %in% c(23,24)) {
-              fam <- fam+10
-            } else if (fam %in% c(33,34)) {
-              fam <- fam-10
+            if (fam %in% c(301,303,401,403)) {
+              fam <- fam+1
+            } else if (fam %in% c(302,304,402,404)) {
+              fam <- fam-1
             }
             
             if (isS4(tmp)) {

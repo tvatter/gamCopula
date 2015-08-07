@@ -5,21 +5,22 @@
 #'
 #' @param family A copula family: \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel, 
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and
-#'  \code{34} Rotated (270 degrees) Gumbel.
+#' \code{5} Frank, 
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param model A \code{\link{gamObject}} as return by the 
 #' \code{\link{gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @param par2 Second parameter for the Studen t-copula.
-#' @param tau \code{FALSE} (default) for a calibration fonction specified 
-#' for the Copula parameter 
-#' or \code{TRUE} for a calibration function specified for Kendall's tau.
+#' @param tau \code{FALSE} for a calibration fonction specified 
+#' for the Copula parameter or \code{TRUE} (default) for a calibration 
+#' function specified for Kendall's tau.
 #' @return An object of the class
 #'  \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @seealso \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}, 
@@ -28,19 +29,18 @@
 #' @name gamBiCop
 #' @rdname gamBiCop
 #' @export
-gamBiCop <- function(family, model, par2 = 0, tau = FALSE) {
+gamBiCop <- function(family, model, par2 = 0, tau = TRUE) {
   if (family != 2) {
     par2 <- 0
   }
-  if (as.integer(family) != family) {
-    return("Family should be an integer.")
-  }
-  if (!(is.logical(tau) || (tau == 0) || (tau == 1))) {
-    return(paste("Tau should takes 0/1 or FALSE/TRUE to model",
-                 "the copula parameter/Kendall's tau."))
+  tmp <- tryCatch(as.integer(family), error = function(e) e)
+  msg <- "should be or be coercisable to an integer."
+  if (any(class(tmp) != "integer") || 
+        length(family) != 1 || as.integer(family) != family) {
+    stop(paste("family", msg))
   }
   new("gamBiCop", family = as.integer(family), model = model, 
-      par2 = par2, tau = as.logical(tau))
+      par2 = par2, tau = tau)
 } 
 
 valid.gamBiCop <- function(object) {
@@ -67,7 +67,7 @@ valid.gamBiCop <- function(object) {
 }
 
 show.gamBiCop <- function(object) {
-  cat(BiCopName(object@family, short = FALSE), "copula with ")
+  cat(bicopname(object@family), "copula with ")
   if (object@tau == TRUE) {
     cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")
   } else {
@@ -87,7 +87,7 @@ show.gamBiCop <- function(object) {
 }
 
 summary.gamBiCop <- function(object) {
-  cat(BiCopName(object@family, short = FALSE), "copula with ")
+  cat(bicopname(object@family), "copula with ")
   if (object@tau == TRUE) {
     cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")
   } else {
@@ -120,12 +120,9 @@ logLik.gamBiCop <- function(object, ...) {
   if (family == 2) {
     par2 <- rep(object@par2, length(par))
     data <- cbind(data, par2)
-    Li <- apply(data, 1, function(x) BiCopPDF(x[1], x[2], 
-                                              family = 2, x[3], x[4]))
-  } else {
-    Li <- apply(data, 1, function(x) BiCopPDF(x[1], x[2], 
-                                              family = family, x[3]))
-  }
+  } 
+
+  Li <- as.numeric(bicoppd1d2(data,family))
   val <- sum(log(Li))
   df <- sum(object@model$edf)
   
@@ -160,6 +157,24 @@ formula.gamBiCop <- function(x, ...) {
 
 setValidity("gamBiCop", valid.gamBiCop)
 setMethod("show", signature("gamBiCop"), show.gamBiCop)
+
+#' Summary for a \code{gamBiCop} Object
+#' 
+#' Takes a \code{\link{gamBiCop-class}} object and produces various 
+#' useful summaries from it.
+#'
+#' @param object An object of the class
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
+#' @param ... un-used in this class
+#' @return A useful summary (see \code{\link{summary.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
+#' @seealso \code{\link{summary.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}}
+#' @docType methods
+#' @name summary.gamBiCop
+#' @rdname summary.gamBiCop-methods
+#' @aliases summary,gamBiCop-method
+#' @export
 setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 
 #' Model Formula of the gamBiCop Object
@@ -175,7 +190,8 @@ setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @docType methods
 #' @name formula.gamBiCop
-#' @rdname formula-methods
+#' @rdname formula.gamBiCop-methods
+#' @aliases formula,gamBiCop-method
 #' @export
 setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 
@@ -192,7 +208,8 @@ setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @name nobs.gamBiCop
-#' @rdname nobs-methods
+#' @rdname nobs.gamBiCop-methods
+#' @aliases nobs,gamBiCop-method
 #' @export
 setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 
@@ -210,7 +227,8 @@ setMethod("nobs", signature("gamBiCop"), nobs.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @name logLik.gamBiCop
-#' @rdname logLik-methods
+#' @rdname logLik.gamBiCop-methods
+#' @aliases logLik,gamBiCop-method
 #' @export
 setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
 
@@ -227,7 +245,8 @@ setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @name BIC.gamBiCop
-#' @rdname BIC-methods
+#' @rdname BIC.gamBiCop-methods
+#' @aliases BIC,gamBiCop-method
 #' @export
 setMethod("BIC", signature("gamBiCop"), BIC.gamBiCop)
 
@@ -247,7 +266,8 @@ setMethod("BIC", signature("gamBiCop"), BIC.gamBiCop)
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
 #' @docType methods
 #' @name AIC.gamBiCop
-#' @rdname AIC-methods
+#' @rdname AIC.gamBiCop-methods
+#' @aliases AIC,gamBiCop-method
 #' @export
 setMethod("AIC", signature("gamBiCop"), AIC.gamBiCop)
 
@@ -260,12 +280,14 @@ setMethod("AIC", signature("gamBiCop"), AIC.gamBiCop)
 #' 
 #' @param x An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
+#' @param y Not used with this class.
 #' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
 #' @return This function simply generates plots.
 #' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @docType methods
 #' @name plot.gamBiCop
-#' @rdname plot-methods
+#' @rdname plot.gamBiCop-methods
+#' @aliases plot,gamBiCop,ANY-method
 #' @export
 setMethod("plot", signature(x="gamBiCop"), plot.gamBiCop)
 
@@ -280,7 +302,7 @@ setMethod("plot", signature(x="gamBiCop"), plot.gamBiCop)
 #' @param object A \code{\link{gamBiCop}} object.
 #' @return Estimated degrees of freedom for each smooth component.
 #' @docType methods
-#' @rdname EDF-methods
+#' @rdname EDF.gamBiCop-methods
 #' @export
 EDF <- function(object) {
   

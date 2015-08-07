@@ -2,6 +2,7 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{AIC.gamBiCop}
+\alias{AIC,gamBiCop-method}
 \alias{AIC.gamBiCop}
 \title{Akaike's An Information Criterion for a gamBiCop Object}
 \usage{

@@ -2,6 +2,7 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{formula.gamBiCop}
+\alias{formula,gamBiCop-method}
 \alias{formula.gamBiCop}
 \title{Model Formula of the gamBiCop Object}
 \usage{

@@ -10,14 +10,14 @@ BiCopPar2Eta(family, par)
 \item{family}{A copula family:
 \code{1} Gaussian,
 \code{2} Student t,
-\code{3} Clayton,
-\code{4} Gumbel,
-\code{13} Survival Clayton,
-\code{14} Survival Gumbel,
-\code{23} Rotated (90 degrees) Clayton,
-\code{24} Rotated (90 degrees) Gumbel,
-\code{33} Rotated (270 degrees) Clayton and
- \code{34} Rotated (270 degrees) Gumbel.}
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{par}{The (first) copula parameter}
 }
@@ -27,14 +27,22 @@ parameter and family as:
 \itemize{
 \item \code{1} Gaussian, \code{f(x) = 2*atanh(x)}
 \item \code{2} Student t, \code{f(x) = 2*atanh(x)}
-\item \code{3} Clayton, \code{f(x) = log(x)}
-\item \code{4} Gumbel, \code{f(x) = log(x-1)}
-\item \code{13} Survival Clayton, \code{f(x) = log(x)}
-\item \code{14} Survival Gumbel, \code{f(x) = log(x-1)}
-\item \code{23} Rotated (90 degrees) Clayton, \code{f(x) = -log(x)}
-\item \code{24} Rotated (90 degrees) Gumbel, \code{f(x) = -log(x-1)}
-\item \code{33} Rotated (270 degrees) Clayton, \code{f(x) = -log(x)}
-\item \code{34} Rotated (270 degrees) Gumbel, \code{f(x) = -log(x-1)}
+\item \code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{f(x) = x}
+\item \code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{f(x) = x}
+\item \code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{f(x) = x}
+\item \code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{f(x) = x}
+\item \code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{f(x) = x*(1-1/abs(x))}
+\item \code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{f(x) = x*(1-1/abs(x))}
+\item \code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{f(x) = x*(1-1/abs(x))}
+\item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)
+\code{f(x) = x*(1-1/abs(x))}.
 }
 }
 \description{

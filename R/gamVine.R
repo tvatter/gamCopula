@@ -8,12 +8,13 @@
 #' (family, par and par2) and/or objects of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param names vector of d names.
+#' @param covariates vector of names for the covariates.
 #' @return An object of the class
 #'  \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}}, 
 #' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}}, 
-#' \code{\link{gamVinePred}} and \code{\link{gamVineSim}}.
+#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}}, 
+#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
 #' @name gamVine
 #' @rdname gamVine
 #' @export
@@ -129,8 +130,7 @@ show.gamVine <- function(object) {
   for (i in 1:(d - 1)) {
     a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
                GVC@names[[GVC@Matrix[d,i]]], sep = "")
-    a <- paste(a, ": ", BiCopName(GVC@model[[count]]$family,
-                                  short = FALSE), sep = "")
+    a <- paste(a, ": ", bicopname(GVC@model[[count]]$family), sep = "")
     cat(a, "\n")
     # if(GVC@model[d,i]!=0) { show(GVC@model[d,i]) }
     count <- count + 1
@@ -151,7 +151,7 @@ show.gamVine <- function(object) {
       }
       mm <- GVC@model[[count]]
       if ( valid.gamBiCop(mm) != TRUE) {
-        a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+        a <- paste(a, ": ", bicopname(mm$family), sep = "")
         cat(a, "\n")
       } else {
         cat(a, ": ")
@@ -179,15 +179,14 @@ summary.gamVine <- function(object) {
     mm <- GVC@model[[count]]
     a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
                GVC@names[[GVC@Matrix[d,i]]], sep = "")
-    a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+    a <- paste(a, ": ", bicopname(mm$family), sep = "")
     if (mm$family!=0) {
       a <- paste(a, " with par=", round(mm$par,2), sep="")
       if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,104,
                            114,124,134,204,214,224,234)) {
         a <- paste(a," and par2=", round(mm$par2,2), sep="")
       }
-      a <- paste(a, " (tau=", 
-                 round(BiCopPar2Tau(mm$family,mm$par,mm$par2),2), ")", sep="")
+      a <- paste(a, " (tau=",round(par2tau(mm$par,mm$family),2), ")", sep="")
     }
     cat(a, "\n")
     count <- count + 1
@@ -208,16 +207,14 @@ summary.gamVine <- function(object) {
       }
       mm <- GVC@model[[count]]
       if ( valid.gamBiCop(mm) != TRUE) {
-        a <- paste(a, ": ", BiCopName(mm$family, short = FALSE), sep = "")
+        a <- paste(a, ": ", bicopname(mm$family), sep = "")
         if (mm$family!=0) {
           a <- paste(a, " with par=", round(mm$par,2), sep="")
           if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,
                                104,114,124,134,204,214,224,234)) {
             a <- paste(a," and par2=", round(mm$par2,2), sep="")
           }
-          a <- paste(a, " (tau=", 
-                     round(BiCopPar2Tau(mm$family,mm$par,mm$par2),2), 
-                     ")", sep="")
+          a <- paste(a," (tau=",round(par2tau(mm$par,mm$family),2), ")",sep="")
         }
         cat(a, "\n")
       } else {
@@ -257,6 +254,24 @@ plot.gamVine <- function(x, ...) {
 
 setValidity("gamVine", valid.gamVine)
 setMethod("show", signature("gamVine"), show.gamVine)
+
+#' Summary for a gamVine Class Oject
+#' 
+#' Takes a \code{\link{gamVine-class}} object and produces various 
+#' useful summaries from it.
+#'
+#' @param object An object of the class
+#' \code{\link[gamCopula:gamVine-class]{gamVine}}.
+#' @param ... un-used in this class
+#' @return A useful summary (see \code{\link{summary.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
+#' @seealso \code{\link{summary.gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}}
+#' @docType methods
+#' @name summary.gamVine
+#' @rdname summary.gamVine-methods
+#' @aliases summary,gamVine-method
+#' @export
 setMethod("summary", signature("gamVine"), summary.gamVine)
 
 #' Dimension of a gamVine Class Oject
@@ -270,7 +285,9 @@ setMethod("summary", signature("gamVine"), summary.gamVine)
 #' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @docType methods 
-#' @rdname dim-methods
+#' @name dim.gamVine
+#' @rdname dim.gamVine-methods
+#' @aliases dim,gamVine-methods
 #' @export
 setMethod("dim", signature("gamVine"), dim.gamVine)
 
@@ -282,12 +299,15 @@ setMethod("dim", signature("gamVine"), dim.gamVine)
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' 
 #' @param x An object of the class 
-#' \code{\link[gamCopula:gamVine-class]{gamVine}}
+#' \code{\link[gamCopula:gamVine-class]{gamVine}}.
+#' @param y Not used with this class.
 #' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
 #' @return This function simply generates plots.
 #' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @docType methods
-#' @rdname plot-methods
+#' @name plot.gamVine
+#' @rdname plot.gamVine-methods
+#' @aliases plot,gamVine,ANY-methods
 #' @export
 setMethod("plot", signature(x="gamVine"), plot.gamVine)
 
@@ -366,6 +386,12 @@ RVM2GVC <- function(RVM) {
     stop("RVM has to be an object of the class RVineMatrix.")
   }
   
+  if (!all(RVM$family[lower.tri(RVM$family)] %in% c(1:5,13,14,23,24,33,34))) {
+    msg <- paste("Only the Gaussian, t, Clayton, Gumbel and Frank copulas and",
+                 "rotations are allowed in gamVine objects.")
+    stop(msg)
+  }
+  
   d <- dim(RVM$Matrix)[1]
   
   sel <- seq(d, d^2 - d, by = d)
@@ -378,6 +404,7 @@ RVM2GVC <- function(RVM) {
     par2 <- c(par2, RVM$par2[sel[1:(d - j)] - j + 1])
   }
   
+  family <- sapply(family,famTrans)
   out <- cbind(family, par, par2)
   colnames(out) <- c()
   out <- apply(out, 1, function(x) list(family = x[1], par = x[2], par2 = x[3]))

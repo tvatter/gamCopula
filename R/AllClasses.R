@@ -9,14 +9,15 @@ setOldClass(c("gam"))
 #'
 #' @slot family A copula family: \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel, 
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and 
-#' \code{34} Rotated (270 degrees) Gumbel.
+#' \code{5} Frank, 
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @slot model A \code{\link{gamObject}} as return by the
 #'  \code{\link{gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
@@ -46,8 +47,8 @@ setClass("gamBiCop", slots = c(family = "integer", model = "gam",
 #' @slot covariates vector of names for the exogenous covariates.
 #' @seealso \code{\link{gamVine}}, 
 #' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}}, 
-#' \code{\link{gamVinePred}} and \code{\link{gamVineSim}}.
+#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}}, 
+#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
 #' @name gamVine-class
 #' @rdname gamVine-class
 #' @export

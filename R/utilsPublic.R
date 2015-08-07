@@ -4,31 +4,39 @@
 #' Computes the (first) copula parameter of a bivariate copula for a given 
 #' value of the calibration function (eta).
 #'
-#' @param family A copula family: 
+#' @param family A copula family:  
 #' \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel, 
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and
-#'  \code{34} Rotated (270 degrees) Gumbel.
-#' @param par The (first) copula parameter
-#' @return The value of the calibration function, depending on the copula
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
+#' @param eta The calibration function.
+#' @return The value of the first copula parameter, depending on the copula
 #' parameter and family as:
 #' \itemize{
 #' \item \code{1} Gaussian, \code{f(x) = tanh(x/2)}
 #' \item \code{2} Student t, \code{f(x) = tanh(x/2)}
-#' \item \code{3} Clayton, \code{f(x) = exp(x)}
-#' \item \code{4} Gumbel, \code{f(x) = 1+exp(x)}
-#' \item \code{13} Survival Clayton, \code{f(x) = exp(x)}
-#' \item \code{14} Survival Gumbel, \code{f(x) = 1+exp(x)}
-#' \item \code{23} Rotated (90 degrees) Clayton, \code{f(x) = -exp(x)}
-#' \item \code{24} Rotated (90 degrees) Gumbel, \code{f(x) = -1-exp(x)}
-#' \item \code{33} Rotated (270 degrees) Clayton, \code{f(x) = -exp(x)}
-#' \item \code{34} Rotated (270 degrees) Gumbel, \code{f(x) = -1-exp(x)}
+#' \item \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{f(x) = x}
+#' \item \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{401} Double Gumbel type I (standard and rotated 90 degrees),  
+#' \code{f(x) = x*(1+abs(x))/abs(x)}
+#' \item \code{402} Double Gumbel type II (standard and rotated 270 degrees),  
+#' \code{f(x) = x*(1+abs(x))/abs(x)} 
+#' \item \code{403} Double Gumbel type III (survival and rotated 90 degrees),  
+#' \code{f(x) = x*(1+abs(x))/abs(x)} 
+#' \item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)  
+#' \code{f(x) = x*(1+abs(x))/abs(x)}.
 #' } 
 #' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
 #' \code{\link{BiCopTau2Par}} from 
@@ -65,28 +73,36 @@ BiCopEta2Par <- function(family, eta) {
 #' @param family A copula family: 
 #' \code{1} Gaussian, 
 #' \code{2} Student t, 
-#' \code{3} Clayton, 
-#' \code{4} Gumbel, 
-#' \code{13} Survival Clayton, 
-#' \code{14} Survival Gumbel, 
-#' \code{23} Rotated (90 degrees) Clayton, 
-#' \code{24} Rotated (90 degrees) Gumbel, 
-#' \code{33} Rotated (270 degrees) Clayton and
-#'  \code{34} Rotated (270 degrees) Gumbel.
+#' \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{401} Double Gumbel type I (standard and rotated 90 degrees), 
+#' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
+#' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+#' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param par The (first) copula parameter
 #' @return The value of the calibration function, depending on the copula
 #' parameter and family as:
 #' \itemize{
 #' \item \code{1} Gaussian, \code{f(x) = 2*atanh(x)}
 #' \item \code{2} Student t, \code{f(x) = 2*atanh(x)}
-#' \item \code{3} Clayton, \code{f(x) = log(x)}
-#' \item \code{4} Gumbel, \code{f(x) = log(x-1)}
-#' \item \code{13} Survival Clayton, \code{f(x) = log(x)}
-#' \item \code{14} Survival Gumbel, \code{f(x) = log(x-1)}
-#' \item \code{23} Rotated (90 degrees) Clayton, \code{f(x) = -log(x)}
-#' \item \code{24} Rotated (90 degrees) Gumbel, \code{f(x) = -log(x-1)}
-#' \item \code{33} Rotated (270 degrees) Clayton, \code{f(x) = -log(x)}
-#' \item \code{34} Rotated (270 degrees) Gumbel, \code{f(x) = -log(x-1)}
+#' \item \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+#' \code{f(x) = x}
+#' \item \code{302} Double Clayton type II (standard and rotated 270 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{303} Double Clayton type III (survival and rotated 90 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
+#' \code{f(x) = x} 
+#' \item \code{401} Double Gumbel type I (standard and rotated 90 degrees),  
+#' \code{f(x) = x*(1-1/abs(x))}
+#' \item \code{402} Double Gumbel type II (standard and rotated 270 degrees),  
+#' \code{f(x) = x*(1-1/abs(x))} 
+#' \item \code{403} Double Gumbel type III (survival and rotated 90 degrees),  
+#' \code{f(x) = x*(1-1/abs(x))} 
+#' \item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)  
+#' \code{f(x) = x*(1-1/abs(x))}.
 #' } 
 #' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
 #' \code{\link{BiCopTau2Par}} from 
@@ -167,7 +183,7 @@ BiCopPar2Eta <- function(family, par) {
 #' @param return.par Should the parameter (and calibration function) be returned
 #' as well (default \code{return.par = TRUE})?
 #' @param tau Should the calibration function (and the model) be specified for
-#' the copula parameter or Kendall's tau (default \code{tau = FALSE})?
+#' the copula parameter or Kendall's tau (default \code{tau = TRUE})?
 #' @return If \code{return.par = TRUE}, then the function returns a list with:
 #' \itemize{
 #' \item \code{data}, a matrix with two columns containing the simulated data,
@@ -179,13 +195,14 @@ BiCopPar2Eta <- function(family, par) {
 #' a matrix with two columns containing the simulated data.
 #' @seealso \code{\link{gamBiCopEst}} and \code{\link{gamBiCopSim}}.
 #' @examples
+#' require(copula)
 #' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
-#' ## Clayton copula family)
+#' ## Gaussian copula family)
 #' n <- 2e2
 #' rho <- 0.5
-#' fam <- 3
+#' fam <- 1
 #' 
 #' 
 #' ## A calibration surface depending on three variables
@@ -226,10 +243,10 @@ BiCopPar2Eta <- function(family, par) {
 #' }
 #' 
 #' ## 3-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 3),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
 #' U <- condBiCopSim(fam, function(x1,x2,x3) {eta0+sum(mapply(function(f,x)
@@ -242,17 +259,17 @@ BiCopPar2Eta <- function(family, par) {
 #' ## Display the data
 #' dev.off()
 #' plot(data[, "u1"], data[, "u2"], xlab = "U1", ylab = "U2")
-#' @name CondBiCopSim
-#' @rdname CondBiCopSim
+#' @name condBiCopSim
+#' @rdname condBiCopSim
 #' @export
 condBiCopSim <- function(family, calib.fnc, X, 
-                         par2 = 0, return.par = TRUE, tau = FALSE) {
+                         par2 = 0, return.par = TRUE, tau = TRUE) {
   
   if (!is.numeric(family) || length(family) != 1) {
     stop("Input for family has to be a scalar/integer.")
   }
   
-  if (!(family %in% c(1, 2, 3, 4, 5, 13, 14, 23, 24, 33, 34))) 
+  if (!(family %in% get.familyset())) 
     stop("Copula family not yet implemented.")
   
   if (!is.function(calib.fnc)) {
@@ -300,15 +317,25 @@ condBiCopSim <- function(family, calib.fnc, X,
   }
   
   if (tau != TRUE) {
-    par <- BiCopEta2Par(family, eta)
+    par <- eta2par(eta,family)
   } else {
-    if (is.element(family, c(1, 2))) {
-      par <- sapply(tanh(eta/2), function(x) BiCopTau2Par(1, x))
-    } else {
-      par <- sapply((1 + tanh(eta/2))/2, function(x) BiCopTau2Par(family, x))
-    }
+    par <- tau2par(eta2par(eta,1),family)
   }
 
+  if (family %in% c(1,2,5)) {
+    family <- rep(family,length(par))
+  } else {
+    if (family %in% c(301:304)) {
+      fam <- rev(expand.grid(c(23,33),c(3,13)))[family-300,]
+    } else {
+      fam <- rev(expand.grid(c(24,34),c(4,14)))[family-400,]
+    }
+    sel <- par > 0
+    family <- rep(0,length(par))
+    family[sel] <- fam[1]
+    family[!sel] <- fam[2]
+  }
+  
   data <- t(mapply(BiCopSim, 1, family, par, par2))
   if (return.par == TRUE) {
     return(list(data = data, par = par, eta = eta))

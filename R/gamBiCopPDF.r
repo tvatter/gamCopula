@@ -15,13 +15,14 @@
 #' @return The conditional density.
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPred}}.
 #' @examples 
+#' require(copula) 
 #' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
-#' ## Clayton copula family)
+#' ## Gaussian copula family)
 #' n <- 2e2
 #' rho <- 0.5
-#' fam <- 3 
+#' fam <- 1 
 #' 
 #' ## A calibration surface depending on three variables
 #' eta0 <- 1
@@ -41,10 +42,10 @@
 #'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 #' 
 #' ## 3-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 3),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' colnames(X) <- paste("x",1:3,sep="")
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
@@ -60,7 +61,7 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam, method = "FS"))
+#' system.time(fit <- gamBiCopEst(data, formula, fam))
 #' 
 #' ## Evaluate the conditional density
 #' gamBiCopPDF(fit$res)
@@ -77,9 +78,8 @@ gamBiCopPDF <- function(object, newdata = NULL) {
     data <- cbind(newdata[,"u1"], newdata[,"u2"])
   }
   data <- cbind(data, par)
-  out <- apply(data, 1, function(x) BiCopPDF(x[1], x[2], 
-                                             object@family, 
-                                             x[3], object@par2))
+  
+  out <- as.numeric(bicoppd1d2(data,object@family))
   
   return(out)
 } 

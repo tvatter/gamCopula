@@ -40,13 +40,14 @@
 #' \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}). 
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}.
 #' @examples 
+#' require(copula) 
 #' set.seed(0)
 #' 
 #' ## Simulation parameters (sample size, correlation between covariates,
 #' ## Clayton copula family)
-#' n <- 2e2
+#' n <- 5e2
 #' rho <- 0.5
-#' fam <- 3 
+#' fam <- 1
 #' 
 #' ## A calibration surface depending on three variables
 #' eta0 <- 1
@@ -66,10 +67,10 @@
 #'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
 #' 
 #' ## 3-dimensional matrix X of covariates
-#' covariates.distr <- copula::mvdc(copula::normalCopula(rho, dim = 3),
+#' covariates.distr <- mvdc(normalCopula(rho, dim = 3),
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
-#' X <- copula::rMvdc(n, covariates.distr)
+#' X <- rMvdc(n, covariates.distr)
 #' colnames(X) <- paste("x",1:3,sep="")
 #' 
 #' ## U in [0,1]x[0,1] with copula parameter depending on X
@@ -85,7 +86,7 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam, method = "FS"))
+#' system.time(fit <- gamBiCopEst(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- fit$res)
@@ -102,126 +103,76 @@ gamBiCopPred <- function(object, newdata = NULL,
   
   mm <- object@model
   
-  rotated <- family <- object@family
-  if (is.element(rotated, c(13, 23, 33))) {
-    rotated <- 3
-  } else if (is.element(family, c(14, 24, 34))) {
-    rotated <- 4
-  }
-  
+  family <- object@family
   # Define links between Kendall's tau, copula parameter and calibration 
   # function... the cst/cstinv make sure that the boundaries are never attained
-  if (rotated %in% c(3, 4)) {
-    cst <- function(x) (1-1e-8)*(1e-8+x)
-    cstinv <- function(x) 1e-8+x
-    par2tau.fun <- function(x) cst(BiCopPar2Tau(rotated, cstinv(x)))
-    tau2par.fun <- function(x) cstinv(BiCopTau2Par(rotated, cst(x)))
-    eta2par.fun <- function(x) cstinv(BiCopEta2Par(rotated, x))
-  }else{
-    cst <- (1-1e-8)
-    par2tau.fun <- function(x) BiCopPar2Tau(1, x*cst)*cst
-    tau2par.fun <- function(x) BiCopTau2Par(1, x*cst)*cst
-    eta2par.fun <- function(x) BiCopEta2Par(1, x)*cst
+  if (family %in% c(1, 2)) {
+    cstpar <- csttau <- function(x) x*(1-1e-8) 
+  } else {
+    csttau <- function(x) x*(1-1e-8)
+    cstpar <- function(x) x
   }
+  
+  par2tau.fun <- function(x) csttau(par2tau(cstpar(x),family))
+  tau2par.fun <- function(x) cstpar(tau2par(csttau(x),family))
+  eta2par.fun <- function(x) cstpar(eta2par(x, family))
+  par2eta.fun <- function(x) par2eta(cstpar(x),family)
+  eta2tau.fun <- function(x) csttau(eta2par(x, 1))
+  tau2eta.fun <- function(x) par2eta(csttau(x),1)
 
   out <- list()
   sel <- length(target) == 1 && (target == "calib")
   if (sel) {
     if (is.null(newdata)) {
-      out$calib <- mgcv::predict.gam(mm, type = type)
+      out$calib <- predict.gam(mm, type = type)
     } else {
-      out$calib <- mgcv::predict.gam(mm, as.data.frame(newdata), type = type)
+      out$calib <- predict.gam(mm, as.data.frame(newdata), type = type)
     }
   } else {
     if (is.null(newdata)) {
-      out$calib <- mgcv::predict.gam(mm)
+      out$calib <- predict.gam(mm)
     } else {
-      out$calib <- mgcv::predict.gam(mm, as.data.frame(newdata))
+      out$calib <- predict.gam(mm, as.data.frame(newdata))
     }
   }
 
   quantile.fun <- function(x) quantile(x, c((1 - alpha)/2, 1 - (1 - alpha)/2))
+  myCI <- function(x) t(apply(x, 2, quantile.fun))
   if (!sel && (alpha != 0) && (alpha != 1)) {
-    Xp <- mgcv::predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
+    Xp <- predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
     b <- coef(mm)
     Vp <- vcov(mm)
-    br <- MASS::mvrnorm(1e4, b, Vp)
+    br <- mvrnorm(1e4, b, Vp)
     calib <- br %*% t(Xp)
-    out$calib.CI <- t(apply(calib, 2, quantile.fun))
+    out$calib.CI <- myCI(calib)
   } else {
     calib <- NULL
   }
 
   if (any(is.element(target, "par"))) {
-    tanhsp <- function(x) tanh(x/2)
     if (object@tau) {
-      tmp <- tanhsp(out$calib)
-      if (rotated %in% c(3, 4)) {
-        out$par <- sapply((1 + tmp)/2, tau2par.fun)
-        if (family %in% c(23, 24, 33, 34)) {
-          out$par <- -out$par
-        }
-        if (!is.null(calib)) {
-          tmp <- apply((1 + tanhsp(calib))/2, 2, tau2par.fun)
-          out$par.CI <- t(apply(tmp, 2, quantile.fun))
-          if (family %in% c(23, 24, 33, 34)) {
-          out$par.CI <- -out$par.CI
-          }
-        }
-      } else {
-        out$par <- sapply(tmp, tau2par.fun)
-        if (!is.null(calib)) {
-          tmp <- apply(tanhsp(calib), 2, tau2par.fun)
-          out$par.CI <- t(apply(tmp, 2, quantile.fun))
-        }
+      out$par <- tau2par.fun(eta2tau.fun(out$calib))
+      if (!is.null(calib)) {
+        out$par.CI <- myCI(tau2par.fun(eta2tau.fun(calib)))
       }
     } else {
-      out$par <- sapply(out$calib, eta2par.fun)
-      if (family %in% c(23, 24, 33, 34)) {
-        out$par <- -out$par
-      }
+      out$par <- eta2par.fun(out$calib)
       if (!is.null(calib)) {
-        tmp <- apply(calib, 2, eta2par.fun)
-        out$par.CI <- t(apply(tmp, 2, quantile.fun))
-        if (family %in% c(23, 24, 33, 34)) {
-          out$par.CI <- -out$par.CI
-        }
+        out$par.CI <- myCI(eta2par.fun(calib))
       }
     }
   }
   
   if (any(is.element(target, "tau"))) {
-    tanhsp <- function(x) tanh(x/2)*(1-1e-8)
     if (object@tau) {
-      out$tau <- tanhsp(out$calib)
-      if (rotated %in% c(3, 4)) {
-        out$tau <- (1 + out$tau)/2
-        if (family %in% c(23, 24, 33, 34)) {
-          out$tau <- -out$tau
-        }
-      }
+      out$tau <- eta2tau.fun(out$calib)
       if (!is.null(calib)) {
-        out$tau.CI <- t(apply(tanhsp(calib), 2, quantile.fun))
-        if (rotated %in% c(3, 4)) {
-          out$tau.CI <- (1 + out$tau.CI)/2
-          if (family %in% c(23, 24, 33, 34)) {
-          out$tau.CI <- -out$tau.CI
-          }
-        }
+        out$tau.CI <- myCI(eta2tau.fun(calib))
       }
     } else {
-      tmp <- sapply(out$calib, eta2par.fun)
-      out$tau <- sapply(tmp, par2tau.fun)
-      if (family %in% c(23, 24, 33, 34)) {
-        out$tau <- -out$tau
-      }
+      out$tau <- par2tau.fun(eta2par.fun(out$calib))
       if (!is.null(calib)) {
-        tmp <- apply(calib, 2, eta2par.fun)
-        tmp <- apply(tmp, 2, par2tau.fun)
-        out$tau.CI <- t(apply(tmp, 2, quantile.fun))
-        if (family %in% c(23, 24, 33, 34)) {
-          out$tau.CI <- -out$tau.CI
-        }
+        out$tau.CI <- myCI(par2tau.fun(eta2par.fun(calib)))
       }
     }
   }

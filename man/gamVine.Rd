@@ -14,6 +14,8 @@ gamVine(Matrix, model, names = NA, covariates = NA)
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
 \item{names}{vector of d names.}
+
+\item{covariates}{vector of names for the covariates.}
 }
 \value{
 An object of the class
@@ -26,7 +28,7 @@ Constructs an object of the class
 \seealso{
 \code{\link[gamCopula:gamVine-class]{gamVine}},
 \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-\code{\link{gamVineSeqEst}}, \code{\link{gamVineStructureSelect}},
-\code{\link{gamVinePred}} and \code{\link{gamVineSim}}.
+\code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}},
+\code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
 }
 

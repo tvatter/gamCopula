@@ -96,10 +96,11 @@ a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
-TODO
+print(12)
 }
 \seealso{
-\code{\link{gamVine-class}}, \code{\link{gamVineSim}} and
-\code{\link{gamBiCopEst}}.
+\code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}},
+ \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and
+ \code{\link{gamBiCopEst}}.
 }
 

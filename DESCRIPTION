@@ -2,19 +2,20 @@ Package: gamCopula
 Type: Package
 Title: Generalized Additive Models for Bivariate Conditional Dependence Structures and Vine Copulas
 Version: 0.0-1
-Date: 2014-08-05
+Date: 2015-08-07
 Author: Thibault Vatter
 Maintainer: Thibault Vatter <thibault.vatter@gmail.com>
 Depends:
     R (>= 3.0.2)
 Imports:
-    VineCopula,
+    VineCopula (>= 1.7),
     mgcv,
     MASS,
     gsl,
+    numDeriv,
     methods,
     copula,
-    igraph,
+    igraph (>= 1.0.0),
     parallel,
     foreach,
     doParallel

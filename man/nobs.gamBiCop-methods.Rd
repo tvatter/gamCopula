@@ -2,6 +2,7 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{nobs.gamBiCop}
+\alias{nobs,gamBiCop-method}
 \alias{nobs.gamBiCop}
 \title{Extract the Number of Obserations from gamBiCop Object}
 \usage{

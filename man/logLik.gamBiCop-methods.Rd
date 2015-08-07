@@ -2,6 +2,7 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{logLik.gamBiCop}
+\alias{logLik,gamBiCop-method}
 \alias{logLik.gamBiCop}
 \title{Extract the Log-likelihood from a gamBiCop Object}
 \usage{
