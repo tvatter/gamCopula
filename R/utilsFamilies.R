@@ -278,21 +278,23 @@ bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE,
     out <- rbind(out,0)
     myfuns$p <- function(x,family) BiCopPDF(u1 = x[,1], u2 = x[,2],
                                             par = x[,3], par2 = x[,4],
-                                            family = family)
+                                            family = family, check.pars = FALSE)
   }
 
   if (d1 == TRUE) {
     out <- rbind(out,0)
     myfuns$d1 <- function(x,family) BiCopDeriv(u1 = x[,1], u2 = x[,2],
                                                par = x[,3], par2 = x[,4], 
-                                               family = family, log = TRUE)
+                                               family = family, log = TRUE, 
+                                               check.pars = FALSE)
   }
   
   if (d2 == TRUE) {
     out <- rbind(out,0)
     myfuns$d2 <- function(x,family) BiCopDeriv2(u1 = x[,1], u2 = x[,2],
                                                 par = x[,3], par2 = x[,4], 
-                                                family = family)
+                                                family = family, 
+                                                check.pars = FALSE)
   }   
   
   if (h == TRUE) {
@@ -300,7 +302,8 @@ bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE,
     myfuns$h <- function(x,family) do.call(rbind, 
                                            BiCopHfunc(u1 = x[,1], u2 = x[,2],
                                                       par = x[,3], par2 = x[,4], 
-                                                      family = family))
+                                                      family = family, 
+                                                      check.pars = FALSE))
   }   
   
   if (hinv == TRUE) {
@@ -308,7 +311,8 @@ bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE,
     myfuns$h <- function(x,family) do.call(rbind, 
                                            BiCopHinv(u1 = x[,1], u2 = x[,2],
                                                      par = x[,3], par2 = x[,4], 
-                                                     family = family))
+                                                     family = family, 
+                                                     check.pars = FALSE))
   } 
 
   if (cdf == TRUE) {
