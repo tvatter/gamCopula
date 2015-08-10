@@ -4,17 +4,19 @@
 \alias{gamVineStructureSelect}
 \title{Structure selection and estimation of a GAM-Vine model.}
 \usage{
-gamVineStructureSelect(data, type = 0, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "Kendall", SAtestOptions = "ERC",
-  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = TRUE,
-  verbose = FALSE)
+gamVineStructureSelect(data, covariates = NA, type = 0, familyset = NA,
+  rotations = TRUE, familycrit = "AIC", treecrit = "Kendall",
+  SAtestOptions = "ERC", indeptest = TRUE, level = 0.05,
+  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
+  n.iters = 10, parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
+\item{covariates}{Vector of names for the covariates.}
+
 \item{type}{\code{type = 0} (default) for a R-Vine and \code{type = 1} for a
-C-Vine}
+C-Vine.}
 
 \item{familyset}{An integer vector of pair-copula families to select from
 (the independence copula MUST NOT be specified in this vector unless one
@@ -151,7 +153,7 @@ colnames(simData) <- nnames
 summary(fitGVC <- gamVineSeqEst(simData, GVC))
 
 # Fit data using structure selection and sequential estimation
-summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))
+summary(fitGVC2 <- gamVineStructureSelect(simData))
 }
 \seealso{
 \code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}},

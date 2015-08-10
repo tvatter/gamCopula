@@ -5,11 +5,11 @@
 \title{Sequential pair-copula selection and maximum penalized likelihood estimation
 of a GAM-Vine model.}
 \usage{
-gamVineCopSelect(data, Matrix, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "Kendall", SAtestOptions = "ERC",
-  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = TRUE,
-  verbose = FALSE)
+gamVineCopSelect(data, Matrix, covariates = NA, familyset = NA,
+  rotations = TRUE, familycrit = "AIC", treecrit = "Kendall",
+  SAtestOptions = "ERC", indeptest = TRUE, level = 0.05,
+  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
+  n.iters = 10, parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}

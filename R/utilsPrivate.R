@@ -21,3 +21,44 @@ get.modelCount <- function(d) {
   }
   model.count <- matrix(model.count, d, d)
 }
+
+prepare.data <- function(data, covariates, trunclevel = NA, 
+                         familyset = c(1,2,301,401), rotations = TRUE) {
+  
+  data <- data.frame(data)
+  covariates <- as.character(covariates)
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
+  n <- dim(data)[1]
+  d <- dim(data)[2] - l
+  
+  if (is.null(colnames(data))) {
+    nn <- paste("V",1:d,sep="") 
+    if (l != 0) {
+      nn <- c(nn,covariates)
+    }
+    colnames(data) <- nn
+  } else {
+    nn <- colnames(data)
+  }  
+  
+  if (is.na(trunclevel)) {
+    trunclevel <- d
+  }
+  if (trunclevel == 0) {
+    familyset <- 0
+  }
+  if (length(familyset) == 1 && is.na(familyset)) {
+    familyset <- get.familyset()
+  }
+  if (rotations) {
+    familyset <- withRotations(familyset)
+  }
+  
+  return(list(nn = nn, covariates = covariates, data = data,
+              l = l, n = n, d = d, 
+              trunclevel = trunclevel, familyset = familyset))
+}

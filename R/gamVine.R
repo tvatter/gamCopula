@@ -130,7 +130,14 @@ show.gamVine <- function(object) {
   for (i in 1:(d - 1)) {
     a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
                GVC@names[[GVC@Matrix[d,i]]], sep = "")
-    a <- paste(a, ": ", bicopname(GVC@model[[count]]$family), sep = "")
+    mm <- GVC@model[[count]]
+    if ( valid.gamBiCop(mm) != TRUE) {
+      a <- paste(a, ": ", bicopname(mm$family), sep = "")
+      cat(a, "\n")
+    } else {
+      cat(a, ": ")
+      show(mm)
+    }
     cat(a, "\n")
     # if(GVC@model[d,i]!=0) { show(GVC@model[d,i]) }
     count <- count + 1
@@ -177,18 +184,23 @@ summary.gamVine <- function(object) {
   cat("\n", "Tree 1:", "\n")
   for (i in 1:(d - 1)) {
     mm <- GVC@model[[count]]
-    a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
-               GVC@names[[GVC@Matrix[d,i]]], sep = "")
-    a <- paste(a, ": ", bicopname(mm$family), sep = "")
-    if (mm$family!=0) {
-      a <- paste(a, " with par=", round(mm$par,2), sep="")
-      if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,104,
-                           114,124,134,204,214,224,234)) {
-        a <- paste(a," and par2=", round(mm$par2,2), sep="")
+    if ( valid.gamBiCop(mm) != TRUE) {
+      a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+                 GVC@names[[GVC@Matrix[d,i]]], sep = "")
+      a <- paste(a, ": ", bicopname(mm$family), sep = "")
+      if (mm$family!=0) {
+        a <- paste(a, " with par=", round(mm$par,2), sep="")
+        if (mm$family %in% c(2,7,8,9,10,17,18,19,20,27,28,29,30,37,38,39,40,104,
+                             114,124,134,204,214,224,234)) {
+          a <- paste(a," and par2=", round(mm$par2,2), sep="")
+        }
+        a <- paste(a, " (tau=",round(par2tau(mm$par,mm$family),2), ")", sep="")
       }
-      a <- paste(a, " (tau=",round(par2tau(mm$par,mm$family),2), ")", sep="")
+      cat(a, "\n")
+    } else {
+      cat(a, ": ")
+      summary(mm)
     }
-    cat(a, "\n")
     count <- count + 1
   }
   for (j in 2:(d - 1)) {
@@ -229,6 +241,12 @@ summary.gamVine <- function(object) {
 plot.gamVine <- function(x, ...) {
   sel <- sapply(x@model,function(y) valid.gamBiCop(y) == "TRUE" && 
                   length(summary(y@model)$s.pv) > 0)
+  covariates <- x@covariates
+  if (!is.na(covariates)) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
   if (any(sel)) {
     d <- (1+sqrt(1+8*length(x@model)))/2
     model.count <- get.modelCount(d)
@@ -237,15 +255,17 @@ plot.gamVine <- function(x, ...) {
     par(ask = T)
     sel <- which(sel)
     for(j in sel) {
-      k <- which(model.count == j)
-      cc <- floor(k/d)+1
-      rr <- k %% d
-      if (rr == 0) {
-        rr <- d
-      }
-      con1 <- paste(nn[M[rr,cc]],nn[M[which(M[,cc] != 0)[1],cc]], 
+      mm <- x@model[[j]]
+      k <- arrayInd(which(model.count == j),dim(M))
+      con1 <- paste(nn[M[k[1],k[2]]],nn[M[which(M[,k[2]] != 0)[1],k[2]]], 
                     sep = ",", collapse = "")
-      con2 <- paste(nn[M[(rr+1):d,cc]], sep = "", collapse = ",")
+      #con2 <- c()
+      #if (k[1] != d) {
+        #con2 <- c(con2, paste(nn[M[(k[1]+1):d,k[2]]], sep = "", collapse = ","))
+      #} else {
+        con2 <- paste(all.vars(mm@model$pred.formula), sep = "", collapse = ",")
+      #}
+      
       plot(x@model[[j]], main = paste(con1,con2,sep = "|", collapse = ""), 
            se = F, ...)
     }
@@ -329,7 +349,8 @@ gamVineNormalize <- function(GVC) {
   oldOrder <- diag(GVC@Matrix)
   Matrix <- reorderRVineMatrix(GVC@Matrix)
   
-  return(gamVine(Matrix, GVC@model, names = rev(GVC@names[oldOrder])))
+  return(gamVine(Matrix, GVC@model, 
+                 names = rev(GVC@names[oldOrder]), covariates = GVC@covariates))
 }
 
 

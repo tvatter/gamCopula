@@ -10,8 +10,9 @@
 #' the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
 #' @param data A matrix or data frame containing the data in [0,1]^d.
+#' @param covariates Vector of names for the covariates.
 #' @param type \code{type = 0} (default) for a R-Vine and \code{type = 1} for a
-#' C-Vine 
+#' C-Vine.
 #' @param familyset An integer vector of pair-copula families to select from 
 #' (the independence copula MUST NOT be specified in this vector unless one 
 #' wants to fit an independence vine!). 
@@ -121,63 +122,55 @@
 #' summary(fitGVC <- gamVineSeqEst(simData, GVC))
 #' 
 #' # Fit data using structure selection and sequential estimation
-#' summary(fitGVC2 <- gamVineStructureSelect(simData, tau = FALSE))
+#' summary(fitGVC2 <- gamVineStructureSelect(simData))
 #' 
 #' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}}, 
 #'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #'  \code{\link{gamBiCopEst}}.
-gamVineStructureSelect <- function(data, type = 0, familyset = NA, 
+gamVineStructureSelect <- function(data, covariates = NA, 
+                                   type = 0, familyset = NA, 
                                    rotations = TRUE, familycrit = "AIC", 
                                    treecrit = "Kendall", SAtestOptions = "ERC",
                                    indeptest = TRUE, level = 0.05,
                                    trunclevel = NA, tau = TRUE, method = "FS",
                                    tol.rel = 0.001, n.iters = 10, 
-                                   parallel = TRUE, verbose = FALSE) {
+                                   parallel = FALSE, verbose = FALSE) {
   
-  chk <- valid.gamVineStructureSelect(data, type, 
+  tmp <- valid.gamVineStructureSelect(data, covariates, type, 
                                       familyset, rotations, familycrit, 
                                       treecrit, SAtestOptions, 
                                       indeptest, level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
                                       parallel, verbose)
-  if (chk != TRUE) {
-   stop(chk)
+  if (tmp != TRUE) {
+   stop(tmp)
   }     
   
-  data <- data.frame(data)
-  n <- dim(data)[1]
-  d <- dim(data)[2] 
+  ## Transform to dataframe, get dimensions, etc (see in utilsPrivate)
+  tmp <- prepare.data(data, covariates, trunclevel, familyset, rotations)
+  n <- tmp$n
+  d <- tmp$d
+  l <- tmp$l
+  nn <- tmp$nn
+  data <- tmp$data
+  covariates <- tmp$covariates
+  trunclevel <- tmp$trunclevel
+  familyset <- tmp$familyset
   
-  if (is.null(colnames(data))) {
-    nn <- paste("V",1:d,sep="") 
-    colnames(data) <- nn
-  } else {
-    nn <- colnames(data)
-  }
   if (type == 0) {
     type <- "RVine"
   } else {
     type <- "CVine"
   } 
   
-  if (is.na(trunclevel)) {
-    trunclevel <- d
-  }
-  if (trunclevel == 0) {
-    familyset <- 0
-  }
-  if (length(familyset) == 1 && is.na(familyset)) {
-    familyset <- get.familyset()
-  }
-  if (rotations) {
-    familyset <- withRotations(familyset)
-  }
-  
   out <- list(tree <- vector("list", d), graph <- vector("list", d))
   
   graph <- initFirstGraph(data)
   mst <- findMST(graph, type)
-  tree <- fitFirstTree(mst, data, familyset, familycrit, indeptest, level)
+  tree <- fitFirstTree(mst, data,  l, covariates, 
+                       familyset, familycrit, 
+                       treecrit, SAtestOptions, indeptest, level, 
+                       tau, method, tol.rel, n.iters, parallel, verbose)
   out$Tree[[1]] <- tree
   out$Graph[[1]] <- graph
   oldtree  <- tree
@@ -187,9 +180,9 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
       familyset <- 0
     }
 
-    graph <- buildNextGraph(tree, data, treecrit, SAtestOptions)
+    graph <- buildNextGraph(tree, data, l, covariates, treecrit, SAtestOptions)
     mst <- findMST(graph, type) 
-    tree <- fitTree(mst, tree, data, 
+    tree <- fitTree(mst, tree, data, l, covariates,
                     familyset, familycrit, 
                     treecrit, SAtestOptions, indeptest, level, 
                     tau, method, tol.rel, n.iters, parallel, verbose)
@@ -198,7 +191,7 @@ gamVineStructureSelect <- function(data, type = 0, familyset = NA,
     out$Graph[[i]] <- graph
   }
   
-  return(as.GVC(out))
+  return(as.GVC(out,covariates))
 }
 
 initFirstGraph <- function(data) {
@@ -230,31 +223,26 @@ findMST <- function(g, mode = "RVine") {
   }
 }
 
-fitFirstTree <- function(mst, data, 
-                         familyset, familycrit,
-                         indeptest, level) {
+fitFirstTree <- function(mst, data, l, covariates, familyset, familycrit, 
+                         treecrit, SAtestOptions, indeptest, level, 
+                         tau, method, tol.rel, n.iters, parallel, verbose) {
   
   d <- ecount(mst)
   
   parameterForACopula <- vector("list", d)
   
   for(i in 1:d) {
-    parameterForACopula[[i]] <- list()
-    
+ 
     a <- ends(mst,i,FALSE)
-
-    parameterForACopula[[i]]$zr1 <- data[,a[1]]
-    parameterForACopula[[i]]$zr2 <- data[,a[2]]
-    
-    E(mst)[i]$Data1 <-  list(data[,a[1]])
-    E(mst)[i]$Data2 <-  list(data[,a[2]])
+    #     E(mst)[i]$Data1 <-  list(data[,a[1]])
+    #     E(mst)[i]$Data2 <-  list(data[,a[2]])
     
     if (is.null(V(mst)[a[1]]$name)) {
       E(mst)[i]$CondName1 <- a[1]
     } else {
       E(mst)[i]$CondName1 <- V(mst)[a[1]]$name
     }
-         
+    
     if(is.null(V(mst)[a[2]]$name)) {
       E(mst)[i]$CondName2 <- a[2]
     } else {
@@ -265,12 +253,30 @@ fitFirstTree <- function(mst, data,
       E(mst)[i]$Name <- paste(a[1], a[2], sep=" , ")
     } else {
       E(mst)[i]$Name <- paste(V(mst)[a[1]]$name, 
-                                     V(mst)[a[2]]$name, sep=" , ")
+                              V(mst)[a[2]]$name, sep=" , ")
     } 
+    
+    if (l == 0) {
+      parameterForACopula[[i]] <- list()
+      parameterForACopula[[i]]$zr1 <- data[,a[1]]
+      parameterForACopula[[i]]$zr2 <- data[,a[2]]
+    } else {
+      parameterForACopula[[i]] <- data.frame(as.numeric(data[,a[1]]), 
+                                             as.numeric(data[,a[2]]),
+                                             data[,covariates])
+      names(parameterForACopula[[i]]) <- c("u1","u2",covariates)
+    }
   }
   
-  outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
-                          familyset, familycrit, indeptest, level)
+  if (l == 0) {
+    outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
+                            familyset, familycrit, indeptest, level)
+  } else {
+    outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
+                            familyset, familycrit, 
+                            treecrit, SAtestOptions, indeptest, level, 
+                            tau, method, tol.rel, n.iters, parallel)
+  }
   
   for(i in 1:d) {
     E(mst)[i]$model <- list(outForACopula[[i]]$model)
@@ -281,7 +287,7 @@ fitFirstTree <- function(mst, data,
   return(mst)
 }
 
-fitTree <- function(mst, oldVineGraph, data, 
+fitTree <- function(mst, oldVineGraph, data, l, covariates,
                     familyset, familycrit, 
                     treecrit, SAtestOptions, indeptest, level, 
                     tau, method, tol.rel, n.iters, parallel, verbose) {
@@ -292,9 +298,6 @@ fitTree <- function(mst, oldVineGraph, data,
   
   for(i in 1:d) {
     con <- ends(mst,i,FALSE)
-    if (length(con) > 2) {
-      browser()
-    }
     tmp <- ends(oldVineGraph,con,FALSE)
     
     if ((tmp[1,1] == tmp[2,1])|| (tmp[1,2] == tmp[2,1])) {
@@ -339,17 +342,21 @@ fitTree <- function(mst, oldVineGraph, data,
     
     if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
     
-    E(mst)[i]$Data1 <-  list(zr1a)
-    E(mst)[i]$Data2 <-  list(zr2a)
+    #     E(mst)[i]$Data1 <-  list(zr1a)
+    #     E(mst)[i]$Data2 <-  list(zr2a)
     
     E(mst)[i]$CondName2 <- n1a
     E(mst)[i]$CondName1 <- n2a
-    
+ 
     tmp <- E(mst)$conditioningSet[[i]]
-    #print(names(data)[tmp])
-    parameterForACopula[[i]] <- data.frame(u1 = as.numeric(zr1a), 
-                                           u2 = as.numeric(zr2a), data[,tmp])
-    names(parameterForACopula[[i]])[-c(1,2)] <- names(data)[tmp]
+    parameterForACopula[[i]] <- data.frame(as.numeric(zr1a), as.numeric(zr2a), 
+                                           data[,tmp])
+    names(parameterForACopula[[i]]) <- c("u1", "u2", names(data)[tmp])
+    if (l != 0) {
+      parameterForACopula[[i]] <- cbind(parameterForACopula[[i]], 
+                                        data[,covariates])
+      names(parameterForACopula[[i]])[-c(1,2,3:(2+length(tmp)))] <- covariates
+    }
   }
 
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
@@ -366,7 +373,8 @@ fitTree <- function(mst, oldVineGraph, data,
   return(mst)
 }	
 
-buildNextGraph <- function(graph, data, treecrit, SAtestOptions) {
+buildNextGraph <- function(graph, data,  l, covariates, 
+                           treecrit, SAtestOptions) {
   
   EL <- get.edgelist(graph)
   d <- ecount(graph)
@@ -382,9 +390,6 @@ buildNextGraph <- function(graph, data, treecrit, SAtestOptions) {
   for(i in 1:ecount(g)){
     
     con <- ends(g, i, FALSE)
-    if (length(con) > 2) {
-      browser()
-    }
     tmp <- ends(graph, con, FALSE)
     
     ok <- FALSE    
@@ -471,10 +476,13 @@ buildNextGraph <- function(graph, data, treecrit, SAtestOptions) {
       if (treecrit == "Kendall") {
         E(g)[i]$weight <- 1-abs(fasttau(zr1a[noNAs], zr2a[noNAs]))
       } else if (treecrit == "SAtest") {
+        tmp <- data[noNAs, out$intersection]
+        if (l != 0) {
+          data <- cbind(data, data[,covariates])
+        }
         E(g)[i]$weight <- SAtest(cbind(as.numeric(zr1a[noNAs]), 
                                        as.numeric(zr2a[noNAs])), 
-                                 data[noNAs, out$intersection], 
-                                 SAtestOptions)$pValue
+                                 tmp, SAtestOptions)$pValue
       }
     }
     
@@ -650,7 +658,7 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   return(out)
 }
 
-as.GVC <- function(GVC){
+as.GVC <- function(GVC, covariates){
   n <- length(GVC$Tree)+1
   con <- list()
   nam <- V(GVC$Tree[[1]])$name
@@ -723,11 +731,11 @@ as.GVC <- function(GVC){
     }
   }
   M[is.na(M)] <- 0
-  return(gamVine(M, model, nam))
+  return(gamVine(M, model, nam, covariates))
   
 }
 
-valid.gamVineStructureSelect <- function(data, type, 
+valid.gamVineStructureSelect <- function(data, covariates, type,
                                           familyset, rotations, familycrit, 
                                           treecrit, SAtestOptions, 
                                           indeptest, level, trunclevel, 
@@ -738,22 +746,32 @@ valid.gamVineStructureSelect <- function(data, type,
     return("data has to be either a matrix or a data frame")
   } 
   
+  covariates <- tryCatch(as.character(covariates), error = function(e) e)
+  if (!is.vector(covariates) || any(class(covariates) != "character")) {
+    return("covariates should be or be coercisable to a character vector.")
+  }
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
   n <- dim(data)[1]
-  d <- dim(data)[2]
+  d <- dim(data)[2] - l
   
+  if (is.matrix(data)) {
+    data <- as.data.frame(data)
+  }
     
-  options(warn = -1)
   if (d < 2) {
     return("Number of dimensions has to be at least 2.")
   }
   if (n < 2) {
     return("Number of observations has to be at least 2.")
   }
-  if (any(data > 1) || any(data < 0)) {
+  if (any(data[,1:d] > 1) || any(data[,1:d] < 0)) {
     return("Data has be in the interval [0,1].")
   }
-  
-  
+   
   if (is.null(type) || length(type) != 1 || !is.element(type,c(0,1))) {
     return("Vine model not implemented.")
   }
@@ -761,25 +779,10 @@ valid.gamVineStructureSelect <- function(data, type,
   if (!valid.familyset(familyset)) {
     return(return(msg.familyset(var2char(familyset))))
   }
-
-  if (is.na(familyset)) {
-    familyset <- 1:4
-  }
   
   if (!valid.logical(rotations)) {
     return(msg.logical(var2char(rotations)))
   }
-  if (rotations) {
-    familyset <- withRotations(familyset)
-  }
-  
-  if (!valid.familysetpos(familyset, 0.5)) {
-    return(msg.familysetpos(var2char(familyset)))
-  }
-  
-  if (!valid.familysetneg(familyset, -0.5)) {
-    return(msg.familysetneg(var2char(familyset)))
-  }    
   
   if(length(familycrit) != 1 || (familycrit != "AIC" && familycrit != "BIC")) {
     return("Selection criterion for copula family not implemented.")
@@ -796,10 +799,6 @@ valid.gamVineStructureSelect <- function(data, type,
   if (!is.na(trunclevel) && !valid.posint(trunclevel)) {
     return("'trunclevel' should be a positive integer or NA.")
   }
-
-  if (is.matrix(data)) {
-    data <- as.data.frame(data)
-  }
   
   names(data)[1:2] <- c("u1","u2")
   tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
@@ -810,8 +809,6 @@ valid.gamVineStructureSelect <- function(data, type,
   if (!valid.logical(parallel)) {
     return(msg.logical(var2char(parallel)))
   }
-  
-  options(warn = 0)
   
   return(TRUE)
 }

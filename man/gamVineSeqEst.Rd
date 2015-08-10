@@ -10,9 +10,9 @@ gamVineSeqEst(data, GVC, covariates = NA, method = "FS", tol.rel = 0.001,
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
-\item{GVC}{\code{\link{gamVine-class}} object.}
+\item{GVC}{A \code{\link[gamCopula:gamVine-class]{gamVine}} object.}
 
-\item{covariates}{vector of names for the covariates.}
+\item{covariates}{Vector of names for the covariates.}
 
 \item{method}{\code{'NR'} for Newton-Raphson
 and  \code{'FS'} for Fisher-scoring (default).}
@@ -29,7 +29,8 @@ estimation and \code{FALSE} (default) for a silent version.}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
-\code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
+\code{gamVineSeqEst} returns a
+\code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{
 This function estimates the parameter(s) of a Generalized Additive model

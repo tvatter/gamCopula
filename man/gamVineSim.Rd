@@ -4,20 +4,24 @@
 \alias{gamVineSim}
 \title{Simulation from a \code{\link{gamVine-class}} object}
 \usage{
-gamVineSim(N, GVC, U = NULL)
+gamVineSim(n, GVC, U = NULL, newdata = NULL)
 }
 \arguments{
+\item{GVC}{A \code{\link[gamCopula:gamVine-class]{gamVine}} object.}
+
+\item{U}{If not \code{NULL}, \code{U} is an (N,d)-matrix of U[0,1] random
+variates to be transformed to the copula sample.}
+
+\item{newdata}{If not \code{NULL}, which is mandatory when
+the attribute \code{covariates} from \code{GVC} is not \code{NA},
+\code{newdata} is a data frame containing the values of
+the model covariates at which simulations are required.}
+
 \item{N}{number of d-dimensional observations to simulate.}
-
-\item{GVC}{\code{\link{gamVine-class}} object.}
-
-\item{U}{(similar as \code{\link{RVineSim}} from the from the
-\code{\link{VineCopula}} package) If not NULL, an (N,d)-matrix of U[0,1]
-random variates to be transformed to the copula sample.}
 }
 \value{
 A Nxd matrix of data simulated from the given
-\code{\link{gamVine-class}} object.
+\code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{
 Simulation from a \code{\link{gamVine-class}} object
@@ -68,8 +72,8 @@ d <- 5
 U <- matrix(runif(n*d), nrow = n)
 
 ## The output of gamVineSim correspond to that of RVineSim
-sampleRVM <- RVineSim(n,RVM,U)
-sampleGVC <- gamVineSim(n,GVC,U)
+sampleRVM <- RVineSim(n, RVM,U)
+sampleGVC <- gamVineSim(n, GVC,U)
 all.equal(sampleRVM, sampleGVC)
 
 ## Fit the two models and compare the estimated parameter

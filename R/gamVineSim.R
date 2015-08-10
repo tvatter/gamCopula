@@ -1,12 +1,15 @@
 #' Simulation from a \code{\link{gamVine-class}} object
 #'
 #' @param N number of d-dimensional observations to simulate.
-#' @param GVC \code{\link{gamVine-class}} object.
-#' @param U (similar as \code{\link{RVineSim}} from the from the 
-#' \code{\link{VineCopula}} package) If not NULL, an (N,d)-matrix of U[0,1] 
-#' random variates to be transformed to the copula sample.
+#' @param GVC A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' @param U If not \code{NULL}, \code{U} is an (N,d)-matrix of U[0,1] random 
+#' variates to be transformed to the copula sample.
+#' @param newdata If not \code{NULL}, which is mandatory when 
+#' the attribute \code{covariates} from \code{GVC} is not \code{NA}, 
+#' \code{newdata} is a data frame containing the values of 
+#' the model covariates at which simulations are required.
 #' @return A Nxd matrix of data simulated from the given 
-#' \code{\link{gamVine-class}} object.
+#' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @examples
 #' require(VineCopula)
 #' 
@@ -53,8 +56,8 @@
 #' U <- matrix(runif(n*d), nrow = n)
 #' 
 #' ## The output of gamVineSim correspond to that of RVineSim
-#' sampleRVM <- RVineSim(n,RVM,U)
-#' sampleGVC <- gamVineSim(n,GVC,U)
+#' sampleRVM <- RVineSim(n, RVM,U)
+#' sampleGVC <- gamVineSim(n, GVC,U)
 #' all.equal(sampleRVM, sampleGVC)
 #' 
 #' ## Fit the two models and compare the estimated parameter
@@ -63,30 +66,39 @@
 #' all.equal(simplify2array(attr(fitRVM, "model")),
 #' simplify2array(attr(fitGVC, "model")))
 #' @export
-gamVineSim <- function(N, GVC, U = NULL) {
-  
-  chk <- valid.gamVineSim(N, GVC, U)
-  if (chk != TRUE) {
-    return(chk)
+gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
+
+  tmp <- valid.gamVineSim(n, GVC, U, newdata)
+  if (tmp != TRUE) {
+    stop(tmp)
+  }
+
+  covariates <- GVC@covariates
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
   }
   
+  if (!is.null(newdata)) {
+    newdata <- as.data.frame(newdata)
+    n <- dim(newdata)[1]
+  }
+  
+  if (!is.null(U)) {
+    U <- as.matrix(U)
+    n <- dim(U)[1]
+  }
+
   o <- diag(GVC@Matrix)
   d <- length(o)
   GVC <- gamVineNormalize(GVC)
   fam <- gamVineFamily(GVC)
   MaxMat <- createMaxMat(GVC@Matrix)
   CondDistr <- neededCondDistr(GVC@Matrix)
+  nn <- GVC@names
   
-  model.count <- rep(0, d^2)
-  temp <- 1:(d * (d - 1)/2)
-  t1 <- 1
-  sel <- seq(d, d^2 - d, by = d)
-  for (i in 1:(d - 1)) {
-    t2 <- t1 + d - i - 1
-    model.count[sel[1:(d - i)] - i + 1] <- temp[t1:t2]
-    t1 <- t2 + 1
-  }
-  model.count <- matrix(model.count, d, d)
+  model.count <- get.modelCount(d)
   
   rotate <- function(x) t(apply(x, 2, rev))
   m <- rotate(rotate(GVC@Matrix))
@@ -95,22 +107,17 @@ gamVineSim <- function(N, GVC, U = NULL) {
   maxmat <- rotate(rotate(MaxMat))
   conindirect <- rotate(rotate(CondDistr$indirect))
   
-  Vdirect <- Vindirect <- array(dim = c(d, d, N))
+  Vdirect <- Vindirect <- array(dim = c(d, d, n))
   takeU <- !is.null(U)
   if (takeU) {
-    if (!is.matrix(U)) 
-      U <- rbind(U, deparse.level = 0L)
-    if ((d <- ncol(U)) < 2) 
-      stop("U should be at least bivariate")  # should be an (N, n) matrix
     U <- U[, rev(o)]
   } else {
-    U <- matrix(runif(N * d), ncol = d)
+    U <- matrix(runif(n * d), ncol = d)
   }
   for (i in 1:d) {
     Vdirect[i, i, ] <- U[, i]
   }
   Vindirect[1, 1, ] <- Vdirect[1, 1, ]
-  count <- 1
   for (i in 2:d) {
     for (k in (i - 1):1) {
       #print(model.count[k,i])
@@ -121,30 +128,31 @@ gamVineSim <- function(N, GVC, U = NULL) {
       } else {
         zz <- Vindirect[k, mm, ]
       }
-      
       if (isS4(model) && is(model, "gamBiCop")) {
         vars <- all.vars(model@model$pred.formula)
+        vars <- vars[!is.element(vars,covariates)]
         nvars <- length(vars)
         if (nvars == 1) {
-          newdata <- data.frame(Vdirect[1, 1:nvars, ])
-          names(newdata) <- vars
+          data <- data.frame(Vdirect[1, 1, ], newdata)
+          names(data) <- c(vars, names(newdata))
+        } else if (nvars == 0) { 
+          data <- newdata
         } else {
-          newdata <- data.frame(t(Vdirect[1, 1:nvars, ]))
-          names(newdata) <- vars
+          data <- data.frame(t(Vdirect[1, 1:nvars, ]), newdata)
+          names(newdata) <- c(vars[rank(sapply(vars, function(x)
+            which(nn == x)))], names(newdata))
         }
-        par <- gamBiCopPred(model, newdata, target = "par")$par
+        par <- gamBiCopPred(model, data, target = "par")$par
         par2 <- model@par2
         #pp <- par
       } else {
-        par <- rep(model$par, N)
+        par <- rep(model$par, n)
         par2 <- model$par2
       }
       
       Vdirect[k, i, ] <- bicoppd1d2(cbind(Vdirect[k + 1, i, ],
                                            zz, par, par2), fam[k, i],
                                      p = FALSE, hinv = TRUE)[2,]
-      
-      
       if (i < d) {
         if (conindirect[k + 1, i] == TRUE) {
           Vindirect[k + 1, i, ] <- bicoppd1d2(cbind(Vdirect[k, i, ], zz, 
@@ -164,25 +172,57 @@ gamVineSim <- function(N, GVC, U = NULL) {
   return(out)
 } 
 
-valid.gamVineSim <- function(N, GVC, U) {
+valid.gamVineSim <- function(n, GVC, U, newdata) {
   
-  if (is.null(N) && is.null(U)) {
-    return("When U is null, N can't be.")
+  tmp <- valid.gamVine(GVC)
+  if (tmp != "TRUE") {
+    return(tmp)
+  }
+  d <- dim(GVC)
+  
+  covariates <- GVC@covariates
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
+  
+  if (l != 0) {
+    if (is.null(newdata)) {
+      return("With this gamVine object, the argument newdata can't be null.")
+    } 
+    newdata <- tryCatch(as.data.frame(newdata), error = function(e) e)
+    msg <- "should be or be coercisable to a data frame."
+    if (any(class(newdata) != "data.frame")) {
+      return(paste("newdata", msg))
+    }
+    if (any(!is.element(names(newdata), covariates))) {
+      return("newdata should contain all the covariates required by GVC.")
+    }
+    n <- dim(newdata)[1]
   } 
   
-  if (is.na(N) || !is.numeric(N) || (as.integer(N) < 1) || 
-        (as.integer(N) != as.numeric(N))) {
-    return("N should be a positive integer.")
-  }
+  if (!is.null(U)) {
+    U <- tryCatch(as.matrix(U), error = function(e) e)
+    msg <- "should be or be coercisable to a matrix."
+    if (any(class(U) != "matrix")) {
+      return(paste("U", msg))
+    }   
+    if (!is.numeric(U) || dim(U)[2] != d || any(U <= 0) || any(U >= 1)) {
+      msg <- paste("If not null, U should have a number of column equal to",
+                   "the dimension of GVC and with elements in (0,1).")
+      return(msg)
+    }
+    if (!is.null(newdata) && dim(U)[1] != n) {
+      msg <- paste("If not null, U should have a number of rows equal to",
+                   "the number of rows in newdata.")
+      return(msg)
+    }
+    n <- dim(U)[1]
+  } 
   
-  if (any(!isS4(GVC), !is(GVC, "gamVine"))) {
-    return("GVC should be an gamVine object.")
-  }
-  
-  if (!is.null(U) && (!is.numeric(U) || any(is.na(U)) || 
-                        dim(U)[2] != dim(GVC) || any(U <= 0) || any(U >= 1))) {
-    return("If not null, U should be a matrix of the same dimension as GVC,
-           containing only data in (0,1).")
+  if (!valid.posint(n)) {
+    return(msg.posint(var2char(n)))
   }
   
   return(TRUE)

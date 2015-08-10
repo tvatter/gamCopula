@@ -9,8 +9,8 @@
 #' the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
 #' @param data A matrix or data frame containing the data in [0,1]^d.
-#' @param GVC \code{\link{gamVine-class}} object.
-#' @param covariates vector of names for the covariates.
+#' @param GVC A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' @param covariates Vector of names for the covariates.
 #' @param method \code{'NR'} for Newton-Raphson
 #' and  \code{'FS'} for Fisher-scoring (default).
 #' @param tol.rel Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.
@@ -20,7 +20,8 @@
 #' estimation and \code{FALSE} (default) for a silent version.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
-#' @return \code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
+#' @return \code{gamVineSeqEst} returns a 
+#' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @seealso \code{\link{gamVineCopSelect}} and 
 #' \code{\link{gamVineStructureSelect}}
 #' @examples
@@ -167,22 +168,20 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
                           method = "FS", tol.rel = 0.001, n.iters = 10, 
                           verbose = FALSE) {
   
-  chk <- valid.gamVineSeqEst(data, GVC, covariates, 
+  tmp <- valid.gamVineSeqEst(data, GVC, covariates, 
                              method, tol.rel, n.iters, verbose)
-  if (chk != TRUE) {
-    return(chk)
+  if (tmp != TRUE) {
+    stop(tmp)
   }
   
-  data <- data.frame(data)
-  n <- dim(data)[1]
-  d <- dim(data)[2] 
-  
-  if (is.null(colnames(data))) {
-    nn <- paste("V",1:d,sep="") 
-    colnames(data) <- nn
-  } else {
-    nn <- colnames(data)
-  }  
+  ## Transform to dataframe, get dimensions, etc (see in utilsPrivate)
+  tmp <- prepare.data(data, covariates)
+  n <- tmp$n
+  d <- tmp$d
+  l <- tmp$l
+  nn <- tmp$nn
+  data <- tmp$data
+  covariates <- tmp$covariates
   
   oldGVC <- GVC
   oldMat <- GVC@Matrix
@@ -190,7 +189,7 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
   oo <- o[length(o):1]
   if (any(o != length(o):1)) {
     GVC <- gamVineNormalize(GVC)
-    data <- data[,oo]
+    data[,1:d] <- data[,oo]
   }
   
   Mat <- GVC@Matrix
@@ -204,10 +203,9 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
   V$direct[d, , ] <- t(data[, d:1])
   
   model.count <- get.modelCount(d)
-  
   for (i in (d - 1):1) {
     for (k in d:(i + 1)) {
-      #print(model.count[k, i])
+      print(model.count[k, i])
       m <- MaxMat[k, i]
       zr1 <- V$direct[k, i, ]
       
@@ -230,40 +228,37 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
       #if (mki == 5) {
       #  browser()
       #}
-      if (k == d || valid.gamBiCop(mm) != TRUE) {
+      if (valid.gamBiCop(mm) != TRUE) {
         tmp <- BiCopEst(zr2, zr1, famTrans(fam[k, i], FALSE, cor(zr1,zr2)))
         mm$par <- tmp$par
         mm$par2 <- tmp$par2
         par <- rep(tmp$par, n)
         par2 <- tmp$par2
       } else {
-        cond <- Mat[(k +1):d, i]
-        tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
-        names(tmp) <- c("u1","u2",nn[oo[cond]])
+        if (k != d) {
+          cond <- Mat[(k +1):d, i]
+          tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
+          names(tmp) <- c("u1","u2",nn[oo[cond]])
+        } else {
+          tmp <- data.frame(u1=zr2,u2=zr1)
+        }
+        if (l != 0) {
+          tmp <- cbind(tmp, data[,covariates])
+          names(tmp)[(length(tmp)-l+1):length(tmp)] <- covariates
+        }    
         mm <- gamBiCopEst(tmp, mm@model$formula, fam[k, i], mm@tau, 
                           method, tol.rel, n.iters)$res
         par <- gamBiCopPred(mm, target = "par")$par
         par2 <- mm@par2
       }
       GVC@model[[mki]] <- mm
-      #browser()
       tmp <- bicoppd1d2(cbind(zr1, zr2, par, par2), fam[k, i],
                          p = FALSE, h = TRUE)
       if (CondDistr$direct[k - 1, i]) {
-        #         tmp <- rep(0, n)
-        #         tmp <- sapply(1:n, function(x) .C("Hfunc1", as.integer(4), 
-        #           as.integer(1), as.double(zr1[x]), as.double(zr2[x]), 
-        #           as.double(par[x]), as.double(par2), as.double(tmp[x]), 
-        #           PACKAGE = "VineCopula")[[7]])
         V$direct[k - 1, i, ] <- tmp[2,]
       }
       
       if (CondDistr$indirect[k - 1, i]) {
-        #         tmp <- rep(0, n)
-        #         tmp <- sapply(1:n, function(x) .C("Hfunc2", as.integer(4), 
-        #           as.integer(1), as.double(zr2[x]), as.double(zr1[x]), 
-        #           as.double(par[x]), as.double(par2), as.double(tmp[x]), 
-        #           PACKAGE = "VineCopula")[[7]])
         V$indirect[k - 1, i, ] <- tmp[1,]
       }
     }
@@ -285,14 +280,17 @@ valid.gamVineSeqEst <- function(data, GVC, covariates,
     data <- as.data.frame(data)
   }
   
-#   ### TODO
-#   tmp <- tryCatch(as.character(covariates), error = function(e) e)
-#   if (any(class(tmp) != "character")) {
-#     stop("covariates should be or be coercisable to a character vector.")
-#   }
-  
+  covariates <- tryCatch(as.character(covariates), error = function(e) e)
+  if (!is.vector(covariates) || any(class(covariates) != "character")) {
+    return("covariates should be or be coercisable to a character vector.")
+  }
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
   n <- dim(data)[1]
-  d <- dim(data)[2]
+  d <- dim(data)[2] - l
   
   if (d < 2) {
     return("Number of dimensions has to be at least 2.")
@@ -300,21 +298,24 @@ valid.gamVineSeqEst <- function(data, GVC, covariates,
   if (n < 2) {
     return("Number of observations has to be at least 2.")
   }
-  if (any(data > 1) || any(data < 0)) {
+  if (any(data[,1:d] > 1) || any(data[,1:d] < 0)) {
     return("Data has be in the interval [0,1].")
   }
   
-  if (!valid.gamVine(GVC))
+  if (!valid.gamVine(GVC)) {
     return("gamBiVineSeqEst can only be used to estimate from gamVine objects")
+  } 
   
   o <- diag(GVC@Matrix)
-  if (length(o) != d)
+  if (length(o) != d) {
     return("The dimension of the gamVine object is incorrect.")
+  }
   
   names(data)[1:2] <- c("u1","u2")
   tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
-  if (tmp != TRUE)
+  if (tmp != TRUE) {
     return(tmp)
-  
+  }
+
   return(TRUE)
 }

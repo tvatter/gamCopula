@@ -205,53 +205,40 @@
 #' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}}, 
 #'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #'  \code{\link{gamBiCopEst}}.
-gamVineCopSelect <- function(data, Matrix, familyset = NA, 
+gamVineCopSelect <- function(data, Matrix, covariates = NA, familyset = NA, 
                              rotations = TRUE, familycrit = "AIC", 
                              treecrit = "Kendall", SAtestOptions = "ERC",
                              indeptest = TRUE, level = 0.05,
                              trunclevel = NA, tau = TRUE, method = "FS",
                              tol.rel = 0.001, n.iters = 10, 
-                             parallel = TRUE, verbose = FALSE) {
+                             parallel = FALSE, verbose = FALSE) {
   
-  chk <- valid.gamVineCopSelect(data, Matrix,
+  tmp <- valid.gamVineCopSelect(data, Matrix, covariates, 
                                 familyset, rotations, familycrit, 
                                 treecrit, SAtestOptions, 
                                 indeptest, level, trunclevel, 
                                 tau, method, tol.rel, n.iters, 
                                 parallel, verbose)
-  if (chk != TRUE) {
-    stop(chk)
+  if (tmp != TRUE) {
+    stop(tmp)
   }   
   
-  data <- data.frame(data)
-  n <- dim(data)[1]
-  d <- dim(data)[2] 
-  
-  if (is.null(colnames(data))) {
-    nn <- paste("V",1:d,sep="") 
-    colnames(data) <- nn
-  } else {
-    nn <- colnames(data)
-  }
-  
-  if (is.na(trunclevel)) {
-    trunclevel <- d
-  }
-  if (trunclevel == 0) {
-    familyset <- 0
-  }
-  if (length(familyset) == 1 && is.na(familyset)) {
-    familyset <- get.familyset()
-  }
-  if (rotations) {
-    familyset <- withRotations(familyset)
-  }
+  ## Transform to dataframe, get dimensions, etc (see in utilsPrivate)
+  tmp <- prepare.data(data, covariates, trunclevel, familyset, rotations)
+  n <- tmp$n
+  d <- tmp$d
+  l <- tmp$l
+  nn <- tmp$nn
+  data <- tmp$data
+  covariates <- tmp$covariates
+  trunclevel <- tmp$trunclevel
+  familyset <- tmp$familyset
   
   oldMat <- Matrix
   o <- diag(oldMat)
   oo <- o[length(o):1]
   Mat <- reorderRVineMatrix(Matrix)
-  data <- data[,oo]
+  data[,1:d] <- data[,oo]
   
   MaxMat <- createMaxMat(Mat)
   CondDistr <- neededCondDistr(Mat)
@@ -287,13 +274,21 @@ gamVineCopSelect <- function(data, Matrix, familyset = NA,
       if (d + 1 - k > trunclevel) {
         tmp <- fitACopula(zr2, zr1, 0, familycrit, indeptest, level)
       } else {
-        if (k == d) {
+        if (k == d && l == 0) {
           tmp <- fitACopula(zr2, zr1, familyset, familycrit, 
                             indeptest, level, FALSE)
         } else {
-          cond <- Mat[(k +1):d, i]
-          tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
-          names(tmp) <- c("u1","u2",nn[oo[cond]])
+          if (k != d) {
+            cond <- Mat[(k +1):d, i]
+            tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
+            names(tmp) <- c("u1","u2",nn[oo[cond]])
+          } else {
+            tmp <- data.frame(u1=zr2,u2=zr1)
+          }
+          if (l != 0) {
+            tmp <- cbind(tmp, data[,covariates])
+            names(tmp)[(length(tmp)-l+1):length(tmp)] <- covariates
+          }   
           tmp <- fitAGAMCopula(tmp, familyset, familycrit, 
                                treecrit, SAtestOptions, indeptest, level, 
                                tau, method, tol.rel, n.iters, parallel, FALSE)
@@ -309,34 +304,35 @@ gamVineCopSelect <- function(data, Matrix, familyset = NA,
       }
     }
   }
-  return(gamVine(Matrix,model,nn))
+  return(gamVine(Matrix,model,nn[1:d],covariates))
 } 
 
-valid.gamVineCopSelect <- function(data, Matrix, 
+valid.gamVineCopSelect <- function(data, Matrix, covariates, 
                                    familyset, rotations, familycrit, 
                                    treecrit, SAtestOptions, 
                                    indeptest, level, trunclevel, 
                                    tau, method, tol.rel, n.iters, 
                                    parallel, verbose) {
   
-  chk <- valid.gamVineStructureSelect(data, 0,
+  tmp <- valid.gamVineStructureSelect(data, covariates, 0, 
                                       familyset, rotations, familycrit, 
                                       treecrit, SAtestOptions, 
                                       indeptest, level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
                                       parallel, verbose)
-  if (chk != TRUE) {
-    return(chk)
+  if (tmp != TRUE) {
+    return(tmp)
   }  
-  d <- dim(data)[2]
-
+  covariates <- as.character(covariates)
+  if (!(length(covariates) == 1 && is.na(covariates))) {
+    l <- length(covariates)
+  } else {
+    l <- 0
+  }
+  d <- dim(data)[2] - l
   if (!is.matrix(Matrix) || dim(Matrix)[1] != dim(Matrix)[2] || 
         max(Matrix) > d || RVineMatrixCheck(Matrix) != 1) {
-    return("Matrix is not a valid R-vine matrix")
-  }
-    
-  if (dim(Matrix)[1] != d) {
-    return("The dimension of Matrix is incorrect.")
+    return("Matrix is not a valid R-vine matrix or its dimension is incorrect.")
   }  
   
   return(TRUE)
