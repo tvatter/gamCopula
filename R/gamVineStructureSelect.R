@@ -546,7 +546,8 @@ fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC",
                      indeptest,
                      level,
                      rotations = FALSE)
-  fam <- famTrans(out$family, inv = TRUE, cor(u1,u2))
+  fam <- famTrans(out$family, inv = TRUE, 
+                  par = cor(u1,u2), familyset = familyset)
   if (rotation == TRUE) {
     if (fam %in% c(301,303,401,403)) {
       fam <- fam+1
@@ -635,7 +636,8 @@ fitAGAMCopula <- function(data, familyset, familycrit,
     }
   }
 
-  fam <- famTrans(fam, inv = TRUE, cor(u1,u2))
+  fam <- famTrans(fam, inv = TRUE, 
+                  par = cor(u1,u2), familyset = familyset)
   if (rotation == TRUE) {
     if (fam %in% c(301,303,401,403)) {
       fam <- fam+1

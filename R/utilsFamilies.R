@@ -392,26 +392,37 @@ getFams <- function(family) {
 
 ## Transformation between the Clayton/Gumbel codes from VineCopula and
 ## the codes from gamCopula
-famTrans <- function(fam, inv = TRUE, par = 0, set = FALSE) {
+famTrans <- function(fam, inv = TRUE, par = 0, set = FALSE, familyset = NULL) {
   if (inv) {
-    if (fam == 3) {
-      return(301)
-    } else if (fam == 13) {
-      return(304)
-    } else if (fam == 23) {
-      return(303)
-    } else if (fam == 33) {
-      return(302)
-    } else if (fam == 4) {
-      return(401)
-    } else if (fam == 14) {
-      return(404)
-    } else if (fam == 24) {
-      return(403)
-    } else if (fam == 34) {
-      return(402)
-    } else {
+    if (is.element(fam, get.familyset())) {
       return(fam)
+    } else {
+      if (is.null(familyset)) {
+        familyset <- c(301:304,401:404)
+      }
+      sel <- (familyset %in% c(301:304,401:404))
+      familyset <- familyset[sel]
+      fams <- sapply(familyset, getFams)
+      sel <- which(apply(fams, 2, function(x) is.element(fam,x)))
+      return(familyset[sel[1]])
+      
+      #       if (fam == 3) {
+      #         return(301)
+      #       } else if (fam == 13) {
+      #         return(304)
+      #       } else if (fam == 23) {
+      #         return(303)
+      #       } else if (fam == 33) {
+      #         return(302)
+      #       } else if (fam == 4) {
+      #         return(401)
+      #       } else if (fam == 14) {
+      #         return(404)
+      #       } else if (fam == 24) {
+      #         return(403)
+      #       } else if (fam == 34) {
+      #         return(402)
+      #       }
     }
   } else {
     if (set == FALSE) {

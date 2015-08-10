@@ -205,7 +205,7 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
   model.count <- get.modelCount(d)
   for (i in (d - 1):1) {
     for (k in d:(i + 1)) {
-      print(model.count[k, i])
+      #print(model.count[k, i])
       m <- MaxMat[k, i]
       zr1 <- V$direct[k, i, ]
       
