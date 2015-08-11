@@ -135,15 +135,17 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
         if (nvars == 1) {
           data <- data.frame(Vdirect[1, 1, ])
           names(data) <- vars
-        } else if (nvars == 0) { 
-          data <- data.frame()
-        } else {
+        } else if (nvars > 1) {
           data <- data.frame(t(Vdirect[1, 1:nvars, ]))
           names(data) <- vars[rank(sapply(vars, function(x) which(nn == x)))]
         }
         if (l != 0) {
-          data <- cbind(data, newdata)
-          names(data)[(nvar+1):dim(data)[2]] <- names(newdata)
+          if (nvars == 0) {
+            data <- newdata
+          } else {
+            data <- cbind(data, newdata)
+            names(data)[(nvar+1):dim(data)[2]] <- names(newdata)
+          }
         }
         par <- gamBiCopPred(model, data, target = "par")$par
         par2 <- model@par2
