@@ -242,7 +242,7 @@ plot.gamVine <- function(x, ...) {
   sel <- sapply(x@model,function(y) valid.gamBiCop(y) == "TRUE" && 
                   length(summary(y@model)$s.pv) > 0)
   covariates <- x@covariates
-  if (!is.na(covariates)) {
+  if (!any(is.na(covariates))) {
     l <- length(covariates)
   } else {
     l <- 0
