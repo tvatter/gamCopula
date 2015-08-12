@@ -2,9 +2,9 @@
 % Please edit documentation in R/gamVine.R
 \docType{methods}
 \name{dim.gamVine}
-\alias{dim,gamVine-methods}
+\alias{dim,gamVine-method}
 \alias{dim.gamVine}
-\title{Dimension of a gamVine Class Oject}
+\title{Dimension of an Object of the Class gamVine}
 \usage{
 \S4method{dim}{gamVine}(x)
 }

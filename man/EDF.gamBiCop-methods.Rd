@@ -8,7 +8,8 @@
 EDF(object)
 }
 \arguments{
-\item{object}{A \code{\link{gamBiCop}} object.}
+\item{object}{An object of the class
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 }
 \value{
 Estimated degrees of freedom for each smooth component.

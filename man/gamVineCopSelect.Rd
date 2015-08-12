@@ -17,6 +17,8 @@ gamVineCopSelect(data, Matrix, covariates = NA, simplified = FALSE,
 \item{Matrix}{Lower triangular \code{d x d} matrix that defines the R-vine
 tree structure.}
 
+\item{covariates}{Vector of names for the covariates.}
+
 \item{simplified}{If \code{TRUE}, then a simplified PCC is fitted (which is
 possible only if there are exogenous covariates). If \code{FALSE} (default),
 then a non-simplified PCC is fitted.}

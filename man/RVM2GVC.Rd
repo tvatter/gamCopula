@@ -2,19 +2,20 @@
 % Please edit documentation in R/gamVine.R
 \name{RVM2GVC}
 \alias{RVM2GVC}
-\title{Transform an R-Vine Class Object into a gamVine Class Object}
+\title{Transform an Object of the Class R-Vine into an Object of the Class gamVine}
 \usage{
 RVM2GVC(RVM)
 }
 \arguments{
-\item{RVM}{A \code{\link{RVineMatrix}} object.}
+\item{RVM}{An object of the class \code{\link{RVineMatrix}}.}
 }
 \value{
-A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+An object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \description{
-Transform a \code{\link{RVineMatrix}} object
-into a \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+Transform an object of the class \code{\link{RVineMatrix}}
+into an object of the class \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \seealso{
 \code{\link{RVineMatrix}} and

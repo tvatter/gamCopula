@@ -158,10 +158,10 @@ formula.gamBiCop <- function(x, ...) {
 setValidity("gamBiCop", valid.gamBiCop)
 setMethod("show", signature("gamBiCop"), show.gamBiCop)
 
-#' Summary for a \code{gamBiCop} Object
+#' Summary for a gamBiCop Object
 #' 
-#' Takes a \code{\link{gamBiCop-class}} object and produces various 
-#' useful summaries from it.
+#' Takes a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object and produces 
+#' various useful summaries from it.
 #'
 #' @param object An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
@@ -184,7 +184,8 @@ setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 #' This function is a wrapper to \code{\link{formula.gam}}
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
-#' @param x \code{\link{gamBiCop}} object.
+#' @param x An object of the class 
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param ... un-used in this class
 #' @seealso \code{\link{formula.gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
@@ -239,7 +240,8 @@ setMethod("logLik", signature("gamBiCop"), logLik.gamBiCop)
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} (note that the models are 
 #' usually fitted by penalized likelihood maximization). 
 #'
-#' @param object \code{\link{gamBiCop}} object.
+#' @param object An object of the class 
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param ... un-used in this class
 #' @return A numeric value with the corresponding BIC.
 #' @seealso \code{\link{AIC}} and \code{\link{BIC}}.
@@ -299,7 +301,8 @@ setMethod("plot", signature(x="gamBiCop"), plot.gamBiCop)
 #' It basically sums the edf of the \code{\link{gamObject}} 
 #' for each smooth component.
 #'
-#' @param object A \code{\link{gamBiCop}} object.
+#' @param object An object of the class 
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @return Estimated degrees of freedom for each smooth component.
 #' @docType methods
 #' @rdname EDF.gamBiCop-methods

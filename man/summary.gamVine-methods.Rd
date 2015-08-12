@@ -4,7 +4,7 @@
 \name{summary.gamVine}
 \alias{summary,gamVine-method}
 \alias{summary.gamVine}
-\title{Summary for a gamVine Class Oject}
+\title{Summary for an Object of the Class gamVin}
 \usage{
 \S4method{summary}{gamVine}(object)
 }
@@ -19,7 +19,8 @@ A useful summary (see \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 }
 \description{
-Takes a \code{\link{gamVine-class}} object and produces various
+Takes an object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}} and produces various
 useful summaries from it.
 }
 \seealso{

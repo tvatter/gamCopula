@@ -2,12 +2,13 @@
 % Please edit documentation in R/gamVine.R
 \name{gamVineNormalize}
 \alias{gamVineNormalize}
-\title{Normalize a gamVine Object}
+\title{Normalize an Object of the Class gamVine}
 \usage{
 gamVineNormalize(GVC)
 }
 \arguments{
-\item{GVC}{A \code{\link[gamCopula:gamVine-class]{gamVine}} object.}
+\item{GVC}{An object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}}.}
 }
 \value{
 The normalized \code{\link[gamCopula:gamVine-class]{gamVine}} object.

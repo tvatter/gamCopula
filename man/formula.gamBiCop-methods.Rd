@@ -9,7 +9,8 @@
 \S4method{formula}{gamBiCop}(x, ...)
 }
 \arguments{
-\item{x}{\code{\link{gamBiCop}} object.}
+\item{x}{An object of the class
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
 \item{...}{un-used in this class}
 }

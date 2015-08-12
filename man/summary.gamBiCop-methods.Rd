@@ -4,7 +4,7 @@
 \name{summary.gamBiCop}
 \alias{summary,gamBiCop-method}
 \alias{summary.gamBiCop}
-\title{Summary for a \code{gamBiCop} Object}
+\title{Summary for a gamBiCop Object}
 \usage{
 \S4method{summary}{gamBiCop}(object)
 }
@@ -19,8 +19,8 @@ A useful summary (see \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 }
 \description{
-Takes a \code{\link{gamBiCop-class}} object and produces various
-useful summaries from it.
+Takes a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object and produces
+various useful summaries from it.
 }
 \seealso{
 \code{\link{summary.gam}}

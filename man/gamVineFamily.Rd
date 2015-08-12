@@ -2,20 +2,23 @@
 % Please edit documentation in R/gamVine.R
 \name{gamVineFamily}
 \alias{gamVineFamily}
-\title{Family Matrix of a gamVine Object}
+\title{Family Matrix of an Object of the Class gamVine}
 \usage{
 gamVineFamily(GVC)
 }
 \arguments{
-\item{GVC}{A \code{\link[gamCopula:gamVine-class]{gamVine}} object.}
+\item{GVC}{An object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}}.}
 }
 \value{
 Matrix of copula families corresponding to the model list in the
 \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{
-Return the matrix of copula family (see \code{\link{gamBiCop-class}})
-corresponding to the model list in the \code{\link{gamVine-class}} object.
+Return the matrix of copula family (see
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}})
+corresponding to the model list in the
+\code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \seealso{
 \code{\link[gamCopula:gamVine-class]{gamVine}}.

@@ -7,6 +7,8 @@
 gamVineSim(n, GVC, U = NULL, newdata = NULL)
 }
 \arguments{
+\item{n}{number of d-dimensional observations to simulate.}
+
 \item{GVC}{A \code{\link[gamCopula:gamVine-class]{gamVine}} object.}
 
 \item{U}{If not \code{NULL}, \code{U} is an (N,d)-matrix of U[0,1] random
@@ -16,8 +18,6 @@ variates to be transformed to the copula sample.}
 the attribute \code{covariates} from \code{GVC} is not \code{NA},
 \code{newdata} is a data frame containing the values of
 the model covariates at which simulations are required.}
-
-\item{N}{number of d-dimensional observations to simulate.}
 }
 \value{
 A Nxd matrix of data simulated from the given

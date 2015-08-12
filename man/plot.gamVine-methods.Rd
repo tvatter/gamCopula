@@ -2,9 +2,9 @@
 % Please edit documentation in R/gamVine.R
 \docType{methods}
 \name{plot.gamVine}
-\alias{plot,gamVine,ANY-methods}
+\alias{plot,gamVine,ANY-method}
 \alias{plot.gamVine}
-\title{Plot a gamVine Class Object}
+\title{Plot an Object of the Class gamVine}
 \usage{
 \S4method{plot}{gamVine,ANY}(x, y, ...)
 }
@@ -20,7 +20,7 @@
 This function simply generates plots.
 }
 \description{
-Plot from an object of the class
+Plot an object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 The function is based on (see \code{\link{plot.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}).

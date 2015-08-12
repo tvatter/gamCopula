@@ -275,9 +275,10 @@ plot.gamVine <- function(x, ...) {
 setValidity("gamVine", valid.gamVine)
 setMethod("show", signature("gamVine"), show.gamVine)
 
-#' Summary for a gamVine Class Oject
+#' Summary for an Object of the Class gamVin
 #' 
-#' Takes a \code{\link{gamVine-class}} object and produces various 
+#' Takes an object of the class 
+#' \code{\link[gamCopula:gamVine-class]{gamVine}} and produces various 
 #' useful summaries from it.
 #'
 #' @param object An object of the class
@@ -294,7 +295,7 @@ setMethod("show", signature("gamVine"), show.gamVine)
 #' @export
 setMethod("summary", signature("gamVine"), summary.gamVine)
 
-#' Dimension of a gamVine Class Oject
+#' Dimension of an Object of the Class gamVine
 #' 
 #' Retrieve the dimension of an object of the class
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
@@ -307,13 +308,13 @@ setMethod("summary", signature("gamVine"), summary.gamVine)
 #' @docType methods 
 #' @name dim.gamVine
 #' @rdname dim.gamVine-methods
-#' @aliases dim,gamVine-methods
+#' @aliases dim,gamVine-method
 #' @export
 setMethod("dim", signature("gamVine"), dim.gamVine)
 
-#' Plot a gamVine Class Object
+#' Plot an Object of the Class gamVine
 #' 
-#' Plot from an object of the class 
+#' Plot an object of the class 
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}. 
 #' The function is based on (see \code{\link{plot.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
@@ -327,16 +328,17 @@ setMethod("dim", signature("gamVine"), dim.gamVine)
 #' @docType methods
 #' @name plot.gamVine
 #' @rdname plot.gamVine-methods
-#' @aliases plot,gamVine,ANY-methods
+#' @aliases plot,gamVine,ANY-method
 #' @export
 setMethod("plot", signature(x="gamVine"), plot.gamVine)
 
-#' Normalize a gamVine Object
+#' Normalize an Object of the Class gamVine
 #' 
 #' Change the R-vine matrix in the natural order, 
 #' i.e. with d:1 on the diagonal
 #'
-#' @param GVC A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' @param GVC An object of the class 
+#' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @return The normalized \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @name gamVineNormalize
@@ -354,12 +356,15 @@ gamVineNormalize <- function(GVC) {
 }
 
 
-#' Family Matrix of a gamVine Object
+#' Family Matrix of an Object of the Class gamVine
 #' 
-#' Return the matrix of copula family (see \code{\link{gamBiCop-class}}) 
-#' corresponding to the model list in the \code{\link{gamVine-class}} object.
+#' Return the matrix of copula family (see 
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}) 
+#' corresponding to the model list in the 
+#' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #'
-#' @param GVC A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' @param GVC An object of the class
+#'  \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @return Matrix of copula families corresponding to the model list in the 
 #' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}}.
@@ -389,13 +394,14 @@ gamVineFamily <- function(GVC) {
   return(matrix(fam, d, d))
 }
 
-#' Transform an R-Vine Class Object into a gamVine Class Object
+#' Transform an Object of the Class R-Vine into an Object of the Class gamVine
 #' 
-#' Transform a \code{\link{RVineMatrix}} object 
-#' into a \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' Transform an object of the class \code{\link{RVineMatrix}}
+#' into an object of the class \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #'
-#' @param RVM A \code{\link{RVineMatrix}} object.
-#' @return A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
+#' @param RVM An object of the class \code{\link{RVineMatrix}}.
+#' @return An object of the class 
+#' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @seealso \code{\link{RVineMatrix}} and 
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @name RVM2GVC

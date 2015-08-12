@@ -1,6 +1,6 @@
 #' Simulation from a \code{\link{gamVine-class}} object
 #'
-#' @param N number of d-dimensional observations to simulate.
+#' @param n number of d-dimensional observations to simulate.
 #' @param GVC A \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @param U If not \code{NULL}, \code{U} is an (N,d)-matrix of U[0,1] random 
 #' variates to be transformed to the copula sample.
@@ -144,7 +144,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
             data <- newdata
           } else {
             data <- cbind(data, newdata)
-            names(data)[(nvar+1):dim(data)[2]] <- names(newdata)
+            names(data)[(nvars+1):dim(data)[2]] <- names(newdata)
           }
         }
         par <- gamBiCopPred(model, data, target = "par")$par

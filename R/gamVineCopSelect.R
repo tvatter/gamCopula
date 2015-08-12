@@ -13,6 +13,7 @@
 #' @param data A matrix or data frame containing the data in [0,1]^d.
 #' @param Matrix Lower triangular \code{d x d} matrix that defines the R-vine 
 #' tree structure.
+#' @param covariates Vector of names for the covariates.
 #' @param simplified If \code{TRUE}, then a simplified PCC is fitted (which is
 #' possible only if there are exogenous covariates). If \code{FALSE} (default),
 #' then a non-simplified PCC is fitted.
