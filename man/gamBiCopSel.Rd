@@ -5,9 +5,9 @@
 \title{Selection and Maximum penalized likelihood estimation of a Generalized
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
-gamBiCopSel(data, familyset = NA, rotations = TRUE, selectioncrit = "AIC",
-  tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
-  parallel = FALSE, verbose = FALSE, ...)
+gamBiCopSel(data, familyset = NA, rotations = TRUE, selcrit = "AIC",
+  level = 0.05, edf = 1.5, tau = TRUE, method = "FS", tol.rel = 0.001,
+  n.iters = 10, parallel = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{data}{A list or data frame containing the model responses, (u1,u2) in
@@ -34,10 +34,17 @@ families:
 \item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
 
-\item{selectioncrit}{Character indicating the criterion for bivariate copula
-selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or
+\item{selcrit}{Character indicating the criterion for bivariate copula
+selection. Possible choices: \code{selcrit = 'AIC'} (default) or
 \code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
+
+\item{level}{Numerical; significance level of the test for removing individual
+predictors (default: \code{level = 0.05}).}
+
+\item{edf}{Numerical; if the estimated EDF for individual predictors is
+smaller than \code{edf} but the predictor is still significant, then
+it is set as linear (default: \code{edf = 1.5}).}
 
 \item{tau}{\code{FALSE} for a calibration fonction specified for
 the Copula parameter or \code{TRUE} (default) for a calibration function

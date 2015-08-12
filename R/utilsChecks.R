@@ -20,6 +20,14 @@ msg.unif <- function(x) {
   paste("'", x, "' should be a real number in [0,1].", sep = "")
 }
 
+valid.real <- function(x) {
+  !is.null(x) && is.numeric(x) &&  length(x) == 1 && !is.na(x)
+}
+
+msg.real <- function(x) {
+  paste("'", x, "' should be a real number.", sep = "")
+}
+
 valid.posint <- function(x) {
   !is.null(x) &&  length(x) == 1 && !is.na(x) && 
     is.numeric(x) &&  as.integer(x) ==  x && x > 0

@@ -13,6 +13,9 @@
 #' @param data A matrix or data frame containing the data in [0,1]^d.
 #' @param Matrix Lower triangular \code{d x d} matrix that defines the R-vine 
 #' tree structure.
+#' @param simplified If \code{TRUE}, then a simplified PCC is fitted (which is
+#' possible only if there are exogenous covariates). If \code{FALSE} (default),
+#' then a non-simplified PCC is fitted.
 #' @param familyset An integer vector of pair-copula families to select from 
 #' (the independence copula MUST NOT be specified in this vector unless one 
 #' wants to fit an independence vine!). The vector has to include at least one 
@@ -205,15 +208,16 @@
 #' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}}, 
 #'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #'  \code{\link{gamBiCopEst}}.
-gamVineCopSelect <- function(data, Matrix, covariates = NA, familyset = NA, 
-                             rotations = TRUE, familycrit = "AIC", 
+gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE, 
+                             familyset = NA, rotations = TRUE, 
+                             familycrit = "AIC", 
                              treecrit = "Kendall", SAtestOptions = "ERC",
                              indeptest = TRUE, level = 0.05,
                              trunclevel = NA, tau = TRUE, method = "FS",
                              tol.rel = 0.001, n.iters = 10, 
                              parallel = FALSE, verbose = FALSE) {
   
-  tmp <- valid.gamVineCopSelect(data, Matrix, covariates, 
+  tmp <- valid.gamVineCopSelect(data, Matrix, covariates, simplified,
                                 familyset, rotations, familycrit, 
                                 treecrit, SAtestOptions, 
                                 indeptest, level, trunclevel, 
@@ -278,7 +282,7 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, familyset = NA,
           tmp <- fitACopula(zr2, zr1, familyset, familycrit, 
                             indeptest, level, FALSE)
         } else {
-          if (k != d) {
+          if (k != d && simplified == FALSE) {
             cond <- Mat[(k +1):d, i]
             tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
             names(tmp) <- c("u1","u2",nn[oo[cond]])
@@ -307,14 +311,14 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, familyset = NA,
   return(gamVine(Matrix,model,nn[1:d],covariates))
 } 
 
-valid.gamVineCopSelect <- function(data, Matrix, covariates, 
+valid.gamVineCopSelect <- function(data, Matrix, covariates, simplified, 
                                    familyset, rotations, familycrit, 
                                    treecrit, SAtestOptions, 
                                    indeptest, level, trunclevel, 
                                    tau, method, tol.rel, n.iters, 
                                    parallel, verbose) {
   
-  tmp <- valid.gamVineStructureSelect(data, covariates, 0, 
+  tmp <- valid.gamVineStructureSelect(data, covariates, simplified, 0, 
                                       familyset, rotations, familycrit, 
                                       treecrit, SAtestOptions, 
                                       indeptest, level, trunclevel, 

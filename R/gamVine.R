@@ -257,14 +257,16 @@ plot.gamVine <- function(x, ...) {
     for(j in sel) {
       mm <- x@model[[j]]
       k <- arrayInd(which(model.count == j),dim(M))
-      con1 <- paste(nn[M[k[1],k[2]]],nn[M[which(M[,k[2]] != 0)[1],k[2]]], 
-                    sep = ",", collapse = "")
+      con1 <- paste0(sort(c(nn[M[k[1],k[2]]], 
+                           nn[M[which(M[,k[2]] != 0)[1],k[2]]])), 
+                     collapse = ",")
       if (k[1] != d) {
-        con1 <- paste(con1, nn[M[(k[1]+1):d,k[2]]], sep = ";", collapse = "")
+        con1 <- paste0(c(con1, paste0(sort(nn[M[(k[1]+1):d,k[2]]]),
+                                    collapse = ",")), collapse = ";")
       }
-      con2 <- paste(all.vars(mm@model$pred.formula), sep = "", collapse = ",")
+      con2 <- paste0(sort(all.vars(mm@model$pred.formula)), collapse = ",")
       
-      plot(x@model[[j]], main = paste(con1,con2,sep = "|", collapse = ""), 
+      plot(x@model[[j]], main = paste0(c(con1,con2), collapse = "|"), 
            se = F, ...)
     }
   }

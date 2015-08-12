@@ -4,16 +4,20 @@
 \alias{gamVineStructureSelect}
 \title{Structure selection and estimation of a GAM-Vine model.}
 \usage{
-gamVineStructureSelect(data, covariates = NA, type = 0, familyset = NA,
-  rotations = TRUE, familycrit = "AIC", treecrit = "Kendall",
-  SAtestOptions = "ERC", indeptest = TRUE, level = 0.05,
-  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
-  n.iters = 10, parallel = FALSE, verbose = FALSE)
+gamVineStructureSelect(data, covariates = NA, simplified = FALSE,
+  type = 0, familyset = NA, rotations = TRUE, familycrit = "AIC",
+  treecrit = "Kendall", SAtestOptions = "ERC", indeptest = TRUE,
+  level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
+  tol.rel = 0.001, n.iters = 10, parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
 \item{covariates}{Vector of names for the covariates.}
+
+\item{simplified}{If \code{TRUE}, then a simplified PCC is fitted (which is
+possible only if there are exogenous covariates). If \code{FALSE} (default),
+then a non-simplified PCC is fitted.}
 
 \item{type}{\code{type = 0} (default) for a R-Vine and \code{type = 1} for a
 C-Vine.}

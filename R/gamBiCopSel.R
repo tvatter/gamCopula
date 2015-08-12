@@ -28,10 +28,15 @@
 #' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param rotations If \code{TRUE}, all rotations of the families in familyset 
 #' are included.
-#' @param selectioncrit Character indicating the criterion for bivariate copula 
-#' selection. Possible choices: \code{selectioncrit = 'AIC'} (default) or 
+#' @param selcrit Character indicating the criterion for bivariate copula 
+#' selection. Possible choices: \code{selcrit = 'AIC'} (default) or 
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
-#' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.   
+#' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package. 
+#' @param level Numerical; significance level of the test for removing individual
+#' predictors (default: \code{level = 0.05}).  
+#' @param edf Numerical; if the estimated EDF for individual predictors is 
+#' smaller than \code{edf} but the predictor is still significant, then
+#' it is set as linear (default: \code{edf = 1.5}). 
 #' @param tau \code{FALSE} for a calibration fonction specified for 
 #' the Copula parameter or \code{TRUE} (default) for a calibration function 
 #' specified for Kendall's tau.  
@@ -105,11 +110,11 @@
 #' plot(best$res)
 #' @export
 gamBiCopSel <- function(data, familyset = NA, rotations = TRUE, 
-                        selectioncrit = "AIC", tau = TRUE, 
-                        method = "FS", tol.rel = 1e-3, n.iters = 10, 
+                        selcrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
+                        method = "FS", tol.rel = 1e-3, n.iters = 10,
                         parallel = FALSE, verbose = FALSE, ...) {
 
-  tmp <- valid.gamBiCopSel(data, rotations, familyset, selectioncrit, tau, 
+  tmp <- valid.gamBiCopSel(data, rotations, familyset, selcrit, level, edf, tau, 
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
     stop(tmp)
@@ -139,13 +144,15 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
   x <- NULL
   if (parallel == FALSE) {
     res <- foreach(x=familyset) %do% 
-      tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
+      tryCatch(gamBiCopVarSel(data, x, tau, method, tol.rel, n.iters, 
+                              level, edf, verbose,...),
                error = function(e) e)
   } else {
     cl <- makeCluster(detectCores() - 1)
     registerDoParallel(cl, cores = detectCores() - 1)
     res <- foreach(x=familyset) %dopar% 
-      tryCatch(gamBiCopVarSel(data,x,tau,method,tol.rel,n.iters,verbose,...),
+      tryCatch(gamBiCopVarSel(data, x, tau, method, tol.rel, n.iters, 
+                              level, edf, verbose,...),
                error = function(e) e)
     stopCluster(cl)
   }
@@ -158,7 +165,7 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
 #     res <- res[sapply(res, function(x) x$conv) == 0]
 #   }
 
-  if (selectioncrit == "AIC") {
+  if (selcrit == "AIC") {
     return(res[[which.min(sapply(res, function(x) AIC(x$res)))]])
   } else {
     return(res[[which.min(sapply(res, function(x) BIC(x$res)))]])
@@ -166,8 +173,9 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
 } 
 
 gamBiCopVarSel <- function(data, family,
-                        tau = TRUE, method = "FS", 
+                        tau = TRUE, method = "FS",
                         tol.rel = 1e-3, n.iters = 10, 
+                        level = 5e-2, edf = 1.5, 
                         verbose = FALSE, ...) {
   
   if (verbose == TRUE) {
@@ -197,7 +205,7 @@ gamBiCopVarSel <- function(data, family,
     }
     tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                        method, tol.rel, n.iters)
-    sel <- summary(tmp$res@model)$s.pv < 5e-2
+    sel <- summary(tmp$res@model)$s.pv < level
     nn <- nn[sel]
     basis <- rep(5,length(nn))
     formula.expr <- mapply(get.formula,nn,basis)
@@ -209,11 +217,11 @@ gamBiCopVarSel <- function(data, family,
     return(tmp)
   }
 
-  ## Create a separate list by setting as linear the predictors with EDF < 1.5
+  ## Create a separate list by setting as linear the predictors with EDF < edf
   formula.tmp <- as.formula(paste("~",paste(formula.expr,collapse = " + ")))
   tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                      method, tol.rel, n.iters)
-  sel <- summary(tmp$res@model)$edf < 1.5
+  sel <- summary(tmp$res@model)$edf < edf
   get.linear <- function(x){
     names(unlist(sapply(nn,function(z)grep(z,x))))
   }
@@ -225,7 +233,7 @@ gamBiCopVarSel <- function(data, family,
                                         formula.expr),
                                         collapse = " + ")))
   if (verbose == TRUE) {
-    cat("Remove by setting as linear the predictors with EDF < 1.5....... \n")
+    cat("Remove by setting as linear the predictors with EDF < edf....... \n")
     cat("Updated model formula:\n")
     print(formula.tmp)
   }
@@ -256,8 +264,9 @@ gamBiCopVarSel <- function(data, family,
   return(tmp)
 }
 
-valid.gamBiCopSel <- function(data, rotations, familyset, selectioncrit, tau, 
-                              method, tol.rel, n.iters, parallel, verbose) {
+valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf, 
+                              tau, method, tol.rel, n.iters, parallel, 
+                              verbose) {
   
   tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
@@ -272,8 +281,8 @@ valid.gamBiCopSel <- function(data, rotations, familyset, selectioncrit, tau,
     return(msg.logical(var2char(rotations)))
   }
   
-  if(is.null(selectioncrit) || length(selectioncrit) != 1 || 
-       (selectioncrit != "AIC" && selectioncrit != "BIC")) {
+  if(is.null(selcrit) || length(selcrit) != 1 || 
+       (selcrit != "AIC" && selcrit != "BIC")) {
     return("Selection criterion not implemented.")
   } 
   
@@ -281,6 +290,13 @@ valid.gamBiCopSel <- function(data, rotations, familyset, selectioncrit, tau,
     return(msg.logical(var2char(parallel)))
   }
   
+  if (!valid.unif(level)) {
+    return(msg.unif(var2char(level)))
+  }
+  
+  if (!valid.real(edf)) {
+    return(msg.real(var2char(edf)))
+  }
   
   return(TRUE)
 }

@@ -5,17 +5,21 @@
 \title{Sequential pair-copula selection and maximum penalized likelihood estimation
 of a GAM-Vine model.}
 \usage{
-gamVineCopSelect(data, Matrix, covariates = NA, familyset = NA,
-  rotations = TRUE, familycrit = "AIC", treecrit = "Kendall",
-  SAtestOptions = "ERC", indeptest = TRUE, level = 0.05,
-  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
-  n.iters = 10, parallel = FALSE, verbose = FALSE)
+gamVineCopSelect(data, Matrix, covariates = NA, simplified = FALSE,
+  familyset = NA, rotations = TRUE, familycrit = "AIC",
+  treecrit = "Kendall", SAtestOptions = "ERC", indeptest = TRUE,
+  level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
+  tol.rel = 0.001, n.iters = 10, parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
 \item{Matrix}{Lower triangular \code{d x d} matrix that defines the R-vine
 tree structure.}
+
+\item{simplified}{If \code{TRUE}, then a simplified PCC is fitted (which is
+possible only if there are exogenous covariates). If \code{FALSE} (default),
+then a non-simplified PCC is fitted.}
 
 \item{familyset}{An integer vector of pair-copula families to select from
 (the independence copula MUST NOT be specified in this vector unless one
