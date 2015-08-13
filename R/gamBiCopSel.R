@@ -246,6 +246,7 @@ gamBiCopVarSel <- function(data, family,
     cat(paste("For the other predictors,", 
         "increase the basis size appropriately.......\n"))
   }
+
   while (any(sel) && all(basis < n/30)) {
     basis[sel] <- 2*basis[sel]
     #browser()
@@ -261,8 +262,13 @@ gamBiCopVarSel <- function(data, family,
                        method, tol.rel, n.iters)
     sel <- summary(tmp$res@model)$edf > (basis-1)/2
     if (any(sel)) {
-      sel[sel] <- 2*basis[sel] < apply(data[,nn[sel]], 2, function(x) 
-        length(unique(x)))
+      if (sum(sel) == 1) {
+        sel[sel] <- 2*basis[sel] < length(unique(data[,nn[sel]]))
+      } else {
+        sel[sel] <- 2*basis[sel] < apply(data[,nn[sel]], 2, function(x) 
+          length(unique(x)))
+      }
+      
     }
   }
   return(tmp)
