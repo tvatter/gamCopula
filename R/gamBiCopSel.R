@@ -260,6 +260,10 @@ gamBiCopVarSel <- function(data, family,
     tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                        method, tol.rel, n.iters)
     sel <- summary(tmp$res@model)$edf > (basis-1)/2
+    if (any(sel)) {
+      sel[sel] <- 2*basis[sel] < apply(data[,nn[sel]], 2, function(x) 
+        length(unique(x)))
+    }
   }
   return(tmp)
 }
