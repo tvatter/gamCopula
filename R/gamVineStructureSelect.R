@@ -159,7 +159,7 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
   covariates <- tmp$covariates
   trunclevel <- tmp$trunclevel
   familyset <- tmp$familyset
-  
+
   if (type == 0) {
     type <- "RVine"
   } else {
@@ -167,8 +167,8 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
   } 
   
   out <- list(tree <- vector("list", d), graph <- vector("list", d))
-  
-  graph <- initFirstGraph(data)
+  #browser()
+  graph <- initFirstGraph(data[,which(!is.element(names(data),covariates))])
   mst <- findMST(graph, type)
   tree <- fitFirstTree(mst, data,  l, covariates, familyset, familycrit, 
                        treecrit, SAtestOptions, indeptest, level, 
@@ -199,7 +199,7 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
 
 initFirstGraph <- function(data) {
   
-  C <- cor(data,method="kendall")
+  C <- TauMatrix(data)#cor(data,method="kendall")
   rownames(C) <- colnames(C) <- colnames(data)
   
   g <- graph.adjacency(C, mode="lower", weighted=TRUE, diag=FALSE)
@@ -270,7 +270,7 @@ fitFirstTree <- function(mst, data, l, covariates, familyset, familycrit,
       names(parameterForACopula[[i]]) <- c("u1","u2",covariates)
     }
   }
-  
+
   if (l == 0) {
     outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
                             familyset, familycrit, indeptest, level)

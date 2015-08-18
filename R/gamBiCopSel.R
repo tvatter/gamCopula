@@ -184,21 +184,18 @@ gamBiCopVarSel <- function(data, family,
   
   n <- dim(data)[1]
 
-  ## Create a list with formulas of smooth terms corresponding to the covariates
-  get.formula <- function(x,k){
-    paste("s(",x,", k=",k,", bs='cr')",sep = "")
-  } 
+  ## Create a list with formulas of smooth terms corresponding to the covariates  
   nn <- names(data)[-which( (names(data) == "u1") | (names(data) == "u2"))]
   basis <- rep(5,ncol(data)-2)
-  formula.expr <- mapply(get.formula,nn,basis)
-
+  formula.expr <- mapply(get.smooth,nn,basis)
+  
   ## Update the list by removing unsignificant predictors 
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
   }
   sel <- FALSE
   while(!all(sel) && length(basis) > 0){
-    formula.tmp <- as.formula(paste("~",paste(formula.expr,collapse = " + ")))
+    formula.tmp <- get.formula(formula.expr)
     if (verbose == TRUE) {
       cat("Model formula:\n")
       print(formula.tmp)
@@ -208,7 +205,7 @@ gamBiCopVarSel <- function(data, family,
     sel <- summary(tmp$res@model)$s.pv < level
     nn <- nn[sel]
     basis <- rep(5,length(nn))
-    formula.expr <- mapply(get.formula,nn,basis)
+    formula.expr <- mapply(get.smooth,nn,basis)
   }
   
   if (length(basis) == 0) {
@@ -216,11 +213,13 @@ gamBiCopVarSel <- function(data, family,
                        method, tol.rel, n.iters)
     return(tmp)
   }
-
+  
   ## Create a separate list by setting as linear the predictors with EDF < edf
-  formula.tmp <- as.formula(paste("~",paste(formula.expr,collapse = " + ")))
-  tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                     method, tol.rel, n.iters)
+  if (get.formula(formula.expr) != formula.tmp) {
+    formula.tmp <- get.formula(formula.expr)
+    tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
+                       method, tol.rel, n.iters)
+  }
   sel <- summary(tmp$res@model)$edf < edf
   get.linear <- function(x){
     names(unlist(sapply(nn,function(z)grep(z,x))))
@@ -229,50 +228,86 @@ gamBiCopVarSel <- function(data, family,
   formula.expr <- formula.expr[!sel]
   basis <- basis[!sel]
   nn <- nn[!sel]
-  formula.tmp <- as.formula(paste("~",paste(c(formula.lin,
-                                        formula.expr),
-                                        collapse = " + ")))
-  if (verbose == TRUE) {
-    cat("Remove by setting as linear the predictors with EDF < edf....... \n")
-    cat("Updated model formula:\n")
-    print(formula.tmp)
-  }
-  tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                     method, tol.rel, n.iters)
-
-  ## Increasing the basis size appropriately
-  sel <- summary(tmp$res@model)$edf > (basis-1)/2 
-  if (verbose == TRUE) {
-    cat(paste("For the other predictors,", 
-        "increase the basis size appropriately.......\n"))
-  }
-
-  while (any(sel) && all(basis < n/30)) {
-    basis[sel] <- 2*basis[sel]
-    #browser()
-    formula.expr[sel] <- mapply(get.formula,nn[sel],basis[sel])
-    formula.tmp <- as.formula(paste("~",paste(c(formula.lin,
-                                              formula.expr),
-                                              collapse = " + ")))
+  if (!is.null(formula.lin)) {
+    formula.tmp <- get.formula(c(formula.lin,formula.expr))
     if (verbose == TRUE) {
+      cat("Remove by setting as linear the predictors with EDF < edf....... \n")
       cat("Updated model formula:\n")
       print(formula.tmp)
     }
     tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
                        method, tol.rel, n.iters)
-    sel <- summary(tmp$res@model)$edf > (basis-1)/2
+  } 
+
+  ## Increasing the basis size appropriately
+  sel <- summary(tmp$res@model)$edf > (basis-1)/2
+  if (verbose == TRUE && any(sel)) {
+    cat(paste("Select the basis sizes .......\n"))
+  }
+  #kk <- round(exp(seq(log(8), log(n/30),length.out=20)))
+  #kcount <- 1
+  #while (any(sel) && kcount < 20) {
+  while (any(sel) && all(basis < n/30)) {
+    
+    ## Increase basis sizes
+    #basis[sel] <- kk[kcount]
+    #kcount <- kcount + 1
+    #basis[sel] <- round(basis[sel]*1.5)
+    basis[sel] <- 2*basis[sel]
+
+    ## Extract and fit model to residuals for each smooth components
+    data$y <- residuals(tmp$res@model)
+    data$w <- tmp$res@model$weights
+    residuals.expr <- mapply(function(x,y) 
+      get.smooth(x,y,bs="cs"), nn[sel], basis[sel])
+    residuals.formula <- sapply(residuals.expr,function(expr) 
+      get.formula(expr,TRUE))
+    residuals.fit <- lapply(residuals.formula, function(f) 
+      gam(f, data = data, gamma = 1.4, weights = w)) 
+
+    ## Suspect residuals
+    residuals.edf <- sapply(residuals.fit,function(x) sum(x$edf)-1) 
+    sel[sel] <- residuals.edf > (basis[sel]-1)/2
+    #residuals.pv <- sapply(residuals.fit,function(x) summary(x)$s.pv) 
+    #sel[sel] <- residuals.pv < level
+    
+    ## Update the smooth terms, formula and fit the new model
+    if (any(sel)) {
+      formula.expr[sel] <- mapply(get.smooth,nn[sel],basis[sel])
+      formula.tmp <- get.formula(c(formula.lin,formula.expr))
+      if (verbose == TRUE) {
+        cat("Updated model formula:\n")
+        print(formula.tmp)
+      }      
+      tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
+                         method, tol.rel, n.iters)
+      sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
+    }
+    
+    ## Check that the basis size is smaller than 1/2 the size of 
+    ## the corresponding covariate's support
     if (any(sel)) {
       if (sum(sel) == 1) {
         sel[sel] <- 2*basis[sel] < length(unique(data[,nn[sel]]))
       } else {
         sel[sel] <- 2*basis[sel] < apply(data[,nn[sel]], 2, function(x) 
           length(unique(x)))
-      }
-      
+      } 
     }
   }
   return(tmp)
 }
+
+get.smooth <- function(x,k,bs="cr") {
+  paste("s(",x,", k=", k,", bs='", bs, "')",sep = "")
+} 
+get.formula <- function(expr,y=FALSE) {
+  if (!y) {
+    as.formula(paste("~",paste(expr,collapse = " + ")))
+  } else {
+    as.formula(paste("y ~",paste(expr,collapse = " + ")))
+  }
+} 
 
 valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf, 
                               tau, method, tol.rel, n.iters, parallel, 

@@ -203,7 +203,6 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
     t <- Sys.time()
   }
   
-  
   if (family %in% c(1,2)) {
     init <- BiCopEst(u1, u2, family, method = "mle")
   } else {
@@ -258,7 +257,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
     return(NULL)
   })
   if (verbose == 1) {
-    cat(paste(Sys.time() - t,"\n"))
+    print(Sys.time() - t)
   }
   stopifnot(!is.null(res))
   
@@ -278,22 +277,21 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
     link <- function(nu) {
       2 + 1e-08 + exp(nu)
     }
-    nllvec <- function(nu) {
+    nllvec <- function(nu, u) {
       sel <- link(nu) == Inf
       if (any(sel)) {
         nu[sel] <- log(30)
       }
       nu <- link(nu)
-      pdf <- function(x, nu) BiCopPDF(x[1], x[2], family = 2, x[3], nu)
-      nll <- function(nu) -sum(log(apply(u, 1, function(x) pdf(x, nu))))
+      nll <- function(nu) -sum(log(bicoppd1d2(cbind(u[,1:3],nu),2)))
       return(sapply(nu, nll))
     }
-    nu <- optimize(nllvec, c(log(2), log(30)))
+    nu <- optimize(nllvec, c(log(2), log(30)), u)
     u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
     
     if (verbose == 1) {
       #print(u[1, 4])
-      cat(paste(Sys.time() - t, "\n"))
+      print(Sys.time() - t)
     }
   }
   
@@ -338,7 +336,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
       break
     }
     if (verbose == 1) {
-      cat(paste(Sys.time() - t, "\n"))
+      print(Sys.time() - t)
     }
     
     tmp2 <- pars.update(mm, family, tmp, tau)
@@ -380,9 +378,10 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
       cat("DF final iteration\n")
       t <- Sys.time()
     }
-    nu <- optimize(nllvec, c(log(2), log(30)))
+    nu <- optimize(nllvec, c(log(2), log(30)), u)
+    
     if (verbose == 1) {
-      cat(paste(Sys.time() - t, "\n"))
+      print(Sys.time() - t)
     }
     u[, 4] <- new.pars$par2 <- rep(link(nu$minimum), n)
     par2 <- u[1, 4]
