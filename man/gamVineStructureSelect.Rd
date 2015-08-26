@@ -6,7 +6,7 @@
 \usage{
 gamVineStructureSelect(data, covariates = NA, simplified = FALSE,
   type = 0, familyset = NA, rotations = TRUE, familycrit = "AIC",
-  treecrit = "Kendall", SAtestOptions = "ERC", indeptest = TRUE,
+  treecrit = "Kendall", pacotestOptions = "ERC", indeptest = TRUE,
   level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
   tol.rel = 0.001, n.iters = 10, parallel = FALSE, verbose = FALSE)
 }
@@ -51,17 +51,17 @@ selection. Possible choices: \code{familycrit = 'AIC'} (default) or
 \item{treecrit}{Character indicating how pairs are selected in each tree.
 \code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau
 (i.e., the tree of maximal overall dependence), and
-\code{treecrit = "SAtest"} builds the minimum spanning tree of p-values of a
+\code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
 test of the simplifying assumption (i.e., the tree of maximal variability
 in conditional dependence).}
 
-\item{SAtestOptions}{TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!}
+\item{pacotestOptions}{TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!}
 
 \item{indeptest}{Logical; whether a hypothesis test for the simplifying
 assumption and the independence of
 \code{u1} and \code{u2} is performed before bivariate copula selection
 (default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-\code{\link{SAtest}}).
+\code{\link{pacotest}}).
 The independence copula is chosen for a (conditional) pair if both the
 simplifying assumption and the null
 hypothesis of independence cannot be rejected.}

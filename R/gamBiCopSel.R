@@ -197,9 +197,7 @@ gamBiCopVarSel <- function(data, family,
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
   }
-#   if (n.iters != 40) {
-#     browser()
-#   }
+
   sel <- FALSE
   while(!all(sel) && length(basis) > 0){
     formula.tmp <- get.formula(formula.expr)
@@ -242,6 +240,9 @@ gamBiCopVarSel <- function(data, family,
     tmp <- myGamBiCopEst(formula.tmp)
   } 
 
+  #if (n.iters != 40) {
+  #  browser()
+  #}
   ## Increasing the basis size appropriately
   tmp2 <- get.pval(tmp$res@model)
   sel <- tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level

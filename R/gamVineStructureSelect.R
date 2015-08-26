@@ -42,15 +42,15 @@
 #' @param treecrit Character indicating how pairs are selected in each tree.
 #' \code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
 #' (i.e., the tree of maximal overall dependence), and 
-#' \code{treecrit = "SAtest"} builds the minimum spanning tree of p-values of a
+#' \code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
 #' test of the simplifying assumption (i.e., the tree of maximal variability 
 #' in conditional dependence).
-#' @param SAtestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
+#' @param pacotestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
 #' @param indeptest Logical; whether a hypothesis test for the simplifying 
 #' assumption and the independence of 
 #' \code{u1} and \code{u2} is performed before bivariate copula selection 
 #' (default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-#' \code{\link{SAtest}}). 
+#' \code{\link{pacotest}}). 
 #' The independence copula is chosen for a (conditional) pair if both the 
 #' simplifying assumption and the null 
 #' hypothesis of independence cannot be rejected.
@@ -133,7 +133,7 @@
 gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
                                    type = 0, familyset = NA, 
                                    rotations = TRUE, familycrit = "AIC", 
-                                   treecrit = "Kendall", SAtestOptions = "ERC",
+                                   treecrit = "Kendall", pacotestOptions = "ERC",
                                    indeptest = TRUE, level = 0.05,
                                    trunclevel = NA, tau = TRUE, method = "FS",
                                    tol.rel = 0.001, n.iters = 10, 
@@ -141,7 +141,7 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
   
   tmp <- valid.gamVineStructureSelect(data, covariates, simplified, type, 
                                       familyset, rotations, familycrit, 
-                                      treecrit, SAtestOptions, 
+                                      treecrit, pacotestOptions, 
                                       indeptest, level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
                                       parallel, verbose)
@@ -171,7 +171,7 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
   graph <- initFirstGraph(data[,which(!is.element(names(data),covariates))])
   mst <- findMST(graph, type)
   tree <- fitFirstTree(mst, data,  l, covariates, familyset, familycrit, 
-                       treecrit, SAtestOptions, indeptest, level, 
+                       treecrit, pacotestOptions, indeptest, level, 
                        tau, method, tol.rel, n.iters, parallel, verbose)
   out$Tree[[1]] <- tree
   out$Graph[[1]] <- graph
@@ -182,11 +182,11 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
       familyset <- 0
     }
     graph <- buildNextGraph(tree, data, l, covariates, 
-                            simplified, treecrit, SAtestOptions)
+                            simplified, treecrit, pacotestOptions)
     mst <- findMST(graph, type) 
     tree <- fitTree(mst, tree, data, l, covariates, simplified,
                     familyset, familycrit, 
-                    treecrit, SAtestOptions, indeptest, level, 
+                    treecrit, pacotestOptions, indeptest, level, 
                     tau, method, tol.rel, n.iters, parallel, verbose)
     out$Tree[[i]] <- tree
     out$Graph[[i]] <- graph
@@ -225,7 +225,7 @@ findMST <- function(g, mode = "RVine") {
 }
 
 fitFirstTree <- function(mst, data, l, covariates, familyset, familycrit, 
-                         treecrit, SAtestOptions, indeptest, level, 
+                         treecrit, pacotestOptions, indeptest, level, 
                          tau, method, tol.rel, n.iters, parallel, verbose) {
   
   d <- ecount(mst)
@@ -275,7 +275,7 @@ fitFirstTree <- function(mst, data, l, covariates, familyset, familycrit,
   } else {
     outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
                             familyset, familycrit, 
-                            treecrit, SAtestOptions, indeptest, level, 
+                            treecrit, pacotestOptions, indeptest, level, 
                             tau, method, tol.rel, n.iters, parallel)
   }
   
@@ -290,7 +290,7 @@ fitFirstTree <- function(mst, data, l, covariates, familyset, familycrit,
 
 fitTree <- function(mst, oldVineGraph, data, l, covariates, simplified,
                     familyset, familycrit, 
-                    treecrit, SAtestOptions, indeptest, level, 
+                    treecrit, pacotestOptions, indeptest, level, 
                     tau, method, tol.rel, n.iters, parallel, verbose) {
 
   d <- ecount(mst)
@@ -367,12 +367,12 @@ fitTree <- function(mst, oldVineGraph, data, l, covariates, simplified,
     }
   }
   
-#   if (d < 5) {
-#     browser()
-#   }
+   #if (d < 5) {
+   #   browser()
+   #}
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
                           familyset, familycrit, 
-                          treecrit, SAtestOptions, indeptest, level, 
+                          treecrit, pacotestOptions, indeptest, level, 
                           tau, method, tol.rel, n.iters, parallel)
 
   for (i in 1:d) {
@@ -385,7 +385,7 @@ fitTree <- function(mst, oldVineGraph, data, l, covariates, simplified,
 }	
 
 buildNextGraph <- function(graph, data,  l, covariates, simplified, 
-                           treecrit, SAtestOptions) {
+                           treecrit, pacotestOptions) {
   
   EL <- get.edgelist(graph)
   d <- ecount(graph)
@@ -486,7 +486,7 @@ buildNextGraph <- function(graph, data,  l, covariates, simplified,
       
       if (treecrit == "Kendall") {
         E(g)[i]$weight <- 1-abs(fasttau(zr1a[noNAs], zr2a[noNAs]))
-      } else if (treecrit == "SAtest") {
+      } else if (treecrit == "pacotest") {
         if (simplified) {
           tmp <- data[noNAs,covariates]
         } else {
@@ -495,9 +495,9 @@ buildNextGraph <- function(graph, data,  l, covariates, simplified,
             tmp <- cbind(tmp, data[noNAs,covariates])
           }
         }
-        E(g)[i]$weight <- SAtest(cbind(as.numeric(zr1a[noNAs]), 
+        E(g)[i]$weight <- pacotest(cbind(as.numeric(zr1a[noNAs]), 
                                        as.numeric(zr2a[noNAs])), 
-                                 tmp, SAtestOptions)$pValue
+                                 tmp, pacotestOptions)$pValue
       }
     }
     
@@ -583,7 +583,7 @@ fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC",
 }
 
 fitAGAMCopula <- function(data, familyset, familycrit, 
-                          treecrit, SAtestOptions, indeptest, level, 
+                          treecrit, pacotestOptions, indeptest, level, 
                           tau, method, tol.rel, n.iters, parallel, 
                           rotation = TRUE) {
   out <- list()
@@ -592,8 +592,8 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   
   ## perform independence test (if asked for)
   if (indeptest == TRUE && familyset != 0) {
-    if (treecrit == "SAtest") {
-      p1 <- SAtest(data[,1:2], data[,-c(1,2)], SAtestOptions)$pValue
+    if (treecrit == "pacotest") {
+      p1 <- pacotest(data[,1:2], data[,-c(1,2)], pacotestOptions)$pValue
     } else {
       p1 <- 0
     }
@@ -752,7 +752,7 @@ as.GVC <- function(GVC, covariates){
 
 valid.gamVineStructureSelect <- function(data, covariates, simplified, type,
                                           familyset, rotations, familycrit, 
-                                          treecrit, SAtestOptions, 
+                                          treecrit, pacotestOptions, 
                                           indeptest, level, trunclevel, 
                                           tau, method, tol.rel, n.iters, 
                                           parallel, verbose) {  
@@ -811,7 +811,7 @@ valid.gamVineStructureSelect <- function(data, covariates, simplified, type,
     return("Selection criterion for copula family not implemented.")
   } 
   
-  if(length(treecrit) != 1 || (treecrit != "Kendall" && treecrit != "SAtest")) {
+  if(length(treecrit) != 1 || (treecrit != "Kendall" && treecrit != "pacotest")) {
     return("Selection criterion for the pair selection not implemented.")
   } 
     
