@@ -181,7 +181,6 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
     if(trunclevel == i-1) {
       familyset <- 0
     }
-
     graph <- buildNextGraph(tree, data, l, covariates, 
                             simplified, treecrit, SAtestOptions)
     mst <- findMST(graph, type) 
@@ -189,7 +188,6 @@ gamVineStructureSelect <- function(data, covariates = NA, simplified = FALSE,
                     familyset, familycrit, 
                     treecrit, SAtestOptions, indeptest, level, 
                     tau, method, tol.rel, n.iters, parallel, verbose)
-    
     out$Tree[[i]] <- tree
     out$Graph[[i]] <- graph
   }
@@ -368,7 +366,10 @@ fitTree <- function(mst, oldVineGraph, data, l, covariates, simplified,
       }
     }
   }
-
+  
+#   if (d < 5) {
+#     browser()
+#   }
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
                           familyset, familycrit, 
                           treecrit, SAtestOptions, indeptest, level, 
@@ -589,9 +590,6 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   u1 <- data[,1]
   u2 <- data[,2]
   
-  ## transform the familyset to codes for the VineCopula package
-  fams <- famTrans(familyset, inv = FALSE, set = TRUE)
-  
   ## perform independence test (if asked for)
   if (indeptest == TRUE && familyset != 0) {
     if (treecrit == "SAtest") {
@@ -616,6 +614,9 @@ fitAGAMCopula <- function(data, familyset, familycrit,
     fam <- 0
     par2 <- 0
   } else {
+    ## transform the familyset to codes for the VineCopula package
+    fams <- famTrans(familyset, inv = FALSE, set = TRUE)
+    
     if (!any(is.na(out$pValue)) && out$pValue[2] < level) {
       ## unconditional copula
       
@@ -648,22 +649,20 @@ fitAGAMCopula <- function(data, familyset, familycrit,
         out$model$par2 <- par2 <- tmp$par2
       }
     }
-  }
-
-  fam <- famTrans(fam, inv = TRUE, 
-                  par = cor(u1,u2), familyset = familyset)
-  if (rotation == TRUE) {
-    if (fam %in% c(301,303,401,403)) {
-      fam <- fam+1
-    } else if (fam %in% c(302,304,402,404)) {
-      fam <- fam-1
-    } 
-  }
-
-  if (isS4(out$model)) {
-    attr(out$model, "family") <- fam
-  } else {
-    out$model$family <- fam
+    fam <- famTrans(fam, inv = TRUE, 
+                    par = cor(u1,u2), familyset = familyset)
+    if (rotation == TRUE) {
+      if (fam %in% c(301,303,401,403)) {
+        fam <- fam+1
+      } else if (fam %in% c(302,304,402,404)) {
+        fam <- fam-1
+      } 
+    }
+    if (isS4(out$model)) {
+      attr(out$model, "family") <- fam
+    } else {
+      out$model$family <- fam
+    }
   }
 
   ## store pseudo-observations for estimation in next tree

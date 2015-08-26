@@ -1,9 +1,25 @@
-# library(gamCopula)
-# library(copula)
-# data(uranium)
+library(gamCopula)
+library(copula)
+library(VineCopula)
+data(uranium)
+
+## With the whole dataset and truncation after level 3 
+## (automatic plot could be improved)
+U <- pobs(uranium)
+familyset <- c(1,2,301,302,401,401)
+model <- gamVineStructureSelect(U, familyset = familyset, rotations = FALSE, 
+                                trunclevel = 3, method = "NR", n.iters = 40, 
+                                verbose = TRUE, parallel = TRUE)
+#model2 <- gamVineStructureSelect(U, familyset = familyset, rotations = FALSE, 
+#                                 trunclevel = 3, n.iters = 40, 
+#                                 verbose = TRUE, parallel = TRUE)
+dev.off()
+par(mfrow=c(5,2), mar = c(3,3,4,0))
+plot(model)
+
+# # 
 # U <- pobs(uranium[,c(3,6,7)])
 # fit <- gamVineStructureSelect(U)
-# library(VineCopula)
 # fitsimpl <- RVineStructureSelect(U)
 # 
 # ## The gamBiCop object you're looking for
@@ -48,11 +64,3 @@
 # lines(range(x), rep(BiCopPar2Tau(1,fitsimpl$par[2,1]),2), col = "red")
 # lines(x, tmp$CI[,1], lty = 2)
 # lines(x, tmp$CI[,2], lty = 2)
-# 
-# ## With the whole dataset and truncation after level 3 
-# ## (automatic plot could be improved)
-# U <- pobs(uranium)
-# model <- gamVineStructureSelect(U, trunclevel = 3, verbose = TRUE)
-# plot(model)
-# 
-# ## test comment

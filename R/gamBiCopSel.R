@@ -182,6 +182,10 @@ gamBiCopVarSel <- function(data, family,
     cat(paste("Model selection for family", family, "\n"))
   }
   
+  myGamBiCopEst <- function(formula) 
+    suppressMessages(gamBiCopEst(data, formula, family, tau, 
+                                 method, tol.rel, n.iters))
+  
   n <- dim(data)[1]
 
   ## Create a list with formulas of smooth terms corresponding to the covariates  
@@ -193,6 +197,9 @@ gamBiCopVarSel <- function(data, family,
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
   }
+#   if (n.iters != 40) {
+#     browser()
+#   }
   sel <- FALSE
   while(!all(sel) && length(basis) > 0){
     formula.tmp <- get.formula(formula.expr)
@@ -200,8 +207,7 @@ gamBiCopVarSel <- function(data, family,
       cat("Model formula:\n")
       print(formula.tmp)
     }
-    tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                       method, tol.rel, n.iters)
+    tmp <- myGamBiCopEst(formula.tmp)
     sel <- summary(tmp$res@model)$s.pv < level
     nn <- nn[sel]
     basis <- rep(5,length(nn))
@@ -209,16 +215,14 @@ gamBiCopVarSel <- function(data, family,
   }
   
   if (length(basis) == 0) {
-    tmp <- gamBiCopEst(data, ~1, family, tau, 
-                       method, tol.rel, n.iters)
+    tmp <- tmp <- myGamBiCopEst(~1)
     return(tmp)
   }
   
   ## Create a separate list by setting as linear the predictors with EDF < edf
   if (get.formula(formula.expr) != formula.tmp) {
     formula.tmp <- get.formula(formula.expr)
-    tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                       method, tol.rel, n.iters)
+    tmp <- myGamBiCopEst(formula.tmp)
   }
   sel <- summary(tmp$res@model)$edf < edf
   get.linear <- function(x){
@@ -235,12 +239,13 @@ gamBiCopVarSel <- function(data, family,
       cat("Updated model formula:\n")
       print(formula.tmp)
     }
-    tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                       method, tol.rel, n.iters)
+    tmp <- myGamBiCopEst(formula.tmp)
   } 
 
   ## Increasing the basis size appropriately
-  sel <- summary(tmp$res@model)$edf > (basis-1)/2
+  tmp2 <- get.pval(tmp$res@model)
+  sel <- tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level
+  #sel <- summary(tmp$res@model)$edf > (basis-1)/2
   if (verbose == TRUE && any(sel)) {
     cat(paste("Select the basis sizes .......\n"))
   }
@@ -255,21 +260,19 @@ gamBiCopVarSel <- function(data, family,
     #basis[sel] <- round(basis[sel]*1.5)
     basis[sel] <- 2*basis[sel]
 
-    ## Extract and fit model to residuals for each smooth components
-    data$y <- residuals(tmp$res@model)
-    data$w <- tmp$res@model$weights
-    residuals.expr <- mapply(function(x,y) 
-      get.smooth(x,y,bs="cs"), nn[sel], basis[sel])
-    residuals.formula <- sapply(residuals.expr,function(expr) 
-      get.formula(expr,TRUE))
-    residuals.fit <- lapply(residuals.formula, function(f) 
-      gam(f, data = data, gamma = 1.4, weights = w)) 
-
-    ## Suspect residuals
-    residuals.edf <- sapply(residuals.fit,function(x) sum(x$edf)-1) 
-    sel[sel] <- residuals.edf > (basis[sel]-1)/2
-    #residuals.pv <- sapply(residuals.fit,function(x) summary(x)$s.pv) 
-    #sel[sel] <- residuals.pv < level
+    #     ## Extract and fit model to residuals for each smooth components
+    #     data$y <- residuals(tmp$res@model)
+    #     data$w <- tmp$res@model$weights
+    #     residuals.expr <- mapply(function(x,y) 
+    #       get.smooth(x,y,bs="cs"), nn[sel], basis[sel])
+    #     residuals.formula <- sapply(residuals.expr,function(expr) 
+    #       get.formula(expr,TRUE))
+    #     residuals.fit <- lapply(residuals.formula, function(f) 
+    #       gam(f, data = data, gamma = 1.4, weights = w)) 
+    # 
+    #     ## Suspect residuals
+    #     residuals.edf <- sapply(residuals.fit,function(x) sum(x$edf)-1) 
+    #     sel[sel] <- residuals.edf > (basis[sel]-1)/2
     
     ## Update the smooth terms, formula and fit the new model
     if (any(sel)) {
@@ -279,9 +282,10 @@ gamBiCopVarSel <- function(data, family,
         cat("Updated model formula:\n")
         print(formula.tmp)
       }      
-      tmp <- gamBiCopEst(data, formula.tmp, family, tau, 
-                         method, tol.rel, n.iters)
-      sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
+      tmp <- myGamBiCopEst(formula.tmp)
+      #sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
+      tmp2 <- get.pval(tmp$res@model)
+      sel <- sel & tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level
     }
     
     ## Check that the basis size is smaller than 1/2 the size of 
@@ -344,4 +348,125 @@ valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf,
   }
   
   return(TRUE)
+}
+
+## Internal code borrowed from mgcv
+get.pval <- function (b, subsample = 5000, n.rep = 400) 
+{
+  m <- length(b$smooth)
+  if (m == 0) 
+    return(NULL)
+  rsd <- residuals(b)
+  ve <- rep(0, n.rep)
+  p.val <- v.obs <- kc <- edf <- rep(0, m)
+  snames <- rep("", m)
+  n <- nrow(b$model)
+  if (n > subsample) {
+    ind <- sample(1:n, subsample)
+    modf <- b$model[ind, ]
+    rsd <- rsd[ind]
+  }
+  else modf <- b$model
+  nr <- length(rsd)
+  for (k in 1:m) {
+    ok <- TRUE
+    b$smooth[[k]]$by <- "NA"
+    dat <- ExtractData(b$smooth[[k]], modf, NULL)$data
+    if (!is.null(attr(dat, "index")) || 
+        !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
+      ok <- FALSE
+    if (ok) 
+      dat <- as.data.frame(dat)
+    snames[k] <- b$smooth[[k]]$label
+    ind <- b$smooth[[k]]$first.para:b$smooth[[k]]$last.para
+    kc[k] <- length(ind)
+    edf[k] <- sum(b$edf[ind])
+    nc <- b$smooth[[k]]$dim
+    if (ok && ncol(dat) > nc) 
+      dat <- dat[, 1:nc, drop = FALSE]
+    for (j in 1:nc) if (is.factor(dat[[j]])) 
+      ok <- FALSE
+    if (!ok) {
+      p.val[k] <- v.obs[k] <- NA
+    }
+    else {
+      if (nc == 1) {
+        e <- diff(rsd[order(dat[, 1])])
+        v.obs[k] <- mean(e^2)/2
+        for (i in 1:n.rep) {
+          e <- diff(rsd[sample(1:nr, nr)])
+          ve[i] <- mean(e^2)/2
+        }
+        p.val[k] <- mean(ve < v.obs[k])
+        v.obs[k] <- v.obs[k]/mean(rsd^2)
+      }
+      else {
+        if (!is.null(b$smooth[[k]]$margin)) {
+          beta <- coef(b)[ind]
+          f0 <- PredictMat(b$smooth[[k]], dat) %*% beta
+          gr.f <- rep(0, ncol(dat))
+          for (i in 1:nc) {
+            datp <- dat
+            dx <- diff(range(dat[, i]))/1000
+            datp[, i] <- datp[, i] + dx
+            fp <- PredictMat(b$smooth[[k]], datp) %*% 
+              beta
+            gr.f[i] <- mean(abs(fp - f0))/dx
+          }
+          for (i in 1:nc) {
+            dat[, i] <- dat[, i] - min(dat[, i])
+            dat[, i] <- gr.f[i] * dat[, i]/max(dat[, 
+                                                   i])
+          }
+        }
+        nn <- 3
+        ni <- nearest(nn, as.matrix(dat))$ni
+        e <- rsd - rsd[ni[, 1]]
+        for (j in 2:nn) e <- c(e, rsd - rsd[ni[, j]])
+        v.obs[k] <- mean(e^2)/2
+        for (i in 1:n.rep) {
+          rsdr <- rsd[sample(1:nr, nr)]
+          e <- rsdr - rsdr[ni[, 1]]
+          for (j in 2:nn) e <- c(e, rsdr - rsdr[ni[, 
+                                                   j]])
+          ve[i] <- mean(e^2)/2
+        }
+        p.val[k] <- mean(ve < v.obs[k])
+        v.obs[k] <- v.obs[k]/mean(rsd^2)
+      }
+    }
+  }
+  k.table <- cbind(kc, edf, v.obs, p.val)
+  dimnames(k.table) <- list(snames, c("k'", "edf", "k-index", 
+                                      "p-value"))
+  k.table
+}
+## Internal code borrowed from mgcv
+ExtractData <- function (object, data, knots) {
+  knt <- dat <- list()
+  for (i in 1:length(object$term)) {
+    dat[[object$term[i]]] <- get.var(object$term[i], data)
+    knt[[object$term[i]]] <- get.var(object$term[i], knots)
+  }
+  names(dat) <- object$term
+  m <- length(object$term)
+  if (!is.null(attr(dat[[1]], "matrix"))) {
+    n <- length(dat[[1]])
+    X <- matrix(unlist(dat), n, m)
+    if (is.numeric(X)) {
+      X <- uniquecombs(X)
+      if (nrow(X) < n * 0.9) {
+        for (i in 1:m) dat[[i]] <- X[, i]
+        attr(dat, "index") <- attr(X, "index")
+      }
+    }
+  }
+  if (object$by != "NA") {
+    by <- get.var(object$by, data)
+    if (!is.null(by)) {
+      dat[[m + 1]] <- by
+      names(dat)[m + 1] <- object$by
+    }
+  }
+  return(list(data = dat, knots = knt))
 }

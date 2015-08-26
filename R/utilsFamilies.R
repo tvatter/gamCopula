@@ -283,18 +283,36 @@ bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE,
 
   if (d1 == TRUE) {
     out <- rbind(out,0)
-    myfuns$d1 <- function(x,family) BiCopDeriv(u1 = x[,1], u2 = x[,2],
-                                               par = x[,3], par2 = x[,4], 
-                                               family = family, log = TRUE, 
-                                               check.pars = FALSE)
+    myfuns$d1 <- function(x,family) {
+      tmp <- BiCopDeriv(u1 = x[,1], u2 = x[,2], par = x[,3], par2 = x[,4], 
+                 family = family, log = TRUE, check.pars = FALSE)
+      sel <- is.na(tmp)
+      if (sum(sel) != 0) {
+        myLogPDF <- function(par) 
+          log(BiCopPDF(u1 = x[sel,1], u2 = x[sel,2], 
+                       par = par, par2 = x[sel,4],
+                       family = family, check.pars = FALSE))
+        tmp[sel] <- grad(myLogPDF,x[sel,3])
+      }
+      return(tmp)
+    } 
   }
   
   if (d2 == TRUE) {
     out <- rbind(out,0)
-    myfuns$d2 <- function(x,family) BiCopDeriv2(u1 = x[,1], u2 = x[,2],
-                                                par = x[,3], par2 = x[,4], 
-                                                family = family, 
-                                                check.pars = FALSE)
+    myfuns$d2 <- function(x,family) {
+      tmp <-  BiCopDeriv2(u1 = x[,1], u2 = x[,2], par = x[,3], par2 = x[,4], 
+                          family = family, check.pars = FALSE)
+      sel <- is.na(tmp)
+      if (sum(sel) != 0) {
+        myPDF <- function(par) BiCopPDF(u1 = x[sel,1], u2 = x[sel,2], 
+                                        par = par, par2 = x[sel,4],
+                                        family = family, check.pars = FALSE)
+        tmp[sel] <- grad(function(x) grad(myPDF,x),x[sel,3])
+      }
+      return(tmp)
+    }
+     
   }   
   
   if (h == TRUE) {
@@ -322,7 +340,7 @@ bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE,
                                             family = family)
   }
 
-  if (family %in% c(1,2,5)) {
+  if (family %in% c(0,1,2,5)) {
     out[,1:dim(out)[2]] <- t(sapply(myfuns, function(f) f(x,family)))
   } else {
     fam <- getFams(family)
@@ -394,7 +412,7 @@ getFams <- function(family) {
 ## the codes from gamCopula
 famTrans <- function(fam, inv = TRUE, par = 0, set = FALSE, familyset = NULL) {
   if (inv) {
-    if (is.element(fam, get.familyset())) {
+    if (is.element(fam, c(0,get.familyset()))) {
       return(fam)
     } else {
       if (is.null(familyset)) {

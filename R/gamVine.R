@@ -138,7 +138,7 @@ show.gamVine <- function(object) {
       cat(a, ": ")
       show(mm)
     }
-    cat(a, "\n")
+    #cat(a, "\n")
     # if(GVC@model[d,i]!=0) { show(GVC@model[d,i]) }
     count <- count + 1
   }
