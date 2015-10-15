@@ -413,7 +413,7 @@ RVM2GVC <- function(RVM) {
     stop("RVM has to be an object of the class RVineMatrix.")
   }
   
-  if (!all(RVM$family[lower.tri(RVM$family)] %in% c(1:5,13,14,23,24,33,34))) {
+  if (!all(RVM$family[lower.tri(RVM$family)] %in% c(0:5,13,14,23,24,33,34))) {
     msg <- paste("Only the Gaussian, t, Clayton, Gumbel and Frank copulas and",
                  "rotations are allowed in gamVine objects.")
     stop(msg)
