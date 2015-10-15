@@ -252,14 +252,19 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
         par2 <- mm@par2
       }
       GVC@model[[mki]] <- mm
-      tmp <- bicoppd1d2(cbind(zr1, zr2, par, par2), fam[k, i],
-                         p = FALSE, h = TRUE)
+      fams <- vapply(1:length(par),
+                     function(j) famTrans(fam[k, i], inv = FALSE, par = par[j]),
+                     numeric(1))
       if (CondDistr$direct[k - 1, i]) {
-        V$direct[k - 1, i, ] <- tmp[2,]
+        V$direct[k - 1, i, ] <- BiCopHfunc(zr2, zr1, 
+                                           fams, par, par2, 
+                                           check.pars = FALSE)$hfunc1
       }
       
       if (CondDistr$indirect[k - 1, i]) {
-        V$indirect[k - 1, i, ] <- tmp[1,]
+        V$indirect[k - 1, i, ] <- BiCopHfunc(zr2, zr1, 
+                                             fams, par, par2, 
+                                             check.pars = FALSE)$hfunc2
       }
     }
   }
