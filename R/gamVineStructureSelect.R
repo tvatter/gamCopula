@@ -666,9 +666,11 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   }
 
   ## store pseudo-observations for estimation in next tree
-  tmp <- bicoppd1d2(cbind(u1,u2,par,par2), family = fam, p = FALSE, h = TRUE)
-  out$CondOn1 <- tmp[2,]
-  out$CondOn2 <- tmp[1,]
+  fams <- vapply(1:length(par),
+                 function(j) famTrans(fam, inv = FALSE, par = par[j]),
+                 numeric(1))
+  out$CondOn1 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc1
+  out$CondOn2 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc2
   
   return(out)
 }
