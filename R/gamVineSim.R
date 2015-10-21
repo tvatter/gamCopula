@@ -118,6 +118,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
     Vdirect[i, i, ] <- U[, i]
   }
   Vindirect[1, 1, ] <- Vdirect[1, 1, ]
+  
   for (i in 2:d) {
     for (k in (i - 1):1) {
       #print(model.count[k,i])
@@ -155,9 +156,12 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
         par2 <- model$par2
       }
       
+      
       fams <- vapply(1:length(par),
                      function(j) famTrans(fam[k, i], inv = FALSE, par = par[j]),
                      numeric(1))
+      if (is.null(par2))
+        par2 <- 0
       
       Vdirect[k, i, ] <- BiCopHinv(zz, Vdirect[k + 1, i, ],
                                    fams, par, par2,
