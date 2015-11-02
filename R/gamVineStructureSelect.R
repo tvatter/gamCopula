@@ -377,8 +377,8 @@ fitTree <- function(mst, oldVineGraph, data, l, covariates, simplified,
 
   for (i in 1:d) {
     E(mst)[i]$model <- list(outForACopula[[i]]$model)
-    E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn1)
-    E(mst)[i]$CondData1 <- list(outForACopula[[i]]$CondOn2)
+    E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn2)
+    E(mst)[i]$CondData1 <- list(outForACopula[[i]]$CondOn1)
   }
   
   return(mst)
@@ -669,8 +669,8 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   fams <- vapply(1:length(par),
                  function(j) famTrans(fam, inv = FALSE, par = par[j]),
                  numeric(1))
-  out$CondOn1 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc1
-  out$CondOn2 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc2
+  out$CondOn1 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc2
+  out$CondOn2 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc1
   
   return(out)
 }
