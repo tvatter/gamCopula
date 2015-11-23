@@ -113,7 +113,7 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
                         selcrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
                         method = "FS", tol.rel = 1e-3, n.iters = 10,
                         parallel = FALSE, verbose = FALSE, ...) {
-
+  
   tmp <- valid.gamBiCopSel(data, rotations, familyset, selcrit, level, edf, tau, 
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
@@ -139,7 +139,7 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
   if (rotations) {
     familyset <- withRotations(familyset)
   }
-
+  
   parallel <- as.logical(parallel)
   x <- NULL
   if (parallel == FALSE) {
@@ -161,10 +161,10 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
     return(paste("No convergence of the estimation for any copula family.",
                  "Try modifying the parameters (FS/NR, tol.rel, n.iters)..."))
   }
-#   } else {
-#     res <- res[sapply(res, function(x) x$conv) == 0]
-#   }
-
+  #   } else {
+  #     res <- res[sapply(res, function(x) x$conv) == 0]
+  #   }
+  
   if (selcrit == "AIC") {
     return(res[[which.min(sapply(res, function(x) AIC(x$res)))]])
   } else {
@@ -173,10 +173,10 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
 } 
 
 gamBiCopVarSel <- function(data, family,
-                        tau = TRUE, method = "FS",
-                        tol.rel = 1e-3, n.iters = 10, 
-                        level = 5e-2, edf = 1.5, 
-                        verbose = FALSE, ...) {
+                           tau = TRUE, method = "FS",
+                           tol.rel = 1e-3, n.iters = 10, 
+                           level = 5e-2, edf = 1.5, 
+                           verbose = FALSE, ...) {
   
   if (verbose == TRUE) {
     cat(paste("Model selection for family", family, "\n"))
@@ -187,64 +187,83 @@ gamBiCopVarSel <- function(data, family,
                                  method, tol.rel, n.iters))
   
   n <- dim(data)[1]
-
+  d <- dim(data)[2]-2
   ## Create a list with formulas of smooth terms corresponding to the covariates  
   nn <- names(data)[-which( (names(data) == "u1") | (names(data) == "u2"))]
-  basis <- rep(5,ncol(data)-2)
+  
+  basis <- rep(5,d)
   formula.expr <- mapply(get.smooth,nn,basis)
+  formula.lin <- NULL
   
   ## Update the list by removing unsignificant predictors 
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
   }
-
-  sel <- FALSE
-  while(!all(sel) && length(basis) > 0){
-    formula.tmp <- get.formula(formula.expr)
+  
+  sel.smooth <- smooth2lin <- FALSE
+  sel.lin <- NULL
+  while((!all(c(sel.lin,sel.smooth)) && length(basis) > 0) ||
+          any(smooth2lin)) {
+    
+    smooth2lin <- FALSE
+    sel.lin <- NULL
+    formula.tmp <- get.formula(c(formula.lin,formula.expr))
+    
     if (verbose == TRUE) {
       cat("Model formula:\n")
       print(formula.tmp)
     }
+    
     tmp <- myGamBiCopEst(formula.tmp)
-    sel <- summary(tmp$res@model)$s.pv < level
-    nn <- nn[sel]
-    basis <- rep(5,length(nn))
-    formula.expr <- mapply(get.smooth,nn,basis)
+    
+    ## Remove unsignificant parametric terms
+    if (length(summary(tmp$res@model)$p.coeff) > 1) {
+      sel.lin <- summary(tmp$res@model)$p.pv[-1] < level
+      formula.lin <- formula.lin[sel.lin]
+    } 
+    
+    if (summary(tmp$res@model)$m > 0) {
+      ## Remove unsignificant smooth terms
+      sel.smooth <- summary(tmp$res@model)$s.pv < level
+      nn <- nn[sel.smooth]
+      basis <- rep(5,length(nn))
+      formula.expr <- mapply(get.smooth,nn,basis)
+      
+      ## Check whether some smooth need to be set to linear
+      ## (and adjust the model if required)
+      smooth2lin <- sel.smooth & summary(tmp$res@model)$edf < edf
+      if (any(smooth2lin)) {
+        sel.lin <- which(sel.smooth) 
+        sel.lin <- summary(tmp$res@model)$edf[sel.lin] < edf
+        sel.smooth <- !sel.lin
+        formula.lin <- c(formula.lin,nn[sel.lin])
+        formula.expr <- formula.expr[sel.smooth]
+        basis <- basis[sel.smooth]
+        nn <- nn[sel.smooth]
+      }    
+    } 
   }
   
-  if (length(basis) == 0) {
-    tmp <- tmp <- myGamBiCopEst(~1)
-    return(tmp)
-  }
-  
-  ## Create a separate list by setting as linear the predictors with EDF < edf
-  if (get.formula(formula.expr) != formula.tmp) {
-    formula.tmp <- get.formula(formula.expr)
-    tmp <- myGamBiCopEst(formula.tmp)
-  }
-  sel <- summary(tmp$res@model)$edf < edf
-  get.linear <- function(x){
-    names(unlist(sapply(nn,function(z)grep(z,x))))
-  }
-  formula.lin <- get.linear(formula.expr[sel])
-  formula.expr <- formula.expr[!sel]
-  basis <- basis[!sel]
-  nn <- nn[!sel]
-  if (!is.null(formula.lin)) {
-    formula.tmp <- get.formula(c(formula.lin,formula.expr))
-    if (verbose == TRUE) {
-      cat("Remove by setting as linear the predictors with EDF < edf....... \n")
-      cat("Updated model formula:\n")
-      print(formula.tmp)
+  ## Check if we can output a constant or linear model directly
+  ## (or re-estimate the model if not)
+  if (length(formula.expr) == 0) {
+    if ((is.null(formula.lin) || 
+           length(formula.lin) == 0)) {
+      tmp <- myGamBiCopEst(~1)
+    } else {
+      formula.tmp <- get.formula(formula.lin)
+      tmp <- myGamBiCopEst(formula.tmp)
     }
+    return(tmp)
+  }  else {
+    formula.tmp <- get.formula(c(formula.lin,formula.expr))
     tmp <- myGamBiCopEst(formula.tmp)
-  } 
-
-  #if (n.iters != 40) {
-  #  browser()
-  #}
+  }
+  
   ## Increasing the basis size appropriately
+  
   tmp2 <- get.pval(tmp$res@model)
+  
   sel <- tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level
   #sel <- summary(tmp$res@model)$edf > (basis-1)/2
   if (verbose == TRUE && any(sel)) {
@@ -260,7 +279,7 @@ gamBiCopVarSel <- function(data, family,
     #kcount <- kcount + 1
     #basis[sel] <- round(basis[sel]*1.5)
     basis[sel] <- 2*basis[sel]
-
+    
     #     ## Extract and fit model to residuals for each smooth components
     #     data$y <- residuals(tmp$res@model)
     #     data$w <- tmp$res@model$weights
@@ -300,6 +319,7 @@ gamBiCopVarSel <- function(data, family,
       } 
     }
   }
+  
   return(tmp)
 }
 
@@ -313,6 +333,10 @@ get.formula <- function(expr,y=FALSE) {
     as.formula(paste("y ~",paste(expr,collapse = " + ")))
   }
 } 
+
+get.linear <- function(x,nn){
+  names(unlist(sapply(nn,function(z)grep(z,x))))
+}
 
 valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf, 
                               tau, method, tol.rel, n.iters, parallel, 
@@ -374,7 +398,7 @@ get.pval <- function (b, subsample = 5000, n.rep = 400)
     b$smooth[[k]]$by <- "NA"
     dat <- ExtractData(b$smooth[[k]], modf, NULL)$data
     if (!is.null(attr(dat, "index")) || 
-        !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
+          !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
       ok <- FALSE
     if (ok) 
       dat <- as.data.frame(dat)
