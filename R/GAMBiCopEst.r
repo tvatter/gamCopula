@@ -250,39 +250,40 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
               control = gam.control(keepData = TRUE), ...)
   }, error = function(err) {
     msg <- paste("A problem occured at the first iteration of the ", 
-              method, "algorithm:\n")
+                 method, "algorithm:\n")
     msg <- c(msg, paste(err))
-    msg <- c(msg, paste("...... switching to", 
-                        switch(method, NR = "FS", FS = "NR"), "instead!\n"))
+#     msg <- c(msg, paste("...... switching to", 
+#                         switch(method, NR = "FS", FS = "NR"), "instead!\n"))
     message(msg)
     return(NULL)
   })
   
-  if (is.null(res)) {
-    method <- switch(method, NR = "FS", FS = "NR")
-    n.iters <- 2*n.iters
-    res <- tryCatch({
-      tmp <- derivatives.par(u, new.pars, family, method, tau)
-      tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
-      tmp <- cbind(tmp, data)
-      mm <- gam(par.formula, data = tmp, weights = w, 
-                control = gam.control(keepData = TRUE), ...)
-    }, error = function(err) {
-      msg <- paste("A problem occured at the first iteration of the ", 
-                   method, "algorithm:\n")
-      msg <- c(msg, paste(err))
-      msg <- c(msg, paste("...... The results should not be trusted!\n"))
-      message(msg)
-      return(NULL)
-    })
-  }
+  
+#   if (is.null(res)) {
+#     method <- switch(method, NR = "FS", FS = "NR")
+#     n.iters <- 2*n.iters
+#     res <- tryCatch({
+#       tmp <- derivatives.par(u, new.pars, family, method, tau)
+#       tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+#       tmp <- cbind(tmp, data)
+#       mm <- gam(par.formula, data = tmp, weights = w, 
+#                 control = gam.control(keepData = TRUE), ...)
+#     }, error = function(err) {
+#       msg <- paste("A problem occured at the first iteration of the ", 
+#                    method, "algorithm:\n")
+#       msg <- c(msg, paste(err))
+#       msg <- c(msg, paste("...... The results should not be trusted!\n"))
+#       message(msg)
+#       return(NULL)
+#     })
+#   }
   if (verbose == 1) {
     print(Sys.time() - t)
   }
   stopifnot(!is.null(res))
   
   tmp <- pars.update(mm, family, tmp, tau)
-
+  
   new.pars$par <- u[, 3] <- tmp$par
   new.pars$partrans <- tmp$partrans
   if (tau) {
@@ -348,30 +349,33 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
       msg <- paste("A problem occured at iteration", k, "of the ", 
                    method, "algorithm:\n")
       msg <- c(msg, paste(err))
-      msg <- c(msg, paste("...... switching to", 
-                          switch(method, NR = "FS", FS = "NR"), "instead!\n"))
+#       msg <- c(msg, paste("...... switching to", 
+#                           switch(method, NR = "FS", FS = "NR"), "instead!\n"))
       message(msg)
       return(NULL)
     })
-    
-    if (is.null(res)) {
-      method <- switch(method, NR = "FS", FS = "NR")
-      n.iters <- 2*n.iters
-      res <- tryCatch({
-        tmp <- derivatives.par(u, new.pars, family, method, tau)
-        tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
-        tmp <- cbind(tmp, data)
-        mm <- gam(par.formula, data = tmp, weights = w, 
-                  control = gam.control(keepData = TRUE), ...)
-      }, error = function(err) {
-        msg <- paste("A problem also occured at iteration", k, "of the ", 
-                     method, "algorithm:\n")
-        msg <- c(msg, paste(err))
-        msg <- c(msg, paste("...... The results should not be trusted!\n"))
-        message(msg)
-        return(NULL)
-      })
-    }
+
+#     if (is.null(res)) {
+#       method <- switch(method, NR = "FS", FS = "NR")
+#       n.iters <- 2*n.iters
+#       res <- tryCatch({
+#         tmp <- derivatives.par(u, new.pars, family, method, tau)
+#         tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+#         tmp <- cbind(tmp, data)
+#         print("before gam")
+#         mm <- gam(par.formula, data = tmp, weights = w, 
+#                   control = gam.control(keepData = TRUE, trace = TRUE), ...)
+#         print("after gam")
+#       }, error = function(err) {
+#         msg <- paste("A problem also occured at iteration", k, "of the ", 
+#                      method, "algorithm:\n")
+#         msg <- c(msg, paste(err))
+#         msg <- c(msg, paste("...... The results should not be trusted!\n"))
+#         message(msg)
+#         return(NULL)
+#       })
+#     }
+
     
     if (is.null(res)) {
       conv <- 1
@@ -406,7 +410,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
     tt <- trace.update(old.pars$partrans, new.pars$partrans)
     if (is.na(tt$eps)) {
       message(paste("A problem occured at the ", k, "th iteration of the ", 
-                method, "algorithm... The results should not be trusted!\n"))
+                    method, "algorithm... The results should not be trusted!\n"))
       conv <- 1
       break
     } else {
@@ -430,7 +434,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
   } else {
     par2 <- 0
   }
-
+  
   out <- list(res = gamBiCop(family, mm, par2, tau), 
               method = method, tol.rel = tol.rel, 
               n.iters = n.iters, trace = trace[1:k], conv = conv)
@@ -479,7 +483,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   } 
   
   if (is.null(method) || length(method) != 1 || 
-        !is.element(method, c("FS", "NR"))) {
+      !is.element(method, c("FS", "NR"))) {
     return("Method should be a string, either NR (Newton-Raphson) 
            or FS (Fisher-scoring, faster but unstable).")
   }
@@ -507,7 +511,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   options(warn = 0)
   
   return(TRUE)
-  }
+}
 
 ## Update parameters with respect to fited gam model
 "pars.update" <- function(mm, family, data, tau) {
@@ -583,12 +587,12 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     #w <- -w
     sel <- !is.na(w) & w > 0
     w[!sel] <- mean(w[sel])
-#     w[!sel] <- FisherBiCop(family, new.pars$par[!sel], new.pars$par2[!sel])
-#     if (tau == TRUE) {
-#       w[!sel] <- (dd$dpar[!sel] * dd$dtau[!sel])^2 * w[!sel]
-#     } else {
-#       w[!sel] <- dd$dpar[!sel]^2 * w[!sel]
-#     }
+    #     w[!sel] <- FisherBiCop(family, new.pars$par[!sel], new.pars$par2[!sel])
+    #     if (tau == TRUE) {
+    #       w[!sel] <- (dd$dpar[!sel] * dd$dtau[!sel])^2 * w[!sel]
+    #     } else {
+    #       w[!sel] <- dd$dpar[!sel]^2 * w[!sel]
+    #     }
   } else {
     w <- FisherBiCop(family, new.pars$par, new.pars$par2)
     if (tau == TRUE) {
@@ -598,7 +602,7 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     }
   }
   
-  z <- new.pars$partrans + u/w
+  z <- new.pars$partrans + pmin(pmax(u/w, -2), 2)
   
   out <- list()
   out$w <- w
