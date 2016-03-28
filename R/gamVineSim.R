@@ -168,7 +168,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
                                    check.pars = FALSE)$hinv1
       if (i < d) {
         if (conindirect[k + 1, i] == TRUE) {
-          Vindirect[k + 1, i, ] <- BiCopHfunc(zz, Vdirect[k + 1, i, ],
+          Vindirect[k + 1, i, ] <- BiCopHfunc(zz, Vdirect[k, i, ],
                                               fams, par, par2,
                                               check.pars = FALSE)$hfunc2
         }
