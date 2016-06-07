@@ -90,3 +90,15 @@ msg.familysetneg <- function(x) {
   paste("'", x, "' needs at least ",
         "one bivariate copula family for negative dependence.", sep = "")
 }
+
+valid.covariates <- function(x, msg) {
+  if (!is.vector(x) || any(class(x) != "character")) {
+    return(msg)
+  }
+  if (!(length(x) == 1 && is.na(x))) {
+    l <- length(x)
+  } else {
+    l <- 0
+  }
+  return(l)
+}

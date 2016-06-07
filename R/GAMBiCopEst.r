@@ -190,6 +190,10 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
   
   n <- dim(data)[1]
   m <- dim(data)[2]
+  if (!all(is.element(c("u1", "u2"), names(data)))) {
+    names(data)[1:2] <- c("u1", "u2")
+  }
+
   u1 <- data$u1
   u2 <- data$u2
   u <- cbind(u1,u2)
@@ -455,6 +459,14 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
     if (is.character(data)) {
       return(data)
     }
+  } else {
+    data <- as.data.frame(data)
+  }
+
+  if (is.null(names(data)) || !all(is.element(c("u1", "u2"), names(data)))) {
+    warnings(paste0("u1 and u2 not found in data. The first two columns are",
+                    " assumed to be the response variables"))
+    names(data)[1:2] <- c("u1", "u2")
   }
   n <- dim(data)[1]
   m <- dim(data)[2]

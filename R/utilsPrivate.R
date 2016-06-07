@@ -22,6 +22,7 @@ get.modelCount <- function(d) {
   model.count <- matrix(model.count, d, d)
 }
 
+
 prepare.data <- function(data, covariates, trunclevel = NA, 
                          familyset = c(1,2,301,401), rotations = TRUE) {
   
@@ -59,6 +60,56 @@ prepare.data <- function(data, covariates, trunclevel = NA,
   }
   
   return(list(nn = nn, covariates = covariates, data = data,
+              l = l, n = n, d = d, 
+              trunclevel = trunclevel, familyset = familyset))
+}
+
+prepare.data2 <- function(udata, lin.covs, smooth.covs, trunclevel = NA, 
+                          familyset = c(1,2,301,401), rotations = TRUE) {
+  udata <- as.data.frame(udata)
+  if (is.null(colnames(udata)))
+    colnames(udata) <- c(paste0("u", 1:ncol(udata)))
+  data <- udata
+  
+  if (!is.null(lin.covs)) {
+    if (is.null(colnames(lin.covs))) {
+      lin.covs <- as.data.frame(lin.covs)
+      colnames(lin.covs) <- paste0("l", 1:ncol(lin.covs))
+    }
+    data <- cbind(data, lin.covs)
+  }
+  if (!is.null(smooth.covs)) {
+    if (is.null(colnames(smooth.covs))) {
+      smooth.covs <- as.data.frame(smooth.covs)
+      colnames(smooth.covs) <- paste0("s", 1:ncol(smooth.covs))
+    }
+    data <- cbind(data, smooth.covs)
+  }  
+  
+  if (ncol(data) > ncol(udata)) {
+    l <- ncol(data) - ncol(udata)
+  } else {
+    l <- 0
+  }
+  n <- nrow(udata)
+  d <- ncol(udata)
+  
+  nn <- colnames(data)
+  
+  if (is.na(trunclevel)) {
+    trunclevel <- d
+  }
+  if (trunclevel == 0) {
+    familyset <- 0
+  }
+  if (length(familyset) == 1 && is.na(familyset)) {
+    familyset <- get.familyset()
+  }
+  if (rotations) {
+    familyset <- withRotations(familyset)
+  }
+  
+  return(list(nn = nn, covariates = colnames(data)[-(1:d)], data = data,
               l = l, n = n, d = d, 
               trunclevel = trunclevel, familyset = familyset))
 }

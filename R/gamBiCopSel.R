@@ -7,8 +7,12 @@
 #' where each Newton-Raphson iteration is reformulated as a generalized ridge 
 #' regression solved using the \code{\link[mgcv:mgcv-package]{mgcv}} package. 
 #' 
-#' @param data A list or data frame containing the model responses, (u1,u2) in 
-#' [0,1]x[0,1], and covariates required by the formula.
+#' @param udata A matrix or data frame containing the model responses, (u1,u2) in 
+#' [0,1]x[0,1]
+#' @param lin.covs A matrix or data frame containing the parametric (i.e., 
+#' linear) covariates.
+#' @param smooth.covs A matrix or data frame containing the non-parametric 
+#' (i.e., smooth) covariates.
 #' @param familyset (Similar to \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package) 
 #' Vector of bivariate copula families to select from. 
@@ -93,45 +97,38 @@
 #'                                  c("unif"), list(list(min = 0, max = 1)),
 #'                                  marginsIdentical = TRUE)
 #' X <- rMvdc(n, covariates.distr)
+#' colnames(X) <- paste("x",1:6,sep="")
 #' 
 #' ## U in [0,1]x[0,1] depending on the four first columns of X
 #' U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
 #'   f(x), calib.surf, c(x1,x2,x3,x4)))}, X[,1:4], par2 = 4, return.par = TRUE)
 #' 
-#' ## Merge U and X
-#' data <- data.frame(U$data,X)
-#' names(data) <- c(paste("u",1:2,sep=""),paste("x",1:6,sep=""))
-#' 
 #' ## Selection using AIC (take about 5mn on single core) 
 #' ## Use parallel = TRUE to speed-up....
-#' system.time(best <- gamBiCopSel(data))
+#' system.time(best <- gamBiCopSel(U$data, smooth.covs = X))
 #' print(best$res)
 #' EDF(best$res)
 #' plot(best$res)
 #' @export
-gamBiCopSel <- function(data, familyset = NA, rotations = TRUE, 
+gamBiCopSel <- function(udata, lin.covs = NULL, smooth.covs = NULL,  
+                        familyset = NA, rotations = TRUE, 
                         selcrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
-                        method = "FS", tol.rel = 1e-3, n.iters = 10,
+                        method = "FS", tol.rel = 1e-3, n.iters = 10, #max.knots = 5,
                         parallel = FALSE, verbose = FALSE, ...) {
   
-  tmp <- valid.gamBiCopSel(data, rotations, familyset, selcrit, level, edf, tau, 
+  tmp <- valid.gamBiCopSel(udata, lin.covs, smooth.covs, rotations, familyset, 
+                           selcrit, level, edf, tau,
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
     stop(tmp)
   
-  if (is.list(data)){
-    if(!is.null(data$xt)){
-      xt <- data$xt
-      data <- data[-which(names(data) == "xt")]
-    }
-    data <- as.data.frame(data)
-  }
-  
-  n <- dim(data)[1]
-  m <- dim(data)[2]
-  u1 <- data$u1
-  u2 <- data$u2
-  u <- cbind(u1,u2)
+  # if (is.list(data)){
+  #   if(!is.null(data$xt)){
+  #     xt <- data$xt
+  #     data <- data[-which(names(data) == "xt")]
+  #   }
+  #   data <- as.data.frame(data)
+  # }
   
   if (length(familyset) == 1 && is.na(familyset)) {
     familyset <- get.familyset()
@@ -139,19 +136,21 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
   if (rotations) {
     familyset <- withRotations(familyset)
   }
-  
+
   parallel <- as.logical(parallel)
   x <- NULL
   if (parallel == FALSE) {
     res <- foreach(x=familyset) %do% 
-      tryCatch(gamBiCopVarSel(data, x, tau, method, tol.rel, n.iters, 
+      tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
+                              x, tau, method, tol.rel, n.iters, #max.knots,
                               level, edf, verbose,...),
                error = function(e) e)
   } else {
     cl <- makeCluster(detectCores() - 1)
     registerDoParallel(cl, cores = detectCores() - 1)
     res <- foreach(x=familyset) %dopar% 
-      tryCatch(gamBiCopVarSel(data, x, tau, method, tol.rel, n.iters, 
+      tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
+                              x, tau, method, tol.rel, n.iters, #max.knots,
                               level, edf, verbose,...),
                error = function(e) e)
     stopCluster(cl)
@@ -172,29 +171,64 @@ gamBiCopSel <- function(data, familyset = NA, rotations = TRUE,
   }
 } 
 
-gamBiCopVarSel <- function(data, family,
-                           tau = TRUE, method = "FS",
-                           tol.rel = 1e-3, n.iters = 10, 
+gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
+                           family, tau = TRUE, method = "FS",
+                           tol.rel = 1e-3, n.iters = 10, #max.knots,
                            level = 5e-2, edf = 1.5, 
                            verbose = FALSE, ...) {
+  udata <- as.data.frame(udata)
+  colnames(udata) <- c("u1", "u2")
+  data <- udata
+  
+  if (!is.null(lin.covs)) {
+    if (is.null(colnames(lin.covs))) {
+      lin.covs <- as.data.frame(lin.covs)
+      colnames(lin.covs) <- paste0("l", 1:ncol(lin.covs))
+    }
+    data <- cbind(data, lin.covs)
+  }
+  if (!is.null(smooth.covs)) {
+    if (is.null(colnames(smooth.covs))) {
+      smooth.covs <- as.data.frame(smooth.covs)
+      colnames(smooth.covs) <- paste0("s", 1:ncol(smooth.covs))
+    }
+    data <- cbind(data, smooth.covs)
+  }  
+  
   
   if (verbose == TRUE) {
     cat(paste("Model selection for family", family, "\n"))
   }
   
-  myGamBiCopEst <- function(formula) 
-    suppressMessages(gamBiCopEst(data, formula, family, tau, 
-                                 method, tol.rel, n.iters))
+  myGamBiCopEst <- function(formula) gamBiCopEst(data, formula, family, tau, 
+                                                 method, tol.rel, n.iters)
   
-  n <- dim(data)[1]
-  d <- dim(data)[2]-2
+  n <- ncol(data)
+  d <- ncol(data) - 2
   ## Create a list with formulas of smooth terms corresponding to the covariates  
-  nn <- names(data)[-which( (names(data) == "u1") | (names(data) == "u2"))]
+  lin.nms <- colnames(lin.covs) 
   
-  basis <- rep(5,d)
-  formula.expr <- mapply(get.smooth,nn,basis)
-  formula.lin <- NULL
+  nn <- smooth.nms <- colnames(smooth.covs)
   
+  if (!is.null(ncol(smooth.covs))) {
+    # if (length(max.knots) == 1) {
+    #   basis <- rep(max.knots, ncol(smooth.covs))
+    # } else {
+    #   stopifnot(length(max.knots) == ncol(smooth.covs))
+    #   basis <- max.knots
+    # }
+    basis <- rep(5, ncol(smooth.covs))
+    formula.expr <- mapply(get.smooth, smooth.nms, basis)
+  } else {
+    basis <- NULL
+    formula.expr <- NULL
+  }
+  if (!is.null(ncol(lin.covs))) {
+    formula.lin <- lin.nms  #get.linear(lin.nms, lin.nms)
+  } else {
+    formula.lin <- NULL
+  }
+
   ## Update the list by removing unsignificant predictors 
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
@@ -202,13 +236,12 @@ gamBiCopVarSel <- function(data, family,
   
   sel.smooth <- smooth2lin <- FALSE
   sel.lin <- NULL
-  while((!all(c(sel.lin,sel.smooth)) && length(basis) > 0) ||
-          any(smooth2lin)) {
+
+  while((!all(c(sel.lin,sel.smooth)) && length(basis) > 0) || any(smooth2lin)) {
     
     smooth2lin <- FALSE
     sel.lin <- NULL
     formula.tmp <- get.formula(c(formula.lin,formula.expr))
-    
     if (verbose == TRUE) {
       cat("Model formula:\n")
       print(formula.tmp)
@@ -243,12 +276,12 @@ gamBiCopVarSel <- function(data, family,
       }    
     } 
   }
-  
+
   ## Check if we can output a constant or linear model directly
   ## (or re-estimate the model if not)
   if (length(formula.expr) == 0) {
     if ((is.null(formula.lin) || 
-           length(formula.lin) == 0)) {
+         length(formula.lin) == 0)) {
       tmp <- myGamBiCopEst(~1)
     } else {
       formula.tmp <- get.formula(formula.lin)
@@ -338,13 +371,40 @@ get.linear <- function(x,nn){
   names(unlist(sapply(nn,function(z)grep(z,x))))
 }
 
-valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf, 
+valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations, 
+                              familyset, selcrit, level, edf, 
                               tau, method, tol.rel, n.iters, parallel, 
                               verbose) {
-  
-  tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, 1)
+
+  data <- tryCatch(as.data.frame(udata), error = function(e) e$message)
+  if (is.character(udata)) {
+    return(udata)
+  }
+
+  tmp <- valid.gamBiCopEst(udata, n.iters, tau, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
     return(tmp)
+  }
+  m <- dim(udata)[2]
+  n <- dim(udata)[1]
+  if (m != 2) {
+    return("udata should have only two columns.")
+  }
+  
+  if (!is.null(lin.covs) && !(is.data.frame(lin.covs) || is.matrix(lin.covs))) {
+      return("lin.covs has to be either a data frame or a matrix.")
+  } else {
+    if(!is.null(lin.covs) && dim(lin.covs)[1] != n) {
+      return("lin.covs must have the same number of rows as udata.")
+    }
+  }
+  if (!is.null(smooth.covs) && !(is.data.frame(smooth.covs) || 
+                                 is.matrix(smooth.covs))) {
+    return("smooth.covs has to be either a data frame or a matrix.")
+  } else {
+    if(!is.null(smooth.covs) && dim(smooth.covs)[1] != n) {
+      return("smooth.covs must have the same number of rows as udata.")
+    }
   }
   
   if (!valid.familyset(familyset)) {
@@ -356,7 +416,7 @@ valid.gamBiCopSel <- function(data, rotations, familyset, selcrit, level, edf,
   }
   
   if(is.null(selcrit) || length(selcrit) != 1 || 
-       (selcrit != "AIC" && selcrit != "BIC")) {
+     (selcrit != "AIC" && selcrit != "BIC")) {
     return("Selection criterion not implemented.")
   } 
   
@@ -398,7 +458,7 @@ get.pval <- function (b, subsample = 5000, n.rep = 400)
     b$smooth[[k]]$by <- "NA"
     dat <- ExtractData(b$smooth[[k]], modf, NULL)$data
     if (!is.null(attr(dat, "index")) || 
-          !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
+        !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
       ok <- FALSE
     if (ok) 
       dat <- as.data.frame(dat)
