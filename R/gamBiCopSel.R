@@ -203,7 +203,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   myGamBiCopEst <- function(formula) gamBiCopEst(data, formula, family, tau, 
                                                  method, tol.rel, n.iters)
   
-  n <- ncol(data)
+  n <- nrow(data)
   d <- ncol(data) - 2
   ## Create a list with formulas of smooth terms corresponding to the covariates  
   lin.nms <- colnames(lin.covs) 
@@ -296,8 +296,8 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   ## Increasing the basis size appropriately
   
   tmp2 <- get.pval(tmp$res@model)
-  
-  sel <- tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level
+
+  sel <- tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
   #sel <- summary(tmp$res@model)$edf > (basis-1)/2
   if (verbose == TRUE && any(sel)) {
     cat(paste("Select the basis sizes .......\n"))
@@ -305,6 +305,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   #kk <- round(exp(seq(log(8), log(n/30),length.out=20)))
   #kcount <- 1
   #while (any(sel) && kcount < 20) {
+
   while (any(sel) && all(basis < n/30)) {
     
     ## Increase basis sizes
@@ -338,7 +339,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
       tmp <- myGamBiCopEst(formula.tmp)
       #sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
       tmp2 <- get.pval(tmp$res@model)
-      sel <- sel & tmp2[,1]-tmp2[,2] < 1 & tmp2[,4] < level
+      sel <- sel & tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
     }
     
     ## Check that the basis size is smaller than 1/2 the size of 
@@ -352,7 +353,6 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
       } 
     }
   }
-  
   return(tmp)
 }
 
@@ -436,7 +436,7 @@ valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations,
 }
 
 ## Internal code borrowed from mgcv
-get.pval <- function (b, subsample = 5000, n.rep = 400) 
+get.pval <- function (b, subsample = 5e3, n.rep = 1e3) 
 {
   m <- length(b$smooth)
   if (m == 0) 

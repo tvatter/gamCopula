@@ -13,7 +13,10 @@
 #' @param data A matrix or data frame containing the data in [0,1]^d.
 #' @param Matrix Lower triangular \code{d x d} matrix that defines the R-vine 
 #' tree structure.
-#' @param covariates Vector of names for the covariates.
+#' @param lin.covs A matrix or data frame containing the parametric (i.e., 
+#' linear) covariates (default: \code{lin.covs = NULL}).
+#' @param smooth.covs A matrix or data frame containing the non-parametric 
+#' (i.e., smooth) covariates (default: \code{smooth.covs = NULL}).
 #' @param simplified If \code{TRUE}, then a simplified PCC is fitted (which is
 #' possible only if there are exogenous covariates). If \code{FALSE} (default),
 #' then a non-simplified PCC is fitted.
@@ -209,7 +212,9 @@
 #' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}}, 
 #'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
 #'  \code{\link{gamBiCopEst}}.
-gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE, 
+gamVineCopSelect <- function(data, Matrix,  
+                             lin.covs = NULL, smooth.covs = NULL,
+                             simplified = FALSE, 
                              familyset = NA, rotations = TRUE, 
                              familycrit = "AIC", 
                              treecrit = "Kendall", SAtestOptions = "ERC",
@@ -218,7 +223,7 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE,
                              tol.rel = 0.001, n.iters = 10, 
                              parallel = FALSE, verbose = FALSE) {
   
-  tmp <- valid.gamVineCopSelect(data, Matrix, covariates, simplified,
+  tmp <- valid.gamVineCopSelect(data, Matrix, lin.covs, smooth.covs, simplified,
                                 familyset, rotations, familycrit, 
                                 treecrit, SAtestOptions, 
                                 indeptest, level, trunclevel, 
@@ -229,7 +234,8 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE,
   }   
   
   ## Transform to dataframe, get dimensions, etc (see in utilsPrivate)
-  tmp <- prepare.data(data, covariates, trunclevel, familyset, rotations)
+  tmp <- prepare.data2(data, lin.covs, smooth.covs, 
+                       trunclevel, familyset, rotations)
   n <- tmp$n
   d <- tmp$d
   l <- tmp$l
@@ -283,17 +289,20 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE,
           tmp <- fitACopula(zr2, zr1, familyset, familycrit, 
                             indeptest, level, FALSE)
         } else {
+          tmp <- list(cbind(as.numeric(zr2),
+                            as.numeric(zr1)),
+                      lin.covs, smooth.covs)
           if (k != d && simplified == FALSE) {
             cond <- Mat[(k +1):d, i]
-            tmp <- data.frame(cbind(zr2, zr1, data[,cond]))
-            names(tmp) <- c("u1","u2",nn[oo[cond]])
-          } else {
-            tmp <- data.frame(u1=zr2,u2=zr1)
-          }
-          if (l != 0) {
-            tmp <- cbind(tmp, data[,covariates])
-            names(tmp)[(length(tmp)-l+1):length(tmp)] <- covariates
-          }   
+            if (is.null(smooth.covs)) {
+              tmp[[3]] <- as.data.frame(data[,cond])
+              names(tmp[[3]]) <- nn[oo[cond]]
+            } else {
+              tmp[[3]] <- as.data.frame(do.call(cbind,
+                                                list(data[,cond],smooth.covs)))
+              names(tmp[[3]]) <- c(nn[oo[cond]], colnames(smooth.covs))
+            }
+          }  
           tmp <- fitAGAMCopula(tmp, familyset, familycrit, 
                                treecrit, SAtestOptions, indeptest, level, 
                                tau, method, tol.rel, n.iters, parallel, FALSE)
@@ -312,15 +321,16 @@ gamVineCopSelect <- function(data, Matrix, covariates = NA, simplified = FALSE,
   return(gamVine(Matrix,model,nn[1:d],covariates))
 } 
 
-valid.gamVineCopSelect <- function(data, Matrix, covariates, simplified, 
+valid.gamVineCopSelect <- function(data, Matrix, lin.covs, smooth.covs, 
+                                   simplified, 
                                    familyset, rotations, familycrit, 
                                    treecrit, SAtestOptions, 
                                    indeptest, level, trunclevel, 
                                    tau, method, tol.rel, n.iters, 
                                    parallel, verbose) {
   
-  tmp <- valid.gamVineStructureSelect(data, covariates, simplified, 0, 
-                                      familyset, rotations, familycrit, 
+  tmp <- valid.gamVineStructureSelect(data, lin.covs, smooth.covs, simplified, 
+                                      0, familyset, rotations, familycrit, 
                                       treecrit, SAtestOptions, 
                                       indeptest, level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
@@ -328,13 +338,8 @@ valid.gamVineCopSelect <- function(data, Matrix, covariates, simplified,
   if (tmp != TRUE) {
     return(tmp)
   }  
-  covariates <- as.character(covariates)
-  if (!(length(covariates) == 1 && is.na(covariates))) {
-    l <- length(covariates)
-  } else {
-    l <- 0
-  }
-  d <- dim(data)[2] - l
+
+  d <- dim(data)[2]
   if (!is.matrix(Matrix) || dim(Matrix)[1] != dim(Matrix)[2] || 
         max(Matrix) > d || RVineMatrixCheck(Matrix) != 1) {
     return("Matrix is not a valid R-vine matrix or its dimension is incorrect.")

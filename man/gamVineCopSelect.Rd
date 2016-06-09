@@ -5,11 +5,12 @@
 \title{Sequential pair-copula selection and maximum penalized likelihood estimation 
 of a GAM-Vine model.}
 \usage{
-gamVineCopSelect(data, Matrix, covariates = NA, simplified = FALSE,
-  familyset = NA, rotations = TRUE, familycrit = "AIC",
-  treecrit = "Kendall", SAtestOptions = "ERC", indeptest = TRUE,
-  level = 0.05, trunclevel = NA, tau = TRUE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, parallel = FALSE, verbose = FALSE)
+gamVineCopSelect(data, Matrix, lin.covs = NULL, smooth.covs = NULL,
+  simplified = FALSE, familyset = NA, rotations = TRUE,
+  familycrit = "AIC", treecrit = "Kendall", SAtestOptions = "ERC",
+  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
+  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -17,7 +18,11 @@ gamVineCopSelect(data, Matrix, covariates = NA, simplified = FALSE,
 \item{Matrix}{Lower triangular \code{d x d} matrix that defines the R-vine 
 tree structure.}
 
-\item{covariates}{Vector of names for the covariates.}
+\item{lin.covs}{A matrix or data frame containing the parametric (i.e., 
+linear) covariates (default: \code{lin.covs = NULL}).}
+
+\item{smooth.covs}{A matrix or data frame containing the non-parametric 
+(i.e., smooth) covariates (default: \code{smooth.covs = NULL}).}
 
 \item{simplified}{If \code{TRUE}, then a simplified PCC is fitted (which is
 possible only if there are exogenous covariates). If \code{FALSE} (default),
