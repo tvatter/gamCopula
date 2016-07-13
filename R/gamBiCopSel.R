@@ -217,7 +217,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     #   stopifnot(length(max.knots) == ncol(smooth.covs))
     #   basis <- max.knots
     # }
-    basis <- rep(5, ncol(smooth.covs))
+    basis <- rep(10, ncol(smooth.covs))
     formula.expr <- mapply(get.smooth, smooth.nms, basis)
   } else {
     basis <- NULL
@@ -259,7 +259,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
       ## Remove unsignificant smooth terms
       sel.smooth <- summary(tmp$res@model)$s.pv < level
       nn <- nn[sel.smooth]
-      basis <- rep(5,length(nn))
+      basis <- rep(10,length(nn))
       formula.expr <- mapply(get.smooth,nn,basis)
       
       ## Check whether some smooth need to be set to linear
