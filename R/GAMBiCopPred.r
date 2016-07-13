@@ -97,9 +97,31 @@
 gamBiCopPred <- function(object, newdata = NULL, 
                          target = "calib", alpha = 0, type = "link") {
   
-  tmp <- valid.gamBiCopPred(object, newdata, target, alpha, type)
-  if (tmp != TRUE)
-    stop(tmp)
+  if (is.list(object)) {
+    if (any(!is.element(names(object), c("family", "par", "par2"))) || 
+        !is.numeric(unlist(object))) {
+      msg <- paste("Element", count, "of model, (tree", j, ") should be a",
+                   " valid gamBiCop object or a list containing three",
+                   " items (family, par, par2).")
+      return(msg)
+    } else if (target == "calib" && type == "terms") {
+      ztrafo <- function(x) (exp(x) - 1) / (exp(x) + 1)
+      famnew <- famTrans(object$family, inv = FALSE, par = object$par)
+      val <- ztrafo(BiCopPar2Tau(famnew, object$par, object$par2))
+      out <- matrix(0,
+                    nrow = nrow(as.matrix(newdata)),
+                    ncol = ncol(as.matrix(newdata)))
+      
+      colnames(out) <- colnames(as.matrix(newdata))
+      out <- list(calib = out)
+      attr(out$calib, "constant") <- val
+      return(out)
+    } else {
+      stop("Prediction method not implemented for simplified copulas.")
+    }
+  }
+  
+  stopifnot(valid.gamBiCop(object))
   
   mm <- object@model
   
@@ -119,7 +141,7 @@ gamBiCopPred <- function(object, newdata = NULL,
   par2eta.fun <- function(x) par2eta(cstpar(x),family)
   eta2tau.fun <- function(x) csttau(eta2par(x, 1))
   tau2eta.fun <- function(x) par2eta(csttau(x),1)
-
+  
   out <- list()
   sel <- length(target) == 1 && (target == "calib")
   if (sel) {
@@ -135,7 +157,7 @@ gamBiCopPred <- function(object, newdata = NULL,
       out$calib <- predict.gam(mm, as.data.frame(newdata))
     }
   }
-
+  
   quantile.fun <- function(x) quantile(x, c((1 - alpha)/2, 1 - (1 - alpha)/2))
   myCI <- function(x) t(apply(x, 2, quantile.fun))
   if (!sel && (alpha != 0) && (alpha != 1)) {
@@ -148,7 +170,7 @@ gamBiCopPred <- function(object, newdata = NULL,
   } else {
     calib <- NULL
   }
-
+  
   if (any(is.element(target, "par"))) {
     if (object@tau) {
       out$par <- tau2par.fun(eta2tau.fun(out$calib))
@@ -189,10 +211,10 @@ valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
   if (!is.character(target) || !is.vector(target)) {
     targerr <- TRUE
   } else if (length(target) == 1 && 
-               !is.element(target, c("calib", "par", "tau"))) {
+             !is.element(target, c("calib", "par", "tau"))) {
     targerr <- TRUE
   } else if (length(target) > 1 && 
-               !all(is.element(target, c("calib", "par", "tau")))) {
+             !all(is.element(target, c("calib", "par", "tau")))) {
     targerr <- TRUE
   } else if (length(target) > 3) {
     targerr <- TRUE
@@ -205,7 +227,7 @@ valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
   }
   
   if (target == "calib" && (length(type) != 1 || 
-                              !is.element(type, c("link","terms","lpmatrix")))){
+                            !is.element(type, c("link","terms","lpmatrix")))){
     return(paste("When 'target' is 'calib', then 'type' should be either", 
                  "'link', 'terms' or 'lpmatrix'."))
   }
