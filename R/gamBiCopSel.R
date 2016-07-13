@@ -297,8 +297,8 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   
   tmp2 <- get.pval(tmp$res@model)
 
-  sel <- tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
-  #sel <- summary(tmp$res@model)$edf > (basis-1)/2
+  # sel <- tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
+  sel <- summary(tmp$res@model)$edf > (basis-1)/2
   if (verbose == TRUE && any(sel)) {
     cat(paste("Select the basis sizes .......\n"))
   }
@@ -337,9 +337,9 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
         print(formula.tmp)
       }      
       tmp <- myGamBiCopEst(formula.tmp)
-      #sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
-      tmp2 <- get.pval(tmp$res@model)
-      sel <- sel & tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
+      sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
+      # tmp2 <- get.pval(tmp$res@model)
+      # sel <- sel & tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
     }
     
     ## Check that the basis size is smaller than 1/2 the size of 
