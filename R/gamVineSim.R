@@ -67,12 +67,12 @@
 #' simplify2array(attr(fitGVC, "model")))
 #' @export
 gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
-
+  
   tmp <- valid.gamVineSim(n, GVC, U, newdata)
   if (tmp != TRUE) {
     stop(tmp)
   }
-
+  
   covariates <- GVC@covariates
   if (!(length(covariates) == 1 && is.na(covariates))) {
     l <- length(covariates)
@@ -89,7 +89,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
     U <- as.matrix(U)
     n <- dim(U)[1]
   }
-
+  
   o <- diag(GVC@Matrix)
   d <- length(o)
   GVC <- gamVineNormalize(GVC)
@@ -122,6 +122,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
   for (i in 2:d) {
     for (k in (i - 1):1) {
       #print(model.count[k,i])
+
       model <- GVC@model[[model.count[k, i]]]
       mm <- maxmat[k, i]
       if (mm == m[k, i]) {
@@ -163,14 +164,17 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
       if (is.null(par2))
         par2 <- 0
       
-      Vdirect[k, i, ] <- BiCopHinv(zz, Vdirect[k + 1, i, ],
-                                   fams, par, par2,
-                                   check.pars = FALSE)$hinv1
+      ## bound parameters; otherwise C code may crash
+      # par[par > 100] <- 100
+      # par[par < -100] <- -100
+      Vdirect[k, i, ] <- BiCopHinv1(zz, Vdirect[k + 1, i, ],
+                                    fams, par, par2,
+                                    check.pars = FALSE)
       if (i < d) {
         if (conindirect[k + 1, i] == TRUE) {
-          Vindirect[k + 1, i, ] <- BiCopHfunc(zz, Vdirect[k, i, ],
-                                              fams, par, par2,
-                                              check.pars = FALSE)$hfunc2
+          Vindirect[k + 1, i, ] <- BiCopHfunc2(zz, Vdirect[k, i, ],
+                                               fams, par, par2,
+                                               check.pars = FALSE)
         }
       }
     }
