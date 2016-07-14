@@ -613,9 +613,10 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
       w <- dd$dpar^2 * w
     }
   }
-
-  z <- new.pars$partrans + pmin(pmax(u/w, -20), 20)
   
+  qq <- quantile(u/w, c(0.025,0.975))
+  z <- new.pars$partrans + pmin(pmax(u/w, qq[1]), qq[2])
+
   out <- list()
   out$w <- w
   out$z <- z
