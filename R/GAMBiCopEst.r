@@ -536,9 +536,9 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
   # Define links between Kendall's tau, copula parameter and calibration 
   # function... the cst/cstinv make sure that the boundaries are never attained
   if (family %in% c(1, 2)) {
-    cstpar <- csttau <- function(x) x*(1-1e-2) 
+    cstpar <- csttau <- function(x) x*(1-1e-5) 
   } else {
-    csttau <- function(x) x*(1-1e-2)
+    csttau <- function(x) x*(1-1e-5)
     cstpar <- function(x) {
       sign(x)*pmin(abs(x),200)
     }
@@ -613,8 +613,8 @@ valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose,
       w <- dd$dpar^2 * w
     }
   }
-  
-  z <- new.pars$partrans + pmin(pmax(u/w, -2), 2)
+
+  z <- new.pars$partrans + pmin(pmax(u/w, -20), 20)
   
   out <- list()
   out$w <- w
