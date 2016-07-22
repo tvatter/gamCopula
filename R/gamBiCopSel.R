@@ -32,8 +32,8 @@
 #' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
 #' @param rotations If \code{TRUE}, all rotations of the families in familyset 
 #' are included.
-#' @param selcrit Character indicating the criterion for bivariate copula 
-#' selection. Possible choices: \code{selcrit = 'AIC'} (default) or 
+#' @param familycrit Character indicating the criterion for bivariate copula 
+#' selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package. 
 #' @param level Numerical; significance level of the test for removing individual
@@ -112,12 +112,12 @@
 #' @export
 gamBiCopSel <- function(udata, lin.covs = NULL, smooth.covs = NULL,  
                         familyset = NA, rotations = TRUE, 
-                        selcrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
+                        familycrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
                         method = "FS", tol.rel = 1e-3, n.iters = 10, #max.knots = 5,
                         parallel = FALSE, verbose = FALSE, ...) {
   
   tmp <- valid.gamBiCopSel(udata, lin.covs, smooth.covs, rotations, familyset, 
-                           selcrit, level, edf, tau,
+                           familycrit, level, edf, tau,
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
     stop(tmp)
@@ -164,7 +164,7 @@ gamBiCopSel <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   #     res <- res[sapply(res, function(x) x$conv) == 0]
   #   }
   
-  if (selcrit == "AIC") {
+  if (familycrit == "AIC") {
     return(res[[which.min(sapply(res, function(x) AIC(x$res)))]])
   } else {
     return(res[[which.min(sapply(res, function(x) BIC(x$res)))]])
@@ -373,7 +373,7 @@ get.linear <- function(x,nn){
 }
 
 valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations, 
-                              familyset, selcrit, level, edf, 
+                              familyset, familycrit, level, edf, 
                               tau, method, tol.rel, n.iters, parallel, 
                               verbose) {
 
@@ -416,8 +416,8 @@ valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations,
     return(msg.logical(var2char(rotations)))
   }
   
-  if(is.null(selcrit) || length(selcrit) != 1 || 
-     (selcrit != "AIC" && selcrit != "BIC")) {
+  if(is.null(familycrit) || length(familycrit) != 1 || 
+     (familycrit != "AIC" && familycrit != "BIC")) {
     return("Selection criterion not implemented.")
   } 
   
