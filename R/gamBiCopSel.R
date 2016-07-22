@@ -311,7 +311,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     #basis[sel] <- kk[kcount]
     #kcount <- kcount + 1
     #basis[sel] <- round(basis[sel]*1.5)
-    print(c(summary(tmp$res@model)$edf, basis))
+    #print(c(summary(tmp$res@model)$edf, basis))
     basis[sel] <- 2*basis[sel]
     
     #     ## Extract and fit model to residuals for each smooth components
