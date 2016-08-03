@@ -8,21 +8,21 @@ Generalized Additive Models for Bivariate Conditional Dependence Structures and
 Vine Copulas
 }
 \description{
-This package implements various inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.
+This package implements inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.
 
-More references in Vatter and Chavez-Demoulin (2014) and Vatter (2014).
+More references in Vatter and Chavez-Demoulin (2014), and Vatter and Nagler (2016).
 }
 \details{
 \tabular{ll}{
 Package: \tab gamCopula\cr
 Type: \tab Package\cr
 Version: \tab 0.0-1\cr
-Date: \tab 2014-08-05\cr
+Date: \tab 2016-08-03\cr
 License: \tab GPL-3\cr
 }
 }
 \author{
-Thibault Vatter
+Thibault Vatter and Thomas Nagler
 
 Maintainer: Thibault Vatter <thibault.vatter@gmail.com>
 }
@@ -39,28 +39,21 @@ Dissmann, J. F., E. C. Brechmann, C. Czado, and D. Kurowicka (2013)
 Selecting and estimating regular vine copulae and application to financial returns.
 Computational Statistics & Data Analysis, 59 (1), 52-69.
 
-Joe, H. (1997)
-Multivariate Models and Dependence Concepts.
-London: Chapman and Hall.
+Vatter, T. and V. Chavez-Demoulin (2015)
+Generalized Additive Models for Conditional Dependence Structures.
+Journal of Multivariate Analysis, 141, 147-167.
 
-Schepsmeier, U. and J. Stoeber (2012).
-Derivatives and Fisher information of bivariate copulas.
-\url{http://link.springer.com/article/10.1007/s00362-013-0498-x}.
-
-Vatter, T. and V. Chavez-Demoulin (2014)
-Generalized additive models for conditional dependence structures.
-\url{http://papers.ssrn.com/sol3/papers.cfm?abstract_id=2265534}
-
-Vatter, T. (2014)
+Vatter, T. and T. Nagler (2016)
 Generalized additive models for non-simplified pair-copula constructions.
+\url{http://ssrn.com/abstract=2817949}
 
 Wood, S.N. (2004)
 Stable and efficient multiple smoothing parameter estimation for generalized additive models. 
-J. Amer. Statist. Ass. 99:673-686. 
+Journal of the American Statistical Association, 99, 673-686. 
 
 Wood, S.N. (2006) 
-eneralized Additive Models: an introduction with R.
-CRC.
+Generalized Additive Models: an introduction with R.
+Chapman and Hall/CRC.
 
 }
 \keyword{ package }
