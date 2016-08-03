@@ -360,8 +360,8 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
     if (simplified) {
       if (l == 0) {
         parameterForACopula[[i]] <- list()
-        parameterForACopula[[i]]$zr1 <- udata[,a[1]]
-        parameterForACopula[[i]]$zr2 <- udata[,a[2]]
+        parameterForACopula[[i]]$zr1 <- as.numeric(zr1a)
+        parameterForACopula[[i]]$zr2 <- as.numeric(zr2a)
       } else {
         parameterForACopula[[i]] <- list(cbind(as.numeric(zr1a), 
                                                as.numeric(zr2a)),

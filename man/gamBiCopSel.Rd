@@ -6,7 +6,7 @@
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopSel(udata, lin.covs = NULL, smooth.covs = NULL, familyset = NA,
-  rotations = TRUE, selcrit = "AIC", level = 0.05, edf = 1.5,
+  rotations = TRUE, familycrit = "AIC", level = 0.05, edf = 1.5,
   tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
   parallel = FALSE, verbose = FALSE, ...)
 }
@@ -41,8 +41,8 @@ families:
 \item{rotations}{If \code{TRUE}, all rotations of the families in familyset 
 are included.}
 
-\item{selcrit}{Character indicating the criterion for bivariate copula 
-selection. Possible choices: \code{selcrit = 'AIC'} (default) or 
+\item{familycrit}{Character indicating the criterion for bivariate copula 
+selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
 \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 

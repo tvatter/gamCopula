@@ -100,7 +100,7 @@ gamBiCopPred <- function(object, newdata = NULL,
   if (is.list(object)) {
     if (any(!is.element(names(object), c("family", "par", "par2"))) || 
         !is.numeric(unlist(object))) {
-      msg <- paste("Element", count, "of model, (tree", j, ") should be a",
+      msg <- paste("Object should be a",
                    " valid gamBiCop object or a list containing three",
                    " items (family, par, par2).")
       return(msg)

@@ -4,7 +4,8 @@ Title: Generalized Additive Models for Bivariate Conditional Dependence
     Structures and Vine Copulas
 Version: 0.0-1
 Date: 2015-08-07
-Author: Thibault Vatter
+Author: Thibault Vatter [aut], 
+	Thomas Nagler [aut]
 Maintainer: Thibault Vatter <thibault.vatter@gmail.com>
 Depends:
     R (>= 3.0.2)

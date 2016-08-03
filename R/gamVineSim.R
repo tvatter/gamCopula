@@ -61,7 +61,7 @@
 #' all.equal(sampleRVM, sampleGVC)
 #' 
 #' ## Fit the two models and compare the estimated parameter
-#' fitRVM <- RVM2GVC(RVineSeqEst(sampleRVM,RVM)$RVM)
+#' fitRVM <- RVM2GVC(RVineSeqEst(sampleRVM,RVM))
 #' fitGVC <- gamVineSeqEst(sampleGVC,GVC)
 #' all.equal(simplify2array(attr(fitRVM, "model")),
 #' simplify2array(attr(fitGVC, "model")))

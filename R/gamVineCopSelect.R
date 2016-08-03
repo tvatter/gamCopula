@@ -42,15 +42,15 @@
 #' @param treecrit Character indicating how pairs are selected in each tree.
 #' \code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
 #' (i.e., the tree of maximal overall dependence), and 
-#' \code{treecrit = "SAtest"} builds the minimum spanning tree of p-values of a
+#' \code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
 #' test of the simplifying assumption (i.e., the tree of maximal variability 
 #' in conditional dependence).
-#' @param SAtestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
+#' @param pacotestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
 #' @param indeptest Logical; whether a hypothesis test for the simplifying 
 #' assumption and the independence of 
 #' \code{u1} and \code{u2} is performed before bivariate copula selection 
 #' (default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-#' \code{\link{SAtest}}). 
+#' \code{\link{pacotest}}). 
 #' The independence copula is chosen for a (conditional) pair if both the 
 #' simplifying assumption and the null 
 #' hypothesis of independence cannot be rejected.
@@ -217,7 +217,7 @@ gamVineCopSelect <- function(data, Matrix,
                              simplified = FALSE, 
                              familyset = NA, rotations = TRUE, 
                              familycrit = "AIC", 
-                             treecrit = "Kendall", SAtestOptions = "ERC",
+                             treecrit = "Kendall", pacotestOptions = "ERC",
                              indeptest = TRUE, level = 0.05,
                              trunclevel = NA, tau = TRUE, method = "FS",
                              tol.rel = 0.001, n.iters = 10, 
@@ -225,7 +225,7 @@ gamVineCopSelect <- function(data, Matrix,
   
   tmp <- valid.gamVineCopSelect(data, Matrix, lin.covs, smooth.covs, simplified,
                                 familyset, rotations, familycrit, 
-                                treecrit, SAtestOptions, 
+                                treecrit, pacotestOptions, 
                                 indeptest, level, trunclevel, 
                                 tau, method, tol.rel, n.iters, 
                                 parallel, verbose)
@@ -304,7 +304,7 @@ gamVineCopSelect <- function(data, Matrix,
             }
           }  
           tmp <- fitAGAMCopula(tmp, familyset, familycrit, 
-                               treecrit, SAtestOptions, indeptest, level, 
+                               treecrit, pacotestOptions, indeptest, level, 
                                tau, method, tol.rel, n.iters, parallel, FALSE)
         }
       }
@@ -324,14 +324,14 @@ gamVineCopSelect <- function(data, Matrix,
 valid.gamVineCopSelect <- function(data, Matrix, lin.covs, smooth.covs, 
                                    simplified, 
                                    familyset, rotations, familycrit, 
-                                   treecrit, SAtestOptions, 
+                                   treecrit, pacotestOptions, 
                                    indeptest, level, trunclevel, 
                                    tau, method, tol.rel, n.iters, 
                                    parallel, verbose) {
   
   tmp <- valid.gamVineStructureSelect(data, lin.covs, smooth.covs, simplified, 
                                       0, familyset, rotations, familycrit, 
-                                      treecrit, SAtestOptions, 
+                                      treecrit, pacotestOptions, 
                                       indeptest, level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
                                       parallel, verbose)
