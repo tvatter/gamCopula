@@ -13,7 +13,7 @@ Imports:
     graphics,
     stats,
     utils,
-    VineCopula (>= 1.7),
+    VineCopula (>= 2.0.0),
     mgcv,
     MASS,
     gsl,
