@@ -601,7 +601,7 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
       fam <- out$model@family
       par2 <- out$model@par2
     } else {
-      tmp <- BiCopSelect(u1, u2, fams, familycrit = familycrit,
+      tmp <- BiCopSelect(u1, u2, fams, selectioncrit = familycrit,
                          indeptest = TRUE, level = level, rotations = FALSE)
       par <- rep(tmp$par, length(u1))
       out$model$par <- tmp$par
