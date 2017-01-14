@@ -13,7 +13,7 @@ An extension to pair-copula constructions (also called vine copulas) is also pro
 You can install the stable version as follows:
 
 ``` r
-install.packages("tvatter/gamCopula")
+install.packages("gamCopula")
 ```
 Alternatively, you can install the latest development version as follows:
 
