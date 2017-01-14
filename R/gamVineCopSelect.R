@@ -72,7 +72,7 @@
 #' Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 #' Matrix <- matrix(Matrix,d,d)
 #' nnames <- paste("X", 1:d, sep = "")
-#' \dontshow{n <- 100}
+#' 
 #' ## A function factory
 #' eta0 <- 1
 #' calib.surf <- list(
@@ -181,6 +181,7 @@
 #' GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 #' print(GVC)
 #' 
+#' \dontrun{
 #' ## Simulate and fit the model
 #' sim <- gamVineSimulate(n, GVC)
 #' fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
@@ -192,7 +193,7 @@
 #' 
 #' plot(fitGVC, ylim = c(-2.5,2.5))
 #' 
-#' plot(fitGVC2, ylim = c(-2.5,2.5))
+#' plot(fitGVC2, ylim = c(-2.5,2.5))}
 #' 
 #' @seealso  \code{\link{gamVineSeqFit}},\code{\link{gamVineStructureSelect}}, 
 #'  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 

@@ -105,7 +105,7 @@ set.seed(0)
 
 # Sample size
 n <- 1e3
-\dontshow{n <- 100}
+
 # Define a R-vine tree structure matrix
 d <- 3
 Matrix <- c(2,3,1,0,3,1,0,0,1)
@@ -144,6 +144,7 @@ attr(model[[count]],"model")$coefficients <- c(-5, 10)
 GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
 GVC
 
+\dontrun{
 # Simulate new data
 simData <- data.frame(gamVineSimulate(n, GVC))
 colnames(simData) <- nnames
@@ -152,7 +153,7 @@ colnames(simData) <- nnames
 summary(fitGVC <- gamVineSeqFit(simData, GVC))
 
 # Fit data using structure selection and sequential estimation
-summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))
+summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))}
 
 }
 \seealso{

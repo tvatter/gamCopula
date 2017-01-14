@@ -10,7 +10,7 @@ Vine Copulas
 \description{
 This package implements inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.
 
-More references in Vatter and Chavez-Demoulin (2014), and Vatter and Nagler (2016).
+More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (2016).
 }
 \details{
 \tabular{ll}{
@@ -71,7 +71,6 @@ set.seed(0)
 n <- 5e2
 rho <- 0.5
 fam <- 1
-\dontshow{n <- 100}
 
 ## A calibration surface depending on three variables
 eta0 <- 1
@@ -194,7 +193,7 @@ d <- 4
 Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 Matrix <- matrix(Matrix,d,d)
 nnames <- paste("X", 1:d, sep = "")
-\dontshow{n <- 100}
+
 ## A function factory
 eta0 <- 1
 calib.surf <- list(
@@ -303,6 +302,7 @@ for(j in 2:(d-1)){
 GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 print(GVC)
 
+\dontrun{
 ## Simulate and fit the model
 sim <- gamVineSimulate(n, GVC)
 fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
@@ -314,6 +314,6 @@ plot(GVC, ylim = c(-2.5,2.5))
 
 plot(fitGVC, ylim = c(-2.5,2.5))
 
-plot(fitGVC2, ylim = c(-2.5,2.5))
+plot(fitGVC2, ylim = c(-2.5,2.5))}
 
 }
