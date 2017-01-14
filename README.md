@@ -2,7 +2,7 @@ gamCopula
 =========
 
 > Generalized additive models for bivariate copulas and pair-copula constructions
-
+[![Build Status](https://travis-ci.org/tvatter/gamCopula.svg?branch=master)](https://travis-ci.org/tvatter/gamCopula)
 
 This R package implements the generalized additive modeling framework for copulas introduced by Vatter and  Chavez-Demoulin (2015).
 An extension to pair-copula constructions (also called vine copulas) is also provied. The package is still under development.
