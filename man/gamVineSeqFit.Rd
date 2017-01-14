@@ -55,7 +55,7 @@ d <- 4
 Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 Matrix <- matrix(Matrix,d,d)
 nnames <- paste("X", 1:d, sep = "")
-
+\dontshow{n <- 100}
 ## A function factory
 eta0 <- 1
 calib.surf <- list(

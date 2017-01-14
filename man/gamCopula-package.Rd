@@ -71,7 +71,7 @@ set.seed(0)
 n <- 5e2
 rho <- 0.5
 fam <- 1
-
+\dontshow{n <- 100}
 
 ## A calibration surface depending on three variables
 eta0 <- 1
@@ -194,7 +194,7 @@ d <- 4
 Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 Matrix <- matrix(Matrix,d,d)
 nnames <- paste("X", 1:d, sep = "")
-
+\dontshow{n <- 100}
 ## A function factory
 eta0 <- 1
 calib.surf <- list(
@@ -309,7 +309,6 @@ fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 
 ## Plot the results
-dev.off()
 par(mfrow=c(3,4))
 plot(GVC, ylim = c(-2.5,2.5))
 

@@ -69,8 +69,12 @@
 #' require(VineCopula)
 #' set.seed(0)
 #' 
-#' ## A first example with a 3-dimensional GAM-Vine
 #' 
+#' ## An example with a 3-dimensional GAM-Vine
+#' 
+#' # Sample size
+#' n <- 1e3
+#' \dontshow{n <- 100}
 #' # Define a R-vine tree structure matrix
 #' d <- 3
 #' Matrix <- c(2,3,1,0,3,1,0,0,1)
@@ -110,8 +114,7 @@
 #' GVC
 #' 
 #' # Simulate new data
-#' N <- 1e3
-#' simData <- data.frame(gamVineSimulate(N, GVC))
+#' simData <- data.frame(gamVineSimulate(n, GVC))
 #' colnames(simData) <- nnames
 #' 
 #' # Fit data using sequential estimation assuming true model known
