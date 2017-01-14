@@ -135,7 +135,7 @@ basis0 <- c(3, 4, 4)
 formula <- ~s(x1, k = basis0[1], bs = "cr", fx = !pen) + 
   s(x2, k = basis0[2], bs = "cr", fx = !pen) + 
   s(x3, k = basis0[3], bs = "cr", fx = !pen)
-system.time(fit0 <- gamBiCopEst(data, formula, fam))
+system.time(fit0 <- gamBiCopFit(data, formula, fam))
 
 ## Model fit with a better basis size and penalized cubic splines (via min GCV)
 pen <- TRUE
@@ -143,7 +143,7 @@ basis1 <- c(3, 10, 10)
 formula <- ~s(x1, k = basis1[1], bs = "cr", fx = !pen) + 
   s(x2, k = basis1[2], bs = "cr", fx = !pen) + 
   s(x3, k = basis1[3], bs = "cr", fx = !pen)
-system.time(fit1 <- gamBiCopEst(data, formula, fam))
+system.time(fit1 <- gamBiCopFit(data, formula, fam))
 
 ## Extract the gamBiCop objects and show various methods
 (res <- sapply(list(fit0,fit1), function(fit){fit$res}))
@@ -153,7 +153,7 @@ lapply(res, function(x) sapply(metds, function(f) f(x)))
 
 ## Comparison between fitted, true smooth and spline approximation for each
 ## true smooth function for the two basis sizes
-fitted <- lapply(res, function(x) gamBiCopPred(x, data.frame(x1=u,x2=u,x3=u), 
+fitted <- lapply(res, function(x) gamBiCopPredict(x, data.frame(x1=u,x2=u,x3=u), 
                                                type = "terms")$calib)
 true <- vector("list", 3)
 for (i in 1:3) {
@@ -285,7 +285,7 @@ for(j in 2:(d-1)){
     #plot(x[,1],(y-fitted(b))/y)
     
     # Create a dummy gamBiCop object
-    tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+    tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
     
     # Update the copula family and the model coefficients
     attr(tmp, "model")$coefficients <- coefficients(b)
@@ -304,8 +304,8 @@ GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 print(GVC)
 
 ## Simulate and fit the model
-sim <- gamVineSim(n, GVC)
-fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+sim <- gamVineSimulate(n, GVC)
+fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 
 ## Plot the results

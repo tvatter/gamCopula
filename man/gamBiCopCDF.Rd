@@ -72,13 +72,13 @@ basis <- c(3, 10, 10)
 formula <- ~s(x1, k = basis[1], bs = "cr") + 
   s(x2, k = basis[2], bs = "cr") + 
   s(x3, k = basis[3], bs = "cr")
-system.time(fit <- gamBiCopEst(data, formula, fam))
+system.time(fit <- gamBiCopFit(data, formula, fam))
 
 ## Evaluate the conditional density
 gamBiCopCDF(fit$res)
 
 }
 \seealso{
-\code{\link{gamBiCop}} and \code{\link{gamBiCopPred}}.
+\code{\link{gamBiCop}} and \code{\link{gamBiCopPredict}}.
 }
 

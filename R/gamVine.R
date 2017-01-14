@@ -13,8 +13,8 @@
 #'  \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}}, 
 #' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}}, 
-#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
+#' \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
+#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 #' @name gamVine
 #' @rdname gamVine
 #' @export

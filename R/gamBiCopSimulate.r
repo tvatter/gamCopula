@@ -62,17 +62,17 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam))
+#' system.time(fit <- gamBiCopFit(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- fit$res)
 #' EDF(res)
-#' sim <- gamBiCopSim(fit$res, X)
+#' sim <- gamBiCopSimulate(fit$res, X)
 #' @export
-gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, 
+gamBiCopSimulate <- function(object, newdata = NULL, N = NULL, return.calib = FALSE, 
                         return.par = FALSE, return.tau = FALSE) {
   
-  tmp <- valid.gamBiCopSim(object, newdata, N, return.calib, 
+  tmp <- valid.gamBiCopSimulate(object, newdata, N, return.calib, 
                            return.par, return.tau)
   if (tmp != TRUE)
     stop(tmp)
@@ -95,7 +95,7 @@ gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE,
     newdata <- newdata[sample.int(dd, N, replace = TRUE), ]
   }
 
-  tmp <- gamBiCopPred(object, as.data.frame(newdata), 
+  tmp <- gamBiCopPredict(object, as.data.frame(newdata), 
                        target = c("par", "calib", "tau"))
   par <- tmp$par
   family <- object@family
@@ -127,10 +127,10 @@ gamBiCopSim <- function(object, newdata = NULL, N = NULL, return.calib = FALSE,
   return(out)
 } 
 
-valid.gamBiCopSim <- function(object, newdata, N, return.calib, 
+valid.gamBiCopSimulate <- function(object, newdata, N, return.calib, 
                               return.par, return.tau) {
   if (!valid.gamBiCop(object)) {
-    return("gamBiCopPred can only be used to predict from gamBiCop objects")
+    return("gamBiCopPredict can only be used to predict from gamBiCop objects")
   }
   
   if (is.null(N)) {

@@ -36,7 +36,7 @@
 #' estimation and \code{FALSE} (default) for a silent version.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
-#' @return \code{gamBiCopEst} returns a list consisting of
+#' @return \code{gamBiCopFit} returns a list consisting of
 #' \item{res}{S4 \code{\link{gamBiCop-class}} object.}
 #' \item{method}{\code{'FS'} for Fisher-scoring (default) and 
 #' \code{'NR'} for Newton-Raphson.}
@@ -45,7 +45,7 @@
 #' \code{'FS'}/\code{'NR'} algorithm.}
 #' \item{trace}{the estimation procedure's trace.}
 #' \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
-#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopSim}}.
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopSimulate}}.
 #' @examples
 #' require(copula)
 #' require(mgcv)
@@ -120,7 +120,7 @@
 #' formula <- ~s(x1, k = basis0[1], bs = "cr", fx = !pen) + 
 #'   s(x2, k = basis0[2], bs = "cr", fx = !pen) + 
 #'   s(x3, k = basis0[3], bs = "cr", fx = !pen)
-#' system.time(fit0 <- gamBiCopEst(data, formula, fam))
+#' system.time(fit0 <- gamBiCopFit(data, formula, fam))
 #' 
 #' ## Model fit with a better basis size and penalized cubic splines (via min GCV)
 #' pen <- TRUE
@@ -128,7 +128,7 @@
 #' formula <- ~s(x1, k = basis1[1], bs = "cr", fx = !pen) + 
 #'   s(x2, k = basis1[2], bs = "cr", fx = !pen) + 
 #'   s(x3, k = basis1[3], bs = "cr", fx = !pen)
-#' system.time(fit1 <- gamBiCopEst(data, formula, fam))
+#' system.time(fit1 <- gamBiCopFit(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- sapply(list(fit0,fit1), function(fit){fit$res}))
@@ -138,7 +138,7 @@
 #' 
 #' ## Comparison between fitted, true smooth and spline approximation for each
 #' ## true smooth function for the two basis sizes
-#' fitted <- lapply(res, function(x) gamBiCopPred(x, data.frame(x1=u,x2=u,x3=u), 
+#' fitted <- lapply(res, function(x) gamBiCopPredict(x, data.frame(x1=u,x2=u,x3=u), 
 #'                                                type = "terms")$calib)
 #' true <- vector("list", 3)
 #' for (i in 1:3) {
@@ -166,11 +166,11 @@
 #'          col = c("black", "red", "red", "green", "green"))
 #' }
 #' @export
-gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE, 
+gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE, 
                         method = "FS", tol.rel = 0.001, n.iters = 10, 
                         verbose = FALSE, ...) {
   
-  tmp <- valid.gamBiCopEst(data, n.iters, tau, tol.rel, method, verbose, family)
+  tmp <- valid.gamBiCopFit(data, n.iters, tau, tol.rel, method, verbose, family)
   if (tmp != TRUE)
     stop(tmp)
   
@@ -445,7 +445,7 @@ gamBiCopEst <- function(data, formula = ~1, family = 1, tau = TRUE,
   return(out)
 } 
 
-valid.gamBiCopEst <- function(data, n.iters, tau, tol.rel, method, verbose, 
+valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose, 
                               family) {
   if (!(is.list(data) || is.data.frame(data) || is.matrix(data))) {
     return("data has to be either a list, a data frame or a matrix.")

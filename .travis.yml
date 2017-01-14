@@ -1,0 +1,26 @@
+language: R
+warnings_are_errors: false
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      sudo: required
+      
+repos:
+  CRAN: http://cran.rstudio.com
+
+before_install:
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
+
+  ### LINUX
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install gsl-bin libgsl0-dbg libgsl0-dev libgsl0ldbl libcurl4-openssl-dev libxml2-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install r-base; fi
+
+  ### OSX
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew tap homebrew/science && brew install gsl curl libxml2; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install cask && brew cask install xquartz && brew install r; fi
+

@@ -13,7 +13,7 @@
 #' original data are returned. If newdata is provided then it should contain all 
 #' the variables needed for prediction: a warning is generated if not.
 #' @return The conditional density.
-#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPred}}.
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPredict}}.
 #' @examples
 #' require(copula) 
 #' set.seed(0)
@@ -61,7 +61,7 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam))
+#' system.time(fit <- gamBiCopFit(data, formula, fam))
 #' 
 #' ## Evaluate the conditional density
 #' gamBiCopCDF(fit$res)
@@ -69,7 +69,7 @@
 #' @export
 gamBiCopCDF <- function(object, newdata = NULL) {
   
-  par <- gamBiCopPred(object, newdata, "par")$par
+  par <- gamBiCopPredict(object, newdata, "par")$par
   mm <- object@model
   
   if (is.null(newdata)) {

@@ -20,7 +20,7 @@
 #' estimation and \code{FALSE} (default) for a silent version.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
-#' @return \code{gamVineSeqEst} returns a 
+#' @return \code{gamVineSeqFit} returns a 
 #' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @seealso \code{\link{gamVineCopSelect}} and 
 #' \code{\link{gamVineStructureSelect}}
@@ -129,7 +129,7 @@
 #'     #plot(x[,1],(y-fitted(b))/y)
 #'     
 #'     # Create a dummy gamBiCop object
-#'     tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+#'     tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
 #'     
 #'     # Update the copula family and the model coefficients
 #'     attr(tmp, "model")$coefficients <- coefficients(b)
@@ -148,8 +148,8 @@
 #' print(GVC)
 #' 
 #' ## Simulate and fit the model
-#' sim <- gamVineSim(n, GVC)
-#' fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+#' sim <- gamVineSimulate(n, GVC)
+#' fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 #' fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 #' 
 #' ## Plot the results
@@ -162,13 +162,13 @@
 #' plot(fitGVC2, ylim = c(-2.5,2.5))
 #' 
 #' @seealso \code{\link{gamVineCopSelect}},\code{\link{gamVineStructureSelect}}, 
-#'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
-#'  \code{\link{gamBiCopEst}}.
-gamVineSeqEst <- function(data, GVC, covariates = NA,
+#'  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+#'  \code{\link{gamBiCopFit}}.
+gamVineSeqFit <- function(data, GVC, covariates = NA,
                           method = "FS", tol.rel = 0.001, n.iters = 10, 
                           verbose = FALSE) {
   
-  tmp <- valid.gamVineSeqEst(data, GVC, covariates, 
+  tmp <- valid.gamVineSeqFit(data, GVC, covariates, 
                              method, tol.rel, n.iters, verbose)
   if (tmp != TRUE) {
     stop(tmp)
@@ -246,9 +246,9 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
           tmp <- cbind(tmp, data[,covariates])
           names(tmp)[(length(tmp)-l+1):length(tmp)] <- covariates
         }    
-        mm <- gamBiCopEst(tmp, mm@model$formula, fam[k, i], mm@tau, 
+        mm <- gamBiCopFit(tmp, mm@model$formula, fam[k, i], mm@tau, 
                           method, tol.rel, n.iters)$res
-        par <- gamBiCopPred(mm, target = "par")$par
+        par <- gamBiCopPredict(mm, target = "par")$par
         par2 <- mm@par2
       }
       GVC@model[[mki]] <- mm
@@ -273,7 +273,7 @@ gamVineSeqEst <- function(data, GVC, covariates = NA,
   return(oldGVC)
 } 
 
-valid.gamVineSeqEst <- function(data, GVC, covariates,
+valid.gamVineSeqFit <- function(data, GVC, covariates,
                                 method, tol.rel, n.iters, 
                                 verbose) {
   
@@ -317,7 +317,7 @@ valid.gamVineSeqEst <- function(data, GVC, covariates,
   }
   
   names(data)[1:2] <- c("u1","u2")
-  tmp <- valid.gamBiCopEst(data, n.iters, FALSE, tol.rel, method, verbose, 1)
+  tmp <- valid.gamBiCopFit(data, n.iters, FALSE, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
     return(tmp)
   }

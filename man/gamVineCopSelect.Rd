@@ -7,8 +7,7 @@ of a GAM-Vine model.}
 \usage{
 gamVineCopSelect(data, Matrix, lin.covs = NULL, smooth.covs = NULL,
   simplified = FALSE, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "Kendall", pacotestOptions = "ERC",
-  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
+  familycrit = "AIC", level = 0.05, trunclevel = NA, tau = TRUE,
   method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
   verbose = FALSE)
 }
@@ -50,26 +49,9 @@ selection. Possible choices: \code{familycrit = 'AIC'} (default) or
 \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
-\item{treecrit}{Character indicating how pairs are selected in each tree.
-\code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
-(i.e., the tree of maximal overall dependence), and 
-\code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
-test of the simplifying assumption (i.e., the tree of maximal variability 
-in conditional dependence).}
-
-\item{pacotestOptions}{TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!}
-
-\item{indeptest}{Logical; whether a hypothesis test for the simplifying 
-assumption and the independence of 
-\code{u1} and \code{u2} is performed before bivariate copula selection 
-(default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-\code{\link{pacotest}}). 
-The independence copula is chosen for a (conditional) pair if both the 
-simplifying assumption and the null 
-hypothesis of independence cannot be rejected.}
-
-\item{level}{Numerical; significance level of the test (default: 
-\code{level = 0.05}).}
+\item{level}{Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
+significance level of the test for removing individual
+predictors (default: \code{level = 0.05}) for each conditional pair-copula.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
@@ -211,7 +193,7 @@ for(j in 2:(d-1)){
     #plot(x[,1],(y-fitted(b))/y)
     
     # Create a dummy gamBiCop object
-    tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+    tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
     
     # Update the copula family and the model coefficients
     attr(tmp, "model")$coefficients <- coefficients(b)
@@ -230,12 +212,11 @@ GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 print(GVC)
 
 ## Simulate and fit the model
-sim <- gamVineSim(n, GVC)
-fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+sim <- gamVineSimulate(n, GVC)
+fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 
 ## Plot the results
-dev.off()
 par(mfrow=c(3,4))
 plot(GVC, ylim = c(-2.5,2.5))
 
@@ -245,8 +226,8 @@ plot(fitGVC2, ylim = c(-2.5,2.5))
 
 }
 \seealso{
-\code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}}, 
- \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
- \code{\link{gamBiCopEst}}.
+\code{\link{gamVineSeqFit}},\code{\link{gamVineStructureSelect}}, 
+ \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+ \code{\link{gamBiCopFit}}.
 }
 

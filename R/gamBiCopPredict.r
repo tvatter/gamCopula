@@ -38,7 +38,7 @@
 #' linear predictor values (minus any offest) at the supplied covariate values, 
 #' when applied to the model coefficient vector (similar as 
 #' \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}). 
-#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}.
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.
 #' @examples 
 #' require(copula) 
 #' set.seed(0)
@@ -86,15 +86,15 @@
 #' formula <- ~s(x1, k = basis[1], bs = "cr") + 
 #'   s(x2, k = basis[2], bs = "cr") + 
 #'   s(x3, k = basis[3], bs = "cr")
-#' system.time(fit <- gamBiCopEst(data, formula, fam))
+#' system.time(fit <- gamBiCopFit(data, formula, fam))
 #' 
 #' ## Extract the gamBiCop objects and show various methods
 #' (res <- fit$res)
 #' EDF(res)
-#' pred <- gamBiCopPred(fit$res, X, target = c("calib", "par", "tau"))
+#' pred <- gamBiCopPredict(fit$res, X, target = c("calib", "par", "tau"))
 #' 
 #' @export
-gamBiCopPred <- function(object, newdata = NULL, 
+gamBiCopPredict <- function(object, newdata = NULL, 
                          target = "calib", alpha = 0, type = "link") {
   
   if (is.list(object)) {
@@ -203,10 +203,10 @@ gamBiCopPred <- function(object, newdata = NULL,
 } 
 
 
-valid.gamBiCopPred <- function(object, newdata, target, alpha, type) {
+valid.gamBiCopPredict <- function(object, newdata, target, alpha, type) {
   
   if (!valid.gamBiCop(object)) {
-    return("'gamBiCopPred' can only be used to predict from 'gamBiCop' objects")
+    return("'gamBiCopPredict' can only be used to predict from 'gamBiCop' objects")
   }
   if (!is.character(target) || !is.vector(target)) {
     targerr <- TRUE

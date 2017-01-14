@@ -25,8 +25,8 @@ setOldClass(c("gam"))
 #' @slot tau \code{FALSE} (default) for a calibration fonction 
 #' specified for the Copula parameter 
 #' or \code{TRUE} for a calibration function specified for Kendall's tau.
-#' @seealso \code{\link{gamBiCopEst}}, 
-#' \code{\link{gamBiCopPred}} and \code{\link{gamBiCopSim}}.
+#' @seealso \code{\link{gamBiCopFit}}, 
+#' \code{\link{gamBiCopPredict}} and \code{\link{gamBiCopSimulate}}.
 #' @name gamBiCop-class
 #' @rdname gamBiCop-class
 #' @export
@@ -47,8 +47,8 @@ setClass("gamBiCop", slots = c(family = "integer", model = "gam",
 #' @slot covariates vector of names for the exogenous covariates.
 #' @seealso \code{\link{gamVine}}, 
 #' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-#' \code{\link{gamVineSeqEst}}, \code{\link{gamVineCopSelect}}, 
-#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSim}}.
+#' \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
+#' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 #' @name gamVine-class
 #' @rdname gamVine-class
 #' @export

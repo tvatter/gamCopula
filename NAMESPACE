@@ -36,16 +36,16 @@ exportMethods("summary")
 export("EDF")
 
 ## gamBiCop related functions
-export("gamBiCopSim")
-export("gamBiCopEst")
-export("gamBiCopPred")
+export("gamBiCopSimulate")
+export("gamBiCopFit")
+export("gamBiCopPredict")
 export("gamBiCopPDF")
 export("gamBiCopCDF")
-export("gamBiCopSel")
+export("gamBiCopSelect")
 
 ## gamVine related functions
-export("gamVineSim")
-export("gamVineSeqEst")
+export("gamVineSimulate")
+export("gamVineSeqFit")
 export("gamVineCopSelect")
 export("gamVineStructureSelect")
 export("gamVineNormalize")

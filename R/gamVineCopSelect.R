@@ -39,23 +39,9 @@
 #' selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package. 
-#' @param treecrit Character indicating how pairs are selected in each tree.
-#' \code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
-#' (i.e., the tree of maximal overall dependence), and 
-#' \code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
-#' test of the simplifying assumption (i.e., the tree of maximal variability 
-#' in conditional dependence).
-#' @param pacotestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
-#' @param indeptest Logical; whether a hypothesis test for the simplifying 
-#' assumption and the independence of 
-#' \code{u1} and \code{u2} is performed before bivariate copula selection 
-#' (default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-#' \code{\link{pacotest}}). 
-#' The independence copula is chosen for a (conditional) pair if both the 
-#' simplifying assumption and the null 
-#' hypothesis of independence cannot be rejected.
-#' @param level Numerical; significance level of the test (default: 
-#' \code{level = 0.05}).
+#' @param level Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
+#' significance level of the test for removing individual
+#' predictors (default: \code{level = 0.05}) for each conditional pair-copula.
 #' @param trunclevel Integer; level of truncation.
 #' @param tau \code{TRUE} (default) for a calibration fonction specified for 
 #' Kendall's tau or \code{FALSE} for a calibration function specified 
@@ -177,7 +163,7 @@
 #'     #plot(x[,1],(y-fitted(b))/y)
 #'     
 #'     # Create a dummy gamBiCop object
-#'     tmp <- gamBiCopEst(data = data, formula = form, family = 1, n.iters = 1)$res
+#'     tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
 #'     
 #'     # Update the copula family and the model coefficients
 #'     attr(tmp, "model")$coefficients <- coefficients(b)
@@ -196,12 +182,11 @@
 #' print(GVC)
 #' 
 #' ## Simulate and fit the model
-#' sim <- gamVineSim(n, GVC)
-#' fitGVC <- gamVineSeqEst(sim, GVC, verbose = TRUE)
+#' sim <- gamVineSimulate(n, GVC)
+#' fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 #' fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 #' 
 #' ## Plot the results
-#' dev.off()
 #' par(mfrow=c(3,4))
 #' plot(GVC, ylim = c(-2.5,2.5))
 #' 
@@ -209,25 +194,21 @@
 #' 
 #' plot(fitGVC2, ylim = c(-2.5,2.5))
 #' 
-#' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineStructureSelect}}, 
-#'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
-#'  \code{\link{gamBiCopEst}}.
+#' @seealso  \code{\link{gamVineSeqFit}},\code{\link{gamVineStructureSelect}}, 
+#'  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+#'  \code{\link{gamBiCopFit}}.
 gamVineCopSelect <- function(data, Matrix,  
                              lin.covs = NULL, smooth.covs = NULL,
                              simplified = FALSE, 
                              familyset = NA, rotations = TRUE, 
-                             familycrit = "AIC", 
-                             treecrit = "Kendall", pacotestOptions = "ERC",
-                             indeptest = TRUE, level = 0.05,
+                             familycrit = "AIC", level = 0.05,
                              trunclevel = NA, tau = TRUE, method = "FS",
                              tol.rel = 0.001, n.iters = 10, 
                              parallel = FALSE, verbose = FALSE) {
   
   tmp <- valid.gamVineCopSelect(data, Matrix, lin.covs, smooth.covs, simplified,
-                                familyset, rotations, familycrit, 
-                                treecrit, pacotestOptions, 
-                                indeptest, level, trunclevel, 
-                                tau, method, tol.rel, n.iters, 
+                                familyset, rotations, familycrit, level, 
+                                trunclevel, tau, method, tol.rel, n.iters, 
                                 parallel, verbose)
   if (tmp != TRUE) {
     stop(tmp)
@@ -283,11 +264,10 @@ gamVineCopSelect <- function(data, Matrix,
       }
       
       if (d + 1 - k > trunclevel) {
-        tmp <- fitACopula(zr2, zr1, 0, familycrit, indeptest, level)
+        tmp <- fitACopula(zr2, zr1, 0, familycrit, level)
       } else {
         if (k == d && l == 0) {
-          tmp <- fitACopula(zr2, zr1, familyset, familycrit, 
-                            indeptest, level, FALSE)
+          tmp <- fitACopula(zr2, zr1, familyset, familycrit, level, FALSE)
         } else {
           tmp <- list(cbind(as.numeric(zr2),
                             as.numeric(zr1)),
@@ -303,9 +283,8 @@ gamVineCopSelect <- function(data, Matrix,
               names(tmp[[3]]) <- c(nn[oo[cond]], colnames(smooth.covs))
             }
           }  
-          tmp <- fitAGAMCopula(tmp, familyset, familycrit, 
-                               treecrit, pacotestOptions, indeptest, level, 
-                               tau, method, tol.rel, n.iters, parallel, FALSE)
+          tmp <- fitAGAMCopula(tmp, familyset, familycrit, level, 
+                               tau, method, tol.rel, n.iters, FALSE)
         }
       }
       model[[mki]] <- tmp$model
@@ -322,17 +301,13 @@ gamVineCopSelect <- function(data, Matrix,
 } 
 
 valid.gamVineCopSelect <- function(data, Matrix, lin.covs, smooth.covs, 
-                                   simplified, 
-                                   familyset, rotations, familycrit, 
-                                   treecrit, pacotestOptions, 
-                                   indeptest, level, trunclevel, 
-                                   tau, method, tol.rel, n.iters, 
-                                   parallel, verbose) {
+                                   simplified, familyset, rotations, familycrit, 
+                                   level, trunclevel, tau, method, tol.rel, 
+                                   n.iters, parallel, verbose) {
   
   tmp <- valid.gamVineStructureSelect(data, lin.covs, smooth.covs, simplified, 
                                       0, familyset, rotations, familycrit, 
-                                      treecrit, pacotestOptions, 
-                                      indeptest, level, trunclevel, 
+                                      "tau", level, trunclevel, 
                                       tau, method, tol.rel, n.iters, 
                                       parallel, verbose)
   if (tmp != TRUE) {

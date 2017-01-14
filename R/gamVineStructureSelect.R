@@ -43,22 +43,12 @@
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package. 
 #' @param treecrit Character indicating how pairs are selected in each tree.
-#' \code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
-#' (i.e., the tree of maximal overall dependence), and 
-#' \code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
-#' test of the simplifying assumption (i.e., the tree of maximal variability 
-#' in conditional dependence).
-#' @param pacotestOptions TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!
-#' @param indeptest Logical; whether a hypothesis test for the simplifying 
-#' assumption and the independence of 
-#' \code{u1} and \code{u2} is performed before bivariate copula selection 
-#' (default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-#' \code{\link{pacotest}}). 
-#' The independence copula is chosen for a (conditional) pair if both the 
-#' simplifying assumption and the null 
-#' hypothesis of independence cannot be rejected.
-#' @param level Numerical; significance level of the test (default: 
-#' \code{level = 0.05}).
+#' \code{treecrit = "tau"} uses the maxmium spanning tree of the Kendall's tau 
+#' (i.e., the tree of maximal overall dependence), \code{treecrit = "rho"} 
+#' uses the Spearman's rho.
+#' @param level Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
+#' significance level of the test for removing individual
+#' predictors (default: \code{level = 0.05}) for each conditional pair-copula. 
 #' @param trunclevel Integer; level of truncation.
 #' @param tau \code{TRUE} (default) for a calibration fonction specified for 
 #' Kendall's tau or \code{FALSE} for a calibration function specified 
@@ -74,7 +64,7 @@
 #' @param verbose \code{TRUE} if informations should be printed during the 
 #' estimation and \code{FALSE} (default) for a silent version.
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
-#' @return \code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
+#' @return \code{gamVineSeqFit} returns a \code{\link{gamVine-class}} object.
 #' @examples
 #' require(VineCopula)
 #' set.seed(0)
@@ -110,7 +100,7 @@
 #' tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 #' 
 #' # Set-up an arbitrary linear model for the calibration function
-#' model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
+#' model[[count]] <- gamBiCopFit(tmp, ~ x1, fam[count])$res
 #' 
 #' # Update the coefficients of the model
 #' attr(model[[count]],"model")$coefficients <- c(-5, 10)
@@ -121,31 +111,29 @@
 #' 
 #' # Simulate new data
 #' N <- 1e3
-#' simData <- data.frame(gamVineSim(N, GVC))
+#' simData <- data.frame(gamVineSimulate(N, GVC))
 #' colnames(simData) <- nnames
 #' 
 #' # Fit data using sequential estimation assuming true model known
-#' summary(fitGVC <- gamVineSeqEst(simData, GVC))
+#' summary(fitGVC <- gamVineSeqFit(simData, GVC))
 #' 
 #' # Fit data using structure selection and sequential estimation
 #' summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))
 #' 
-#' @seealso  \code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}}, 
-#'  \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
-#'  \code{\link{gamBiCopEst}}.
+#' @seealso  \code{\link{gamVineSeqFit}},\code{\link{gamVineCopSelect}}, 
+#'  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+#'  \code{\link{gamBiCopSelect}}.
 gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                                    simplified = TRUE, type = 0, familyset = NA, 
                                    rotations = TRUE, familycrit = "AIC", 
-                                   treecrit = "Kendall", pacotestOptions = "ERC",
-                                   indeptest = TRUE, level = 0.05,
+                                   treecrit = "tau", level = 0.05, 
                                    trunclevel = NA, tau = TRUE, method = "FS",
-                                   tol.rel = 0.001, n.iters = 10, #max.knots = 5,
+                                   tol.rel = 0.001, n.iters = 10,
                                    parallel = FALSE, verbose = FALSE) {
   
   tmp <- valid.gamVineStructureSelect(udata, lin.covs, smooth.covs, simplified, 
                                       type, familyset, rotations, familycrit,
-                                      treecrit, pacotestOptions,
-                                      indeptest, level, trunclevel,
+                                      treecrit, level, trunclevel,
                                       tau, method, tol.rel, n.iters,
                                       parallel, verbose)
   if (tmp != TRUE) {
@@ -174,12 +162,11 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   #browser()
   if (is.null(colnames(udata)))
     colnames(udata) <- paste0("V", 1:ncol(udata))
-  graph <- initFirstGraph(udata)
+  graph <- initFirstGraph(udata, treecrit)
   mst <- findMST(graph, type)
   tree <- fitFirstTree(mst, udata,  lin.covs, smooth.covs, l, covariates,
-                       familyset, familycrit,  treecrit, pacotestOptions, 
-                       indeptest, level, tau, method, tol.rel, n.iters, #max.knots,
-                       parallel,  verbose)
+                       familyset, familycrit,  treecrit, level,
+                       tau, method, tol.rel, n.iters, parallel,  verbose)
   out$Tree[[1]] <- tree
   out$Graph[[1]] <- graph
 
@@ -189,11 +176,10 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
       familyset <- 0
     }
     graph <- buildNextGraph(tree, udata, l, lin.covs, smooth.covs,
-                            simplified, treecrit, pacotestOptions)
+                            simplified, treecrit)
     mst <- findMST(graph, type)
     tree <- fitTree(mst, tree, udata, l, lin.covs, smooth.covs, simplified,
-                    familyset, familycrit,
-                    treecrit, pacotestOptions, indeptest, level,
+                    familyset, familycrit, treecrit, level,
                     tau, method, tol.rel, n.iters, parallel, verbose)
     
     out$Tree[[i]] <- tree
@@ -203,9 +189,17 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   return(as.GVC(out,covariates))
 }
 
-initFirstGraph <- function(data) {
+initFirstGraph <- function(data, treecrit) {
   
-  C <- TauMatrix(data)#cor(data,method="kendall")
+  if (treecrit == "tau")
+  {
+    C <- TauMatrix(data)
+  }
+  if (treecrit == "rho")
+  {
+    C <- cor(data, method = "spearman")
+  }
+  
   rownames(C) <- colnames(C) <- colnames(data)
   
   g <- graph.adjacency(C, mode="lower", weighted=TRUE, diag=FALSE)
@@ -233,7 +227,7 @@ findMST <- function(g, mode = "RVine") {
 }
 
 fitFirstTree <- function(mst, udata, lin.covs, smooth.covs, l, covariates, 
-                         familyset, familycrit, treecrit, pacotestOptions, indeptest, level, 
+                         familyset, familycrit, treecrit, level, 
                          tau, method, tol.rel, n.iters, parallel, verbose) {
   
   d <- ecount(mst)
@@ -243,8 +237,6 @@ fitFirstTree <- function(mst, udata, lin.covs, smooth.covs, l, covariates,
   for(i in 1:d) {
     
     a <- ends(mst,i,FALSE)
-    #     E(mst)[i]$Data1 <-  list(data[,a[1]])
-    #     E(mst)[i]$Data2 <-  list(data[,a[2]])
     
     if (is.null(V(mst)[a[1]]$name)) {
       E(mst)[i]$CondName1 <- a[1]
@@ -279,11 +271,10 @@ fitFirstTree <- function(mst, udata, lin.covs, smooth.covs, l, covariates,
   
   if (l == 0) {
     outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
-                            familyset, familycrit, indeptest, level)
+                            familyset, familycrit, level)
   } else {
     outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
-                            familyset, familycrit, 
-                            treecrit, pacotestOptions, indeptest, level, 
+                            familyset, familycrit, level,
                             tau, method, tol.rel, n.iters, parallel)
   }
   for(i in 1:d) {
@@ -296,8 +287,7 @@ fitFirstTree <- function(mst, udata, lin.covs, smooth.covs, l, covariates,
 }
 
 fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
-                    simplified, familyset, familycrit, 
-                    treecrit, pacotestOptions, indeptest, level, 
+                    simplified, familyset, familycrit, treecrit, level,
                     tau, method, tol.rel, n.iters, parallel, verbose) {
   
   d <- ecount(mst)
@@ -349,10 +339,7 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
     }
     
     if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
-    
-    #     E(mst)[i]$Data1 <-  list(zr1a)
-    #     E(mst)[i]$Data2 <-  list(zr2a)
-    
+
     E(mst)[i]$CondName2 <- n1a
     E(mst)[i]$CondName1 <- n2a
     
@@ -378,13 +365,8 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
     }
   }
 
-  #if (d < 5) {
-  #   browser()
-  #}
-
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
-                          familyset, familycrit, 
-                          treecrit, pacotestOptions, indeptest, level, 
+                          familyset, familycrit, level,
                           tau, method, tol.rel, n.iters, parallel)
 
   for (i in 1:d) {
@@ -397,7 +379,7 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
 }	
 
 buildNextGraph <- function(graph, udata,  l, lin.covs, smooth.covs, simplified, 
-                           treecrit, pacotestOptions) {
+                           treecrit) {
   
   EL <- get.edgelist(graph)
   d <- ecount(graph)
@@ -496,20 +478,10 @@ buildNextGraph <- function(graph, udata,  l, lin.covs, smooth.covs, simplified,
       suppressWarnings({E(g)$conditionedSet[i] <- list(out$difference)})
       suppressWarnings({E(g)$conditioningSet[i]  <- list(out$intersection)})
       
-      if (treecrit == "Kendall") {
+      if (treecrit == "tau") {
         E(g)[i]$weight <- 1-abs(fasttau(zr1a[noNAs], zr2a[noNAs]))
-      } else if (treecrit == "pacotest") {
-        if (simplified) {
-          tmp <- do.call(cbind, list(lin.covs, smooth.covs))[noNAs, ]
-        } else {
-          tmp <- udata[noNAs, out$intersection]
-          if (l != 0) {
-            tmp <- cbind(tmp,  do.call(cbind, list(lin.covs, smooth.covs))[noNAs, ])
-          }
-        }
-        E(g)[i]$weight <- pacotest(cbind(as.numeric(zr1a[noNAs]), 
-                                         as.numeric(zr2a[noNAs])), 
-                                   tmp, pacotestOptions)$pValue
+      } else if (treecrit == "rho") {
+        E(g)[i]$weight <- 1-abs(cor(zr1a[noNAs], zr2a[noNAs], method = "spearman"))
       }
     }
     
@@ -561,7 +533,7 @@ intersectDifference <- function(liste1, liste2) {
 }
 
 fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC", 
-                       indeptest=FALSE,level=0.05,rotation=TRUE) {
+                       level = 0.05, rotation = TRUE) {
   
   ## transform the familyset to codes for the VineCopula package
   fams <- famTrans(familyset, inv = FALSE, set = TRUE)
@@ -570,8 +542,8 @@ fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC",
   out <- BiCopSelect(u1, u2,
                      fams,
                      familycrit,
-                     indeptest,
-                     level,
+                     indeptest = TRUE,
+                     level = level,
                      rotations = FALSE)
   fam <- famTrans(out$family, inv = TRUE, 
                   par = cor(u1,u2), familyset = familyset)
@@ -594,10 +566,8 @@ fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC",
   return(out)
 }
 
-fitAGAMCopula <- function(data, familyset, familycrit, 
-                          treecrit, pacotestOptions, indeptest, level, 
-                          tau, method, tol.rel, n.iters, parallel, 
-                          rotation = TRUE) {
+fitAGAMCopula <- function(data, familyset, familycrit, level, tau, 
+                          method, tol.rel, n.iters, parallel, rotation = TRUE) {
   out <- list()
   u1 <- data[[1]][,1]
   u2 <- data[[1]][,2]
@@ -606,23 +576,7 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   smooth.covs <- data[[3]]
   data <- do.call(cbind, data[!(sapply(data, is.null))])
 
-  ## perform independence test (if asked for)
-  if (indeptest == TRUE && familyset != 0) {
-    if (treecrit == "pacotest") {
-      p1 <- pacotest(data[,1:2], data[,-c(1,2)], pacotestOptions)$pValue
-    } else {
-      p1 <- 0
-    }
-    if (p1 >= level) {
-      p2 <- BiCopIndTest(u1, u2)$p.value
-    } else {
-      p2 <- NA
-    }
-    out$pValue <- c(p1, p2)
-  } else {
-    out$pValue <- rep(NA, 2)
-  }  
-  if (familyset == 0 || (!any(is.na(out$pValue)) && out$pValue[2] >= level)) {
+  if (length(familyset) == 1 && familyset == 0) {
     ## independence copula
     
     out$model <- list(family = 0, par = 0, par2 = 0)    
@@ -633,41 +587,28 @@ fitAGAMCopula <- function(data, familyset, familycrit,
     ## transform the familyset to codes for the VineCopula package
     fams <- famTrans(familyset, inv = FALSE, set = TRUE)
     
-    if (!any(is.na(out$pValue)) && out$pValue[2] < level) {
-      ## unconditional copula
-      
-      ## select family and estimate parameter(s) for the pair copula
-      tmp <- BiCopSelect(u1, u2, fams, familycrit,
-                         indeptest = FALSE, rotations = FALSE)
+    ## conditional copula
+    tmp <- gamBiCopSelect(udata, lin.covs, smooth.covs,
+                       familyset, FALSE, familycrit, level, 1.5, tau,
+                       method, tol.rel, n.iters, parallel)
+    if (!is.character(tmp)) {
+      nvar <- unique(all.vars(tmp$res@model$pred.formula))
+    }
+    
+    if (!is.character(tmp) && length(nvar) > 0) {
+      out$model <- tmp$res
+      par <- gamBiCopPredict(out$model, target = "par")$par
+      fam <- out$model@family
+      par2 <- out$model@par2
+    } else {
+      tmp <- BiCopSelect(u1, u2, fams, familycrit = familycrit,
+                         indeptest = TRUE, level = level, rotations = FALSE)
       par <- rep(tmp$par, length(u1))
       out$model$par <- tmp$par
       out$model$family <- fam <- tmp$family
       out$model$par2 <- par2 <- tmp$par2
-    } else {
-      ## conditional copula
-      tmp <- gamBiCopSel(udata, lin.covs, smooth.covs,
-                         familyset, FALSE, familycrit, level, 1.5, tau,
-                         method, tol.rel, n.iters, parallel)
-      if (!is.character(tmp)) {
-        nvar <- unique(all.vars(tmp$res@model$pred.formula))
-      }
-      
-      if (!is.character(tmp) && length(nvar) > 0) {
-        out$model <- tmp$res
-        par <- gamBiCopPred(out$model, target = "par")$par
-        fam <- out$model@family
-        par2 <- out$model@par2
-      } else {
-        tmp <- BiCopSelect(u1, u2, fams, familycrit,
-                           indeptest = FALSE, rotations = FALSE)
-        par <- rep(tmp$par, length(u1))
-        out$model$par <- tmp$par
-        out$model$family <- fam <- tmp$family
-        out$model$par2 <- par2 <- tmp$par2
-      }
     }
-    fam <- famTrans(fam, inv = TRUE, 
-                    par = cor(u1,u2), familyset = familyset)
+    fam <- famTrans(fam, inv = TRUE, par = cor(u1,u2), familyset = familyset)
     if (rotation == TRUE) {
       if (fam %in% c(301,303,401,403)) {
         fam <- fam+1
@@ -683,9 +624,8 @@ fitAGAMCopula <- function(data, familyset, familycrit,
   }
   
   ## store pseudo-observations for estimation in next tree
-  fams <- vapply(1:length(par),
-                 function(j) famTrans(fam, inv = FALSE, par = par[j]),
-                 numeric(1))
+  fams <- vapply(1:length(par), function(j) 
+    famTrans(fam, inv = FALSE, par = par[j]), numeric(1))
   out$CondOn1 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc2
   out$CondOn2 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc1
   
@@ -772,15 +712,14 @@ as.GVC <- function(GVC, covariates){
 valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs, 
                                          simplified, type,
                                          familyset, rotations, familycrit, 
-                                         treecrit, pacotestOptions, 
-                                         indeptest, level, trunclevel, 
+                                         treecrit, level, trunclevel, 
                                          tau, method, tol.rel, n.iters, 
                                          parallel, verbose) {  
   
   if (!is.matrix(data) && !is.data.frame(data)) {
     return("data has to be either a matrix or a data frame")
   } 
-  tmp <- valid.gamBiCopSel(data[,1:2], lin.covs, smooth.covs, rotations, 
+  tmp <- valid.gamBiCopSelect(data[,1:2], lin.covs, smooth.covs, rotations, 
                            familyset, familycrit, level, 2, tau,
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
@@ -811,7 +750,7 @@ valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs,
     return("Vine model not implemented.")
   }
   
-  if(length(treecrit) != 1 || (treecrit != "Kendall" && treecrit != "pacotest")) {
+  if(length(treecrit) != 1 || (treecrit != "tau" && treecrit != "rho")) {
     return("Selection criterion for the pair selection not implemented.")
   } 
   

@@ -55,20 +55,20 @@
 #' d <- 5
 #' U <- matrix(runif(n*d), nrow = n)
 #' 
-#' ## The output of gamVineSim correspond to that of RVineSim
+#' ## The output of gamVineSimulate correspond to that of RVineSim
 #' sampleRVM <- RVineSim(n, RVM,U)
-#' sampleGVC <- gamVineSim(n, GVC,U)
+#' sampleGVC <- gamVineSimulate(n, GVC,U)
 #' all.equal(sampleRVM, sampleGVC)
 #' 
 #' ## Fit the two models and compare the estimated parameter
 #' fitRVM <- RVM2GVC(RVineSeqEst(sampleRVM,RVM))
-#' fitGVC <- gamVineSeqEst(sampleGVC,GVC)
+#' fitGVC <- gamVineSeqFit(sampleGVC,GVC)
 #' all.equal(simplify2array(attr(fitRVM, "model")),
 #' simplify2array(attr(fitGVC, "model")))
 #' @export
-gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
+gamVineSimulate <- function(n, GVC, U = NULL, newdata = NULL) {
   
-  tmp <- valid.gamVineSim(n, GVC, U, newdata)
+  tmp <- valid.gamVineSimulate(n, GVC, U, newdata)
   if (tmp != TRUE) {
     stop(tmp)
   }
@@ -149,7 +149,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
             names(data)[(nvars+1):dim(data)[2]] <- names(newdata)
           }
         }
-        par <- gamBiCopPred(model, data, target = "par")$par
+        par <- gamBiCopPredict(model, data, target = "par")$par
         par2 <- model@par2
         #pp <- par
       } else {
@@ -189,7 +189,7 @@ gamVineSim <- function(n, GVC, U = NULL, newdata = NULL) {
   return(out)
 } 
 
-valid.gamVineSim <- function(n, GVC, U, newdata) {
+valid.gamVineSimulate <- function(n, GVC, U, newdata) {
   
   tmp <- valid.gamVine(GVC)
   if (tmp != "TRUE") {

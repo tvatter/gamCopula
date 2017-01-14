@@ -53,7 +53,7 @@
 #' As the code is based on mclapply, this parameter has no effect on windows.
 #' @param verbose \code{TRUE} prints informations during the estimation.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
-#' @return \code{gamBiCopEst} returns a list consisting of 
+#' @return \code{gamBiCopFit} returns a list consisting of 
 #' \item{res}{S4 \code{\link{gamBiCop-class}} object.} 
 #' \item{method}{\code{'FS'} for Fisher-scoring and 
 #' \code{'NR'} for Newton-Raphson.} 
@@ -62,7 +62,7 @@
 #' \code{'FS'}/\code{'NR'} algorithm.} 
 #' \item{trace}{the estimation procedure's trace.} 
 #' \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
-#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopEst}}. 
+#' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}. 
 #' @examples
 #' require(copula)
 #' set.seed(0)
@@ -105,30 +105,22 @@
 #' 
 #' ## Selection using AIC (take about 5mn on single core) 
 #' ## Use parallel = TRUE to speed-up....
-#' system.time(best <- gamBiCopSel(U$data, smooth.covs = X))
+#' system.time(best <- gamBiCopSelect(U$data, smooth.covs = X))
 #' print(best$res)
 #' EDF(best$res)
 #' plot(best$res)
 #' @export
-gamBiCopSel <- function(udata, lin.covs = NULL, smooth.covs = NULL,  
+gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,  
                         familyset = NA, rotations = TRUE, 
                         familycrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
                         method = "FS", tol.rel = 1e-3, n.iters = 10, #max.knots = 5,
                         parallel = FALSE, verbose = FALSE, ...) {
   
-  tmp <- valid.gamBiCopSel(udata, lin.covs, smooth.covs, rotations, familyset, 
+  tmp <- valid.gamBiCopSelect(udata, lin.covs, smooth.covs, rotations, familyset, 
                            familycrit, level, edf, tau,
                            method, tol.rel, n.iters, parallel, verbose)
   if (tmp != TRUE)
     stop(tmp)
-  
-  # if (is.list(data)){
-  #   if(!is.null(data$xt)){
-  #     xt <- data$xt
-  #     data <- data[-which(names(data) == "xt")]
-  #   }
-  #   data <- as.data.frame(data)
-  # }
   
   if (length(familyset) == 1 && is.na(familyset)) {
     familyset <- get.familyset()
@@ -199,7 +191,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     cat(paste("Model selection for family", family, "\n"))
   }
   
-  myGamBiCopEst <- function(formula) gamBiCopEst(data, formula, family, tau, 
+  myGamBiCopEst <- function(formula) gamBiCopFit(data, formula, family, tau, 
                                                  method, tol.rel, n.iters)
   
   n <- nrow(data)
@@ -293,40 +285,15 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   }
   
   ## Increasing the basis size appropriately
-  
-  # tmp2 <- get.pval(tmp$res@model)
-  # sel <- tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
-  #sel <- summary(tmp$res@model)$edf > (basis-1)/2
   sel <- summary(tmp$res@model)$edf > (basis-1)*0.8
   if (verbose == TRUE && any(sel)) {
     cat(paste("Select the basis sizes .......\n"))
   }
-  #kk <- round(exp(seq(log(8), log(n/30),length.out=20)))
-  #kcount <- 1
-  #while (any(sel) && kcount < 20) {
 
   while (any(sel) && all(basis < n/30)) {
     
     ## Increase basis sizes
-    #basis[sel] <- kk[kcount]
-    #kcount <- kcount + 1
-    #basis[sel] <- round(basis[sel]*1.5)
-    #print(c(summary(tmp$res@model)$edf, basis))
     basis[sel] <- 2*basis[sel]
-    
-    #     ## Extract and fit model to residuals for each smooth components
-    #     data$y <- residuals(tmp$res@model)
-    #     data$w <- tmp$res@model$weights
-    #     residuals.expr <- mapply(function(x,y) 
-    #       get.smooth(x,y,bs="cs"), nn[sel], basis[sel])
-    #     residuals.formula <- sapply(residuals.expr,function(expr) 
-    #       get.formula(expr,TRUE))
-    #     residuals.fit <- lapply(residuals.formula, function(f) 
-    #       gam(f, data = data, gamma = 1.4, weights = w)) 
-    # 
-    #     ## Suspect residuals
-    #     residuals.edf <- sapply(residuals.fit,function(x) sum(x$edf)-1) 
-    #     sel[sel] <- residuals.edf > (basis[sel]-1)/2
     
     ## Update the smooth terms, formula and fit the new model
     if (any(sel)) {
@@ -337,10 +304,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
         print(formula.tmp)
       }      
       tmp <- myGamBiCopEst(formula.tmp)
-      #sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)/2
       sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)*0.8
-      # tmp2 <- get.pval(tmp$res@model)
-      # sel <- sel & tmp2[,4] < level & tmp2[,1]-tmp2[,2] < 2 
     }
     
     ## Check that the basis size is smaller than 1/2 the size of 
@@ -372,7 +336,7 @@ get.linear <- function(x,nn){
   names(unlist(sapply(nn,function(z)grep(z,x))))
 }
 
-valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations, 
+valid.gamBiCopSelect <- function(udata, lin.covs, smooth.covs, rotations, 
                               familyset, familycrit, level, edf, 
                               tau, method, tol.rel, n.iters, parallel, 
                               verbose) {
@@ -382,7 +346,7 @@ valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations,
     return(udata)
   }
 
-  tmp <- valid.gamBiCopEst(udata, n.iters, tau, tol.rel, method, verbose, 1)
+  tmp <- valid.gamBiCopFit(udata, n.iters, tau, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
     return(tmp)
   }
@@ -434,125 +398,4 @@ valid.gamBiCopSel <- function(udata, lin.covs, smooth.covs, rotations,
   }
   
   return(TRUE)
-}
-
-## Internal code borrowed from mgcv
-get.pval <- function (b, subsample = 5e3, n.rep = 1e3) 
-{
-  m <- length(b$smooth)
-  if (m == 0) 
-    return(NULL)
-  rsd <- residuals(b)
-  ve <- rep(0, n.rep)
-  p.val <- v.obs <- kc <- edf <- rep(0, m)
-  snames <- rep("", m)
-  n <- nrow(b$model)
-  if (n > subsample) {
-    ind <- sample(1:n, subsample)
-    modf <- b$model[ind, ]
-    rsd <- rsd[ind]
-  }
-  else modf <- b$model
-  nr <- length(rsd)
-  for (k in 1:m) {
-    ok <- TRUE
-    b$smooth[[k]]$by <- "NA"
-    dat <- ExtractData(b$smooth[[k]], modf, NULL)$data
-    if (!is.null(attr(dat, "index")) || 
-        !is.null(attr(dat[[1]], "matrix")) || is.matrix(dat[[1]])) 
-      ok <- FALSE
-    if (ok) 
-      dat <- as.data.frame(dat)
-    snames[k] <- b$smooth[[k]]$label
-    ind <- b$smooth[[k]]$first.para:b$smooth[[k]]$last.para
-    kc[k] <- length(ind)
-    edf[k] <- sum(b$edf[ind])
-    nc <- b$smooth[[k]]$dim
-    if (ok && ncol(dat) > nc) 
-      dat <- dat[, 1:nc, drop = FALSE]
-    for (j in 1:nc) if (is.factor(dat[[j]])) 
-      ok <- FALSE
-    if (!ok) {
-      p.val[k] <- v.obs[k] <- NA
-    }
-    else {
-      if (nc == 1) {
-        e <- diff(rsd[order(dat[, 1])])
-        v.obs[k] <- mean(e^2)/2
-        for (i in 1:n.rep) {
-          e <- diff(rsd[sample(1:nr, nr)])
-          ve[i] <- mean(e^2)/2
-        }
-        p.val[k] <- mean(ve < v.obs[k])
-        v.obs[k] <- v.obs[k]/mean(rsd^2)
-      }
-      else {
-        if (!is.null(b$smooth[[k]]$margin)) {
-          beta <- coef(b)[ind]
-          f0 <- PredictMat(b$smooth[[k]], dat) %*% beta
-          gr.f <- rep(0, ncol(dat))
-          for (i in 1:nc) {
-            datp <- dat
-            dx <- diff(range(dat[, i]))/1000
-            datp[, i] <- datp[, i] + dx
-            fp <- PredictMat(b$smooth[[k]], datp) %*% 
-              beta
-            gr.f[i] <- mean(abs(fp - f0))/dx
-          }
-          for (i in 1:nc) {
-            dat[, i] <- dat[, i] - min(dat[, i])
-            dat[, i] <- gr.f[i] * dat[, i]/max(dat[, 
-                                                   i])
-          }
-        }
-        nn <- 3
-        ni <- nearest(nn, as.matrix(dat))$ni
-        e <- rsd - rsd[ni[, 1]]
-        for (j in 2:nn) e <- c(e, rsd - rsd[ni[, j]])
-        v.obs[k] <- mean(e^2)/2
-        for (i in 1:n.rep) {
-          rsdr <- rsd[sample(1:nr, nr)]
-          e <- rsdr - rsdr[ni[, 1]]
-          for (j in 2:nn) e <- c(e, rsdr - rsdr[ni[, 
-                                                   j]])
-          ve[i] <- mean(e^2)/2
-        }
-        p.val[k] <- mean(ve < v.obs[k])
-        v.obs[k] <- v.obs[k]/mean(rsd^2)
-      }
-    }
-  }
-  k.table <- cbind(kc, edf, v.obs, p.val)
-  dimnames(k.table) <- list(snames, c("k'", "edf", "k-index", 
-                                      "p-value"))
-  k.table
-}
-## Internal code borrowed from mgcv
-ExtractData <- function (object, data, knots) {
-  knt <- dat <- list()
-  for (i in 1:length(object$term)) {
-    dat[[object$term[i]]] <- get.var(object$term[i], data)
-    knt[[object$term[i]]] <- get.var(object$term[i], knots)
-  }
-  names(dat) <- object$term
-  m <- length(object$term)
-  if (!is.null(attr(dat[[1]], "matrix"))) {
-    n <- length(dat[[1]])
-    X <- matrix(unlist(dat), n, m)
-    if (is.numeric(X)) {
-      X <- uniquecombs(X)
-      if (nrow(X) < n * 0.9) {
-        for (i in 1:m) dat[[i]] <- X[, i]
-        attr(dat, "index") <- attr(X, "index")
-      }
-    }
-  }
-  if (object$by != "NA") {
-    by <- get.var(object$by, data)
-    if (!is.null(by)) {
-      dat[[m + 1]] <- by
-      names(dat)[m + 1] <- object$by
-    }
-  }
-  return(list(data = dat, knots = knt))
 }

@@ -6,10 +6,9 @@
 \usage{
 gamVineStructureSelect(udata, lin.covs = NULL, smooth.covs = NULL,
   simplified = TRUE, type = 0, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "Kendall", pacotestOptions = "ERC",
-  indeptest = TRUE, level = 0.05, trunclevel = NA, tau = TRUE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
-  verbose = FALSE)
+  familycrit = "AIC", treecrit = "tau", level = 0.05, trunclevel = NA,
+  tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
+  parallel = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the data in [0,1]^d.}
@@ -54,25 +53,13 @@ selection. Possible choices: \code{familycrit = 'AIC'} (default) or
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{treecrit}{Character indicating how pairs are selected in each tree.
-\code{treecrit = "Kendall"} uses the maxmium spanning tree of the Kendall's tau 
-(i.e., the tree of maximal overall dependence), and 
-\code{treecrit = "pacotest"} builds the minimum spanning tree of p-values of a
-test of the simplifying assumption (i.e., the tree of maximal variability 
-in conditional dependence).}
+\code{treecrit = "tau"} uses the maxmium spanning tree of the Kendall's tau 
+(i.e., the tree of maximal overall dependence), \code{treecrit = "rho"} 
+uses the Spearman's rho.}
 
-\item{pacotestOptions}{TODO;TODO;TODO;TODO;TODO;TODO;TODO!!!}
-
-\item{indeptest}{Logical; whether a hypothesis test for the simplifying 
-assumption and the independence of 
-\code{u1} and \code{u2} is performed before bivariate copula selection 
-(default: \code{indeptest = TRUE}; see \code{\link{BiCopIndTest}} and
-\code{\link{pacotest}}). 
-The independence copula is chosen for a (conditional) pair if both the 
-simplifying assumption and the null 
-hypothesis of independence cannot be rejected.}
-
-\item{level}{Numerical; significance level of the test (default: 
-\code{level = 0.05}).}
+\item{level}{Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
+significance level of the test for removing individual
+predictors (default: \code{level = 0.05}) for each conditional pair-copula.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
@@ -97,7 +84,7 @@ estimation and \code{FALSE} (default) for a silent version.
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
-\code{gamVineSeqEst} returns a \code{\link{gamVine-class}} object.
+\code{gamVineSeqFit} returns a \code{\link{gamVine-class}} object.
 }
 \description{
 This function select the structure and estimates the parameter(s) of a 
@@ -144,7 +131,7 @@ for (i in 1:(d-1)) {
 tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 
 # Set-up an arbitrary linear model for the calibration function
-model[[count]] <- gamBiCopEst(tmp, ~ x1, fam[count])$res
+model[[count]] <- gamBiCopFit(tmp, ~ x1, fam[count])$res
 
 # Update the coefficients of the model
 attr(model[[count]],"model")$coefficients <- c(-5, 10)
@@ -155,19 +142,19 @@ GVC
 
 # Simulate new data
 N <- 1e3
-simData <- data.frame(gamVineSim(N, GVC))
+simData <- data.frame(gamVineSimulate(N, GVC))
 colnames(simData) <- nnames
 
 # Fit data using sequential estimation assuming true model known
-summary(fitGVC <- gamVineSeqEst(simData, GVC))
+summary(fitGVC <- gamVineSeqFit(simData, GVC))
 
 # Fit data using structure selection and sequential estimation
 summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))
 
 }
 \seealso{
-\code{\link{gamVineSeqEst}},\code{\link{gamVineCopSelect}}, 
- \code{\link{gamVine-class}}, \code{\link{gamVineSim}} and 
- \code{\link{gamBiCopEst}}.
+\code{\link{gamVineSeqFit}},\code{\link{gamVineCopSelect}}, 
+ \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+ \code{\link{gamBiCopSelect}}.
 }
 

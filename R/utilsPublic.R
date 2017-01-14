@@ -193,7 +193,7 @@ BiCopPar2Eta <- function(family, par) {
 #' }
 #' If \code{return.par = FALSE}, then the function simply returns \code{data}, 
 #' a matrix with two columns containing the simulated data.
-#' @seealso \code{\link{gamBiCopEst}} and \code{\link{gamBiCopSim}}.
+#' @seealso \code{\link{gamBiCopFit}} and \code{\link{gamBiCopSimulate}}.
 #' @examples
 #' require(copula)
 #' set.seed(0)
