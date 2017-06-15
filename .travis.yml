@@ -11,14 +11,15 @@ matrix:
 repos:
   CRAN: http://cran.rstudio.com
 
+apt_packages:
+  - libgsl0-dbg
+  - libgsl0-dev
+  - libgsl0ldbl
+  - libcurl4-openssl-dev
+  - libxml2-dev
+
 before_install:
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo sh -c 'echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
-
-  ### LINUX
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install gsl-bin libgsl0-dbg libgsl0-dev libgsl0ldbl libcurl4-openssl-dev libxml2-dev; fi
-
-  ### OSX
+  - if [ $TRAVIS_OS_NAME == linux ]; sudo add-apt-repository ppa:marutter/c2d4u -y; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; sudo apt-get update -q; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew tap homebrew/science && brew install gsl curl libxml2; fi
 
