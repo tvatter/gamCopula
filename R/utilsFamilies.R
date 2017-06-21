@@ -264,8 +264,9 @@ dpardtau <- function(x, family) {
 
 ## TODO: change to vectorized versions
 # Copula density and its first/second derivatives with respect to the parameter
-bicoppd1d2 <- function(x, family, p = TRUE, d1 = FALSE, 
+bicoppd1d2 <- function(x, family, causal = FALSE, p = TRUE, d1 = FALSE, 
                         d2 = FALSE, h = FALSE, hinv = FALSE, cdf = FALSE) {
+
   if (dim(x)[2] != 4) {
     x <- cbind(x,0)
   }
@@ -507,4 +508,70 @@ bicopname <- function(family) {
     nn <- BiCopName(family, short = FALSE)
   }
   return(nn)
+}
+
+# # An example with Clayton copula
+# theta <- seq(1+1e-1,10,1e-1)
+# u1 <- rep(0.25, length(theta))
+# u2 <- rep(0.75, length(theta))
+# par(mfrow=c(2,2))
+# plot(theta, BiCopHfunc2(u1,u2,3,theta,0), main = "Hfunc", type = "l", ylab = "")
+# plot(theta, BiCopHfuncDeriv(u1,u2,3,theta,0), main = "HfuncDeriv", type = "l", ylab = "")
+# plot(theta, BiCopHfuncDeriv2(u1,u2,3,theta,0), main = "HfuncDeriv2", type = "l", ylab = "")
+# plot(theta, gamCopula:::BiCopHfuncDeriv3(u1,u2,3,theta,0), main = "HfuncDeriv3", type = "l", ylab = "")
+BiCopHfuncDeriv3 <- function(u1, u2, family, par, par2 = 0, 
+                             deriv = "par", 
+                             obj = NULL, check.pars = TRUE) {
+  ## preprocessing of arguments
+  args <- VineCopula:::preproc(c(as.list(environment()), 
+                                 call = match.call()),
+                               VineCopula:::check_u,
+                               VineCopula:::fix_nas,
+                               VineCopula:::check_if_01,
+                               VineCopula:::extract_from_BiCop,
+                               VineCopula:::match_spec_lengths,
+                               VineCopula:::check_fam_par)
+  list2env(args, environment())
+  
+  ## check if specification is admissible for this function
+  if (!all(family %in% c(0, 1, 2, 3, 4, 5, 6, 13, 14, 16, 23, 24, 26, 33, 34, 36)))
+    stop("Copula family not implemented.")
+  if ((deriv == "par2") && any(family != 2))
+    stop("The derivative with respect to the second parameter can only be derived for the t-copula.")
+  
+  n <- args$n
+  if (length(par) == 1) {
+    # call for single parameters
+    if (deriv == "par") {
+      func <- function(x,i) BiCopHfuncDeriv2(u1[i], u2[i], family, x, 
+                                           par2, deriv, obj, FALSE)
+      x <- par
+    } else if (deriv == "par2") {
+      func <- function(x,i) BiCopHfuncDeriv2(u1[i], u2[i], family, par, 
+                                           x, deriv, obj, FALSE)
+      x <- par2
+    } else {
+      stop("This kind of derivative is not implemented")
+    }
+    out <- sapply(seq_along(u1), function(i) grad(function(y) func(y, i), x))
+  } else {
+    # vectorized calls
+    if (deriv == "par") {
+      func <- function(x,i) BiCopHfuncDeriv2(u1[i], u2[i], family[i], x, 
+                                             par2[i], deriv, obj, FALSE)
+      x <- par
+    } else if (deriv == "par2") {
+      func <- function(x,i) BiCopHfuncDeriv2(u1[i], u2[i], family[i], par[i], 
+                                             x, deriv, obj, FALSE)
+      x <- par2
+    } else {
+      stop("This kind of derivative is not implemented")
+    }
+    out <- sapply(seq_along(u1), function(i) grad(function(y) func(y, i), x[i]))
+  }
+  
+  # reset NAs
+  out <- VineCopula:::reset_nas(out, args)
+  # return results
+  out
 }

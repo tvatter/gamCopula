@@ -32,6 +32,8 @@
 #' @param tol.rel Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.
 #' @param n.iters Maximal number of iterations for 
 #' \code{'FS'}/\code{'NR'} algorithm.
+#' @param causal \code{TRUE} to let the copula parameter depend on the
+#' first response and \code{FALSE} (default) for the standard version.
 #' @param verbose \code{TRUE} if informations should be printed during the 
 #' estimation and \code{FALSE} (default) for a silent version.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
@@ -168,9 +170,10 @@
 #' @export
 gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE, 
                         method = "FS", tol.rel = 0.001, n.iters = 10, 
-                        verbose = FALSE, ...) {
+                        causal = FALSE, verbose = FALSE, ...) {
   
-  tmp <- valid.gamBiCopFit(data, n.iters, tau, tol.rel, method, verbose, family)
+  tmp <- valid.gamBiCopFit(data, n.iters, tau, tol.rel, method, 
+                           verbose, family, causal)
   if (tmp != TRUE)
     stop(tmp)
   
@@ -256,31 +259,10 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
     msg <- paste("A problem occured at the first iteration of the ", 
                  method, "algorithm:\n")
     msg <- c(msg, paste(err))
-#     msg <- c(msg, paste("...... switching to", 
-#                         switch(method, NR = "FS", FS = "NR"), "instead!\n"))
     message(msg)
     return(NULL)
   })
   
-  
-#   if (is.null(res)) {
-#     method <- switch(method, NR = "FS", FS = "NR")
-#     n.iters <- 2*n.iters
-#     res <- tryCatch({
-#       tmp <- derivatives.par(u, new.pars, family, method, tau)
-#       tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
-#       tmp <- cbind(tmp, data)
-#       mm <- gam(par.formula, data = tmp, weights = w, 
-#                 control = gam.control(keepData = TRUE), ...)
-#     }, error = function(err) {
-#       msg <- paste("A problem occured at the first iteration of the ", 
-#                    method, "algorithm:\n")
-#       msg <- c(msg, paste(err))
-#       msg <- c(msg, paste("...... The results should not be trusted!\n"))
-#       message(msg)
-#       return(NULL)
-#     })
-#   }
   if (verbose == 1) {
     print(Sys.time() - t)
   }
@@ -308,7 +290,7 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
         nu[sel] <- log(30)
       }
       nu <- link(nu)
-      nll <- function(nu) -sum(log(bicoppd1d2(cbind(u[,1:3],nu),2)))
+      nll <- function(nu) -sum(log(bicoppd1d2(cbind(u[,1:3],nu),2,causal)))
       return(sapply(nu, nll))
     }
     nu <- optimize(nllvec, c(log(2), log(30)), u)
@@ -344,7 +326,7 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
     }
     
     res <- tryCatch({
-      tmp <- derivatives.par(u, new.pars, family, method, tau)
+      tmp <- derivatives.par(u, new.pars, family, method, tau, causal)
       tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
       tmp <- cbind(tmp, data)
       mm <- gam(par.formula, data = tmp, weights = w, 
@@ -353,33 +335,9 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
       msg <- paste("A problem occured at iteration", k, "of the ", 
                    method, "algorithm:\n")
       msg <- c(msg, paste(err))
-#       msg <- c(msg, paste("...... switching to", 
-#                           switch(method, NR = "FS", FS = "NR"), "instead!\n"))
       message(msg)
       return(NULL)
     })
-
-#     if (is.null(res)) {
-#       method <- switch(method, NR = "FS", FS = "NR")
-#       n.iters <- 2*n.iters
-#       res <- tryCatch({
-#         tmp <- derivatives.par(u, new.pars, family, method, tau)
-#         tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
-#         tmp <- cbind(tmp, data)
-#         print("before gam")
-#         mm <- gam(par.formula, data = tmp, weights = w, 
-#                   control = gam.control(keepData = TRUE, trace = TRUE), ...)
-#         print("after gam")
-#       }, error = function(err) {
-#         msg <- paste("A problem also occured at iteration", k, "of the ", 
-#                      method, "algorithm:\n")
-#         msg <- c(msg, paste(err))
-#         msg <- c(msg, paste("...... The results should not be trusted!\n"))
-#         message(msg)
-#         return(NULL)
-#       })
-#     }
-
     
     if (is.null(res)) {
       conv <- 1
@@ -446,7 +404,7 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
 } 
 
 valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose, 
-                              family) {
+                              family, causal) {
   if (!(is.list(data) || is.data.frame(data) || is.matrix(data))) {
     return("data has to be either a list, a data frame or a matrix.")
   } 
@@ -510,15 +468,17 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
     return(msg.family(var2char(family)))
   }  
   
-  #   if (tmp > 0) {
-  #     if (!valid.familypos(family, tmp)) {
-  #       return(msg.familypos(var2char(family)))
-  #     }
-  #   } else {
-  #     if (!valid.familyneg(family, tmp)) {
-  #       return(msg.familyneg(var2char(family)))
-  #     }
-  #   } 
+  if (!valid.familycausal(family, causal)) {
+    return(msg.familycausal())
+  }  
+  
+  if (tau == TRUE && causal == TRUE) {
+    return("Kendall'tau parametrization not implemented for causal families.")
+  }
+  
+  if (method == "FS" && causal == TRUE) {
+    return("Fisher-Scoring not implemented for causal families.")
+  }
   
   options(warn = 0)
   
@@ -584,10 +544,15 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
 ## Newton-Raphson/Fisher-scoring step
 "wz.update" <- function(dd, new.pars, family, method, tau) {
   
-  u <- dd$d1 * dd$dpar
-  if (tau == TRUE) {
-    u <- u * dd$dtau
+  if (causal == FALSE) {
+    u <- dd$d1 * dd$dpar
+    if (tau == TRUE) {
+      u <- u * dd$dtau
+    }
+  } else {
+    
   }
+  
   if (method == "NR") {
     if (tau == TRUE) {
       w <- dd$dtau^2 * (dd$dpar^2 * (dd$d2/dd$p - dd$d1^2) + dd$dpar2 * dd$d1) + 
@@ -626,13 +591,13 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
 
 ## Compute first derivatives of the copula, copula parameters transformations
 ## and dependence measure transformations
-"derivatives.par" <- function(data, new.pars, family, method, tau) {
+"derivatives.par" <- function(data, new.pars, family, method, tau, causal) {
   
   # Derivatives of the copula with respect to its own parameter
   if (method == "NR") {
-    tmp <- bicoppd1d2(data, family, d1 = TRUE, d2 = TRUE)
+    tmp <- bicoppd1d2(data, family, causal, d1 = TRUE, d2 = TRUE)
   } else {
-    tmp <- bicoppd1d2(data, family, d1 = TRUE)
+    tmp <- bicoppd1d2(data, family, causal, d1 = TRUE)
   } 
   tmp[1, which(tmp[1, ] == 0)] <- 1e-16
   
