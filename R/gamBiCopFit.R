@@ -250,8 +250,8 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
   
   w <- NULL
   res <- tryCatch({
-    tmp <- derivatives.par(u, new.pars, family, method, tau)
-    tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+    tmp <- derivatives.par(u, new.pars, family, method, tau, causal)
+    tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau, causal))
     tmp <- cbind(tmp, data)
     mm <- gam(par.formula, data = tmp, weights = w, 
               control = gam.control(keepData = TRUE), ...)
@@ -327,7 +327,7 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
     
     res <- tryCatch({
       tmp <- derivatives.par(u, new.pars, family, method, tau, causal)
-      tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau))
+      tmp <- as.data.frame(wz.update(tmp, new.pars, family, method, tau, causal))
       tmp <- cbind(tmp, data)
       mm <- gam(par.formula, data = tmp, weights = w, 
                 control = gam.control(keepData = TRUE), ...)
@@ -542,7 +542,7 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
 }
 
 ## Newton-Raphson/Fisher-scoring step
-"wz.update" <- function(dd, new.pars, family, method, tau) {
+"wz.update" <- function(dd, new.pars, family, method, tau, causal) {
   
   if (causal == FALSE) {
     u <- dd$d1 * dd$dpar
