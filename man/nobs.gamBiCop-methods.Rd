@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{nobs.gamBiCop}
-\alias{nobs,gamBiCop-method}
 \alias{nobs.gamBiCop}
+\alias{nobs,gamBiCop-method}
 \title{Extract the Number of Obserations from gamBiCop Object}
 \usage{
 \S4method{nobs}{gamBiCop}(object, ...)
@@ -25,4 +25,3 @@ This is principally intended to be used in computing the BIC
 \seealso{
 \code{\link{AIC}} and \code{\link{BIC}}.
 }
-

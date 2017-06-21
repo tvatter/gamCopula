@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{AIC.gamBiCop}
-\alias{AIC,gamBiCop-method}
 \alias{AIC.gamBiCop}
+\alias{AIC,gamBiCop-method}
 \title{Akaike's An Information Criterion for a gamBiCop Object}
 \usage{
 \S4method{AIC}{gamBiCop}(object, ..., k = 2)
@@ -29,4 +29,3 @@ maximization).
 \seealso{
 \code{\link{AIC}} and \code{\link{BIC}}.
 }
-

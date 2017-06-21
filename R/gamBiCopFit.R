@@ -404,7 +404,7 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
 } 
 
 valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose, 
-                              family, causal) {
+                              family, causal = FALSE) {
   if (!(is.list(data) || is.data.frame(data) || is.matrix(data))) {
     return("data has to be either a list, a data frame or a matrix.")
   } 

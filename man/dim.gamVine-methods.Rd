@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamVine.R
 \docType{methods}
 \name{dim.gamVine}
-\alias{dim,gamVine-method}
 \alias{dim.gamVine}
+\alias{dim,gamVine-method}
 \title{Dimension of an Object of the Class gamVine}
 \usage{
 \S4method{dim}{gamVine}(x)
@@ -23,4 +23,3 @@ Retrieve the dimension of an object of the class
 \seealso{
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
-

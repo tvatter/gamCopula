@@ -143,4 +143,3 @@ plot(best$res)}
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.
 }
-

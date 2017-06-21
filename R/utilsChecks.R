@@ -63,12 +63,12 @@ msg.familyneg <- function(x) {
   "This copula family cannot be used for negatively dependent data."
 }
 
-valid.familycausal <- function(x, causal) {
-  causal == FALSE || !is.element(x, c(301:304))
+valid.familycausal <- function(x, causal = FALSE) {
+  causal == FALSE || !is.element(x, c(301:304)) # to change at some point
 }
 
 msg.familycausal <- function() {
-  "Causal version not implemented for this fmaily."
+  "Causal version not implemented for this family."
 }
 
 valid.familyset <- function(x) {

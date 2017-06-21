@@ -161,4 +161,3 @@ summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))}
  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
  \code{\link{gamBiCopSelect}}.
 }
-

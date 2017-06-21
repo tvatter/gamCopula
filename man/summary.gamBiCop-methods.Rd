@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{summary.gamBiCop}
-\alias{summary,gamBiCop-method}
 \alias{summary.gamBiCop}
+\alias{summary,gamBiCop-method}
 \title{Summary for a gamBiCop Object}
 \usage{
 \S4method{summary}{gamBiCop}(object)
@@ -26,4 +26,3 @@ various useful summaries from it.
 \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}
 }
-

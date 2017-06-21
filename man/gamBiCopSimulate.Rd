@@ -88,4 +88,3 @@ system.time(fit <- gamBiCopFit(data, formula, fam))
 EDF(res)
 sim <- gamBiCopSimulate(fit$res, X)
 }
-

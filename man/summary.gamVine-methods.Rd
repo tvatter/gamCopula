@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamVine.R
 \docType{methods}
 \name{summary.gamVine}
-\alias{summary,gamVine-method}
 \alias{summary.gamVine}
+\alias{summary,gamVine-method}
 \title{Summary for an Object of the Class gamVin}
 \usage{
 \S4method{summary}{gamVine}(object)
@@ -27,4 +27,3 @@ useful summaries from it.
 \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}
 }
-

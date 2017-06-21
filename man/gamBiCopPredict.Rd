@@ -115,4 +115,3 @@ pred <- gamBiCopPredict(fit$res, X, target = c("calib", "par", "tau"))
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.
 }
-

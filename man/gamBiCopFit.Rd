@@ -6,7 +6,7 @@
 for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopFit(data, formula = ~1, family = 1, tau = TRUE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE, ...)
+  tol.rel = 0.001, n.iters = 10, causal = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{data}{A list, data frame or matrix containing the model responses,
@@ -39,6 +39,9 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{n.iters}{Maximal number of iterations for 
 \code{'FS'}/\code{'NR'} algorithm.}
+
+\item{causal}{\code{TRUE} to let the copula parameter depend on the
+first response and \code{FALSE} (default) for the standard version.}
 
 \item{verbose}{\code{TRUE} if informations should be printed during the 
 estimation and \code{FALSE} (default) for a silent version.}
@@ -188,4 +191,3 @@ for(k in 1:3){
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopSimulate}}.
 }
-

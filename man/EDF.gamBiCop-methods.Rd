@@ -20,4 +20,3 @@ for a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object.
 It basically sums the edf of the \code{\link{gamObject}} 
 for each smooth component.
 }
-
