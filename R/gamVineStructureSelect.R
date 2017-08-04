@@ -64,6 +64,8 @@
 #' @param verbose \code{TRUE} if informations should be printed during the 
 #' estimation and \code{FALSE} (default) for a silent version.
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
+#' @param select.once if \code{TRUE} the GAM structure is only selected once,
+#'   for the family that appears first in \code{familyset}.
 #' @return \code{gamVineSeqFit} returns a \code{\link{gamVine-class}} object.
 #' @examples
 #' require(VineCopula)
@@ -133,7 +135,8 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                                    treecrit = "tau", level = 0.05, 
                                    trunclevel = NA, tau = TRUE, method = "FS",
                                    tol.rel = 0.001, n.iters = 10,
-                                   parallel = FALSE, verbose = FALSE) {
+                                   parallel = FALSE, verbose = FALSE,
+                                   select.once = TRUE) {
   
   tmp <- valid.gamVineStructureSelect(udata, lin.covs, smooth.covs, simplified, 
                                       type, familyset, rotations, familycrit,
@@ -571,7 +574,8 @@ fitACopula <- function(u1, u2, familyset=NA, familycrit="AIC",
 }
 
 fitAGAMCopula <- function(data, familyset, familycrit, level, tau, 
-                          method, tol.rel, n.iters, parallel, rotation = TRUE) {
+                          method, tol.rel, n.iters, parallel, rotation = TRUE,
+                          select.once = TRUE) {
   out <- list()
   u1 <- data[[1]][,1]
   u2 <- data[[1]][,2]
@@ -594,7 +598,8 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
     ## conditional copula
     tmp <- gamBiCopSelect(udata, lin.covs, smooth.covs,
                        familyset, FALSE, familycrit, level, 1.5, tau,
-                       method, tol.rel, n.iters, parallel)
+                       method, tol.rel, n.iters, parallel, 
+                       select.once = select.once)
     if (!is.character(tmp)) {
       nvar <- unique(all.vars(tmp$res@model$pred.formula))
     }
@@ -718,7 +723,7 @@ valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs,
                                          familyset, rotations, familycrit, 
                                          treecrit, level, trunclevel, 
                                          tau, method, tol.rel, n.iters, 
-                                         parallel, verbose) {  
+                                         parallel, verbose, select.once) {  
   
   if (!is.matrix(data) && !is.data.frame(data)) {
     return("data has to be either a matrix or a data frame")
@@ -760,6 +765,10 @@ valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs,
   
   if (!is.na(trunclevel) && !valid.posint(trunclevel)) {
     return("'trunclevel' should be a positive integer or NA.")
+  }
+  
+  if (!is.logical(select.once)) {
+    return("'select.once' must be logical")
   }
   
   return(TRUE)
