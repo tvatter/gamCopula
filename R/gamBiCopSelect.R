@@ -134,7 +134,8 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   if (rotations) {
     familyset <- withRotations(familyset)
   }
-  
+  familyset <- unique(familyset)
+
   parallel <- as.logical(parallel)
   if (parallel) {
     cl <- makeCluster(detectCores() - 1)
@@ -258,6 +259,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   ## Update the list by removing unsignificant predictors 
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
+    t1 <- Sys.time()
   }
   
   sel.smooth <- smooth2lin <- FALSE
@@ -268,10 +270,10 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     smooth2lin <- FALSE
     sel.lin <- NULL
     formula.tmp <- get.formula(c(formula.lin,formula.expr))
-    if (verbose == TRUE) {
-      cat("Model formula:\n")
-      print(formula.tmp)
-    }
+    # if (verbose == TRUE) {
+    #   cat("Model formula:\n")
+    #   print(formula.tmp)
+    # }
     
     tmp <- myGamBiCopEst(formula.tmp)
     
@@ -322,6 +324,9 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   ## Increasing the basis size appropriately
   sel <- summary(tmp$res@model)$edf > (basis-1)*0.8
   if (verbose == TRUE && any(sel)) {
+    t2 <- Sys.time()
+    cat(paste0("Time elapsed: ", round(as.numeric(t2-t1), 2), " seconds.\n"))
+    t1 <- Sys.time()
     cat(paste("Select the basis sizes .......\n"))
   }
   
@@ -334,10 +339,10 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     if (any(sel)) {
       formula.expr[sel] <- mapply(get.smooth,nn[sel],basis[sel])
       formula.tmp <- get.formula(c(formula.lin,formula.expr))
-      if (verbose == TRUE) {
-        cat("Updated model formula:\n")
-        print(formula.tmp)
-      }      
+      # if (verbose == TRUE) {
+      #   cat("Updated model formula:\n")
+      #   print(formula.tmp)
+      # }      
       tmp <- myGamBiCopEst(formula.tmp)
       sel[sel] <- summary(tmp$res@model)$edf[sel] > (basis[sel]-1)*0.8
     }
@@ -352,6 +357,11 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
           length(unique(x)))
       } 
     }
+  }
+  
+  if (verbose == TRUE) {
+    t2 <- Sys.time()
+    cat(paste0("Time elapsed: ", round(as.numeric(t2-t1), 2), " seconds.\n"))
   }
   return(tmp)
 }
