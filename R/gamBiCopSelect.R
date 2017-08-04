@@ -153,14 +153,14 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
     # fit with same structure for all other families
     if (length(familyset) > 1) {
       if (!parallel) { 
-        res[-1] <- foreach(x=familset[-1]) %do%
+        res[-1] <- foreach(x=familyset[-1]) %do%
           tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
                                verbose,...),
                    error = function(e) e)
       } else {
-        res[-1] <- foreach(x=familset[-1]) %dopar%
+        res[-1] <- foreach(x=familyset[-1]) %dopar%
           tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
@@ -374,7 +374,7 @@ get.linear <- function(x,nn){
 valid.gamBiCopSelect <- function(udata, lin.covs, smooth.covs, rotations, 
                                  familyset, familycrit, level, edf, 
                                  tau, method, tol.rel, n.iters, parallel, 
-                                 verbose) {
+                                 verbose, select.once) {
   
   data <- tryCatch(as.data.frame(udata), error = function(e) e$message)
   if (is.character(udata)) {

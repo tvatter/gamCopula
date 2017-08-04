@@ -144,12 +144,12 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                                       tau, method, tol.rel, n.iters,
                                       parallel, verbose)
   if (tmp != TRUE) {
-   stop(tmp)
+    stop(tmp)
   }
   
   ## Transform to dataframe, get dimensions, etc (see in utilsPrivate)
   tmp <- prepare.data2(udata, lin.covs, smooth.covs, 
-                      trunclevel, familyset, rotations)
+                       trunclevel, familyset, rotations)
   n <- tmp$n
   d <- tmp$d
   l <- tmp$l
@@ -176,7 +176,7 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                        tau, method, tol.rel, n.iters, parallel,  verbose)
   out$Tree[[1]] <- tree
   out$Graph[[1]] <- graph
-
+  
   oldtree  <- tree
   for(i in 2:(d-1)){
     if(trunclevel == i-1) {
@@ -192,7 +192,7 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
     out$Tree[[i]] <- tree
     out$Graph[[i]] <- graph
   }
-
+  
   return(as.GVC(out,covariates))
 }
 
@@ -346,7 +346,7 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
     }
     
     if(verbose == TRUE) message(n1a," + ",n2a," --> ", E(mst)[i]$name)
-
+    
     E(mst)[i]$CondName2 <- n1a
     E(mst)[i]$CondName1 <- n2a
     
@@ -371,11 +371,11 @@ fitTree <- function(mst, oldVineGraph, udata, l, lin.covs, smooth.covs,
                                        lin.covs, temp)
     }
   }
-
+  
   outForACopula <- lapply(parameterForACopula, wrapper.fitACopula, 
                           familyset, familycrit, level,
                           tau, method, tol.rel, n.iters, parallel)
-
+  
   for (i in 1:d) {
     E(mst)[i]$model <- list(outForACopula[[i]]$model)
     E(mst)[i]$CondData2 <- list(outForACopula[[i]]$CondOn2)
@@ -583,7 +583,7 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
   lin.covs <- data[[2]]
   smooth.covs <- data[[3]]
   data <- do.call(cbind, data[!(sapply(data, is.null))])
-
+  
   if (length(familyset) == 1 && familyset == 0) {
     ## independence copula
     
@@ -597,9 +597,9 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
     
     ## conditional copula
     tmp <- gamBiCopSelect(udata, lin.covs, smooth.covs,
-                       familyset, FALSE, familycrit, level, 1.5, tau,
-                       method, tol.rel, n.iters, parallel, 
-                       select.once = select.once)
+                          familyset, FALSE, familycrit, level, 1.5, tau,
+                          method, tol.rel, n.iters, parallel, 
+                          select.once = select.once)
     if (!is.character(tmp)) {
       nvar <- unique(all.vars(tmp$res@model$pred.formula))
     }
@@ -729,11 +729,11 @@ valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs,
     return("data has to be either a matrix or a data frame")
   } 
   tmp <- valid.gamBiCopSelect(data[,1:2], lin.covs, smooth.covs, rotations, 
-                           familyset, familycrit, level, 2, tau,
-                           method, tol.rel, n.iters, parallel, verbose)
+                              familyset, familycrit, level, 2, tau, method, 
+                              tol.rel, n.iters, parallel, verbose, select.once)
   if (tmp != TRUE)
     return(tmp)
- 
+  
   n <- dim(data)[1]
   d <- dim(data)[2]
   
@@ -750,7 +750,7 @@ valid.gamVineStructureSelect <- function(data, lin.covs, smooth.covs,
   if (!valid.logical(simplified)) {
     return(msg.logical(var2char(simplified)))
   }
-
+  
   if (is.null(lin.covs) && is.null(smooth.covs) && simplified == TRUE) {
     return("When there are no covariates, the PCC can't be simplified.")
   }

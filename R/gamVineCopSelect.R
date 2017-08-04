@@ -213,7 +213,7 @@ gamVineCopSelect <- function(data, Matrix,
   tmp <- valid.gamVineCopSelect(data, Matrix, lin.covs, smooth.covs, simplified,
                                 familyset, rotations, familycrit, level, 
                                 trunclevel, tau, method, tol.rel, n.iters, 
-                                parallel, verbose)
+                                parallel, verbose, select.once)
   if (tmp != TRUE) {
     stop(tmp)
   }   
@@ -287,6 +287,7 @@ gamVineCopSelect <- function(data, Matrix,
               names(tmp[[3]]) <- c(nn[oo[cond]], colnames(smooth.covs))
             }
           }  
+          
           tmp <- fitAGAMCopula(tmp, familyset, familycrit, level, 
                                tau, method, tol.rel, n.iters, FALSE, 
                                rotations, select.once)
