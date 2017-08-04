@@ -82,4 +82,3 @@ fitGVC <- gamVineSeqFit(sampleGVC,GVC)
 all.equal(simplify2array(attr(fitRVM, "model")),
 simplify2array(attr(fitGVC, "model")))
 }
-

@@ -42,4 +42,3 @@ Constructs an object of the class
 \code{\link{gamBiCopFit}}, \code{\link{gamBiCopPredict}} and 
 \code{\link{gamBiCopSimulate}}.
 }
-

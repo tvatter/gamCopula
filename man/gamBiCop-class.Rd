@@ -35,8 +35,8 @@ from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 specified for the Copula parameter 
 or \code{TRUE} for a calibration function specified for Kendall's tau.}
 }}
+
 \seealso{
 \code{\link{gamBiCopFit}}, 
 \code{\link{gamBiCopPredict}} and \code{\link{gamBiCopSimulate}}.
 }
-

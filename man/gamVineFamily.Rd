@@ -23,4 +23,3 @@ corresponding to the model list in the
 \seealso{
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
-

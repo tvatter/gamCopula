@@ -188,4 +188,3 @@ plot(fitGVC2, ylim = c(-2.5,2.5))}
  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
  \code{\link{gamBiCopFit}}.
 }
-

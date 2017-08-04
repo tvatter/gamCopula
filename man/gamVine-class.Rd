@@ -22,10 +22,10 @@ gamVine is an S4 class to store a conditional and potentially
 
 \item{\code{covariates}}{vector of names for the exogenous covariates.}
 }}
+
 \seealso{
 \code{\link{gamVine}}, 
 \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
 \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
 \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 }
-

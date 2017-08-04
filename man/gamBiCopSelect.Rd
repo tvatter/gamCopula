@@ -8,7 +8,7 @@ Additive model (gam) for the copula parameter or Kendall's tau.}
 gamBiCopSelect(udata, lin.covs = NULL, smooth.covs = NULL, familyset = NA,
   rotations = TRUE, familycrit = "AIC", level = 0.05, edf = 1.5,
   tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
-  parallel = FALSE, verbose = FALSE, ...)
+  parallel = FALSE, verbose = FALSE, select.once = TRUE, ...)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the model responses, (u1,u2) in 
@@ -69,6 +69,9 @@ specified for Kendall's tau.}
 As the code is based on mclapply, this parameter has no effect on windows.}
 
 \item{verbose}{\code{TRUE} prints informations during the estimation.}
+
+\item{select.once}{if \code{TRUE} the GAM structure is only selected once,
+for the family that appears first in \code{familyset}.}
 
 \item{...}{Additional parameters to be passed to \code{\link{gam}}}
 }
@@ -143,4 +146,3 @@ plot(best$res)}
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.
 }
-

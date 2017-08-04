@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{plot.gamBiCop}
-\alias{plot,gamBiCop,ANY-method}
 \alias{plot.gamBiCop}
+\alias{plot,gamBiCop,ANY-method}
 \title{Plot a gamBiCop Object}
 \usage{
 \S4method{plot}{gamBiCop,ANY}(x, y, ...)
@@ -28,4 +28,3 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}).
 \seealso{
 \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 }
-

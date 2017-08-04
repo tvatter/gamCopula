@@ -188,4 +188,3 @@ for(k in 1:3){
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopSimulate}}.
 }
-

@@ -30,4 +30,4 @@ Description: Implementation of various inference and simulation tools to
     apply generalized additive models to bivariate dependence structures and
     non-simplified vine copulas.
 License: GPL-3
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

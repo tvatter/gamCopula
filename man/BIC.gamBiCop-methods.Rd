@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{BIC.gamBiCop}
-\alias{BIC,gamBiCop-method}
 \alias{BIC.gamBiCop}
+\alias{BIC,gamBiCop-method}
 \title{Schwarz's Bayesian Information Criterion for a gamBiCop Object}
 \usage{
 \S4method{BIC}{gamBiCop}(object, ...)
@@ -26,4 +26,3 @@ usually fitted by penalized likelihood maximization).
 \seealso{
 \code{\link{AIC}} and \code{\link{BIC}}.
 }
-

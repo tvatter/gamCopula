@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamVine.R
 \docType{methods}
 \name{plot.gamVine}
-\alias{plot,gamVine,ANY-method}
 \alias{plot.gamVine}
+\alias{plot,gamVine,ANY-method}
 \title{Plot an Object of the Class gamVine}
 \usage{
 \S4method{plot}{gamVine,ANY}(x, y, ...)
@@ -28,4 +28,3 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}).
 \seealso{
 \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 }
-
