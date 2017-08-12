@@ -158,14 +158,14 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
           tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
-                               verbose,...),
+                               verbose, ...),
                    error = function(e) e)
       } else {
         res[-1] <- foreach(x=familyset[-1]) %dopar%
           tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
-                               verbose,...),
+                               verbose, ...),
                    error = function(e) e)
       }
     }
@@ -175,13 +175,13 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
       res <- foreach(x=familyset) %do%
         tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
                                 x, tau, method, tol.rel, n.iters, #max.knots,
-                                level, edf, verbose,...),
+                                level, edf, verbose, ...),
                  error = function(e) e)
     } else {
       res <- foreach(x=familyset) %dopar%
         tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
                                 x, tau, method, tol.rel, n.iters,
-                                level, edf, verbose,...),
+                                level, edf, verbose, ...),
                  error = function(e) e)
     }
   }
@@ -244,7 +244,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     #   stopifnot(length(max.knots) == ncol(smooth.covs))
     #   basis <- max.knots
     # }
-    basis <- rep(5, ncol(smooth.covs))
+    basis <- rep(10, ncol(smooth.covs))
     formula.expr <- mapply(get.smooth, smooth.nms, basis)
   } else {
     basis <- NULL
