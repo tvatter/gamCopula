@@ -184,9 +184,9 @@ summary.gamVine <- function(object) {
   cat("\n", "Tree 1:", "\n")
   for (i in 1:(d - 1)) {
     mm <- GVC@model[[count]]
+    a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
+               GVC@names[[GVC@Matrix[d,i]]], sep = "")
     if ( valid.gamBiCop(mm) != TRUE) {
-      a <- paste(GVC@names[[GVC@Matrix[i, i]]], ",", 
-                 GVC@names[[GVC@Matrix[d,i]]], sep = "")
       a <- paste(a, ": ", bicopname(mm$family), sep = "")
       if (mm$family!=0) {
         a <- paste(a, " with par=", round(mm$par,2), sep="")
