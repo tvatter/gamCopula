@@ -20,4 +20,3 @@ i.e. with d:1 on the diagonal
 \seealso{
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
-

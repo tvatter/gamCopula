@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{logLik.gamBiCop}
-\alias{logLik,gamBiCop-method}
 \alias{logLik.gamBiCop}
+\alias{logLik,gamBiCop-method}
 \title{Extract the Log-likelihood from a gamBiCop Object}
 \usage{
 \S4method{logLik}{gamBiCop}(object, ...)
@@ -26,4 +26,3 @@ This function is used by \code{\link{AIC}} and \code{\link{BIC}}.
 \seealso{
 \code{\link{AIC}} and \code{\link{BIC}}.
 }
-

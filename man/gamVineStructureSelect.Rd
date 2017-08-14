@@ -8,7 +8,7 @@ gamVineStructureSelect(udata, lin.covs = NULL, smooth.covs = NULL,
   simplified = TRUE, type = 0, familyset = NA, rotations = TRUE,
   familycrit = "AIC", treecrit = "tau", level = 0.05, trunclevel = NA,
   tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
-  parallel = FALSE, verbose = FALSE)
+  parallel = FALSE, verbose = FALSE, select.once = TRUE)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the data in [0,1]^d.}
@@ -82,6 +82,9 @@ for the Copula parameter.}
 \item{verbose}{\code{TRUE} if informations should be printed during the 
 estimation and \code{FALSE} (default) for a silent version.
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
+
+\item{select.once}{if \code{TRUE} the GAM structure is only selected once,
+for the family that appears first in \code{familyset}.}
 }
 \value{
 \code{gamVineSeqFit} returns a \code{\link{gamVine-class}} object.
@@ -161,4 +164,3 @@ summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))}
  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
  \code{\link{gamBiCopSelect}}.
 }
-

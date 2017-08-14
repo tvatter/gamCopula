@@ -31,4 +31,3 @@ Constructs an object of the class
 \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
 \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 }
-

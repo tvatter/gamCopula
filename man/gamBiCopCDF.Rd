@@ -81,4 +81,3 @@ gamBiCopCDF(fit$res)
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopPredict}}.
 }
-

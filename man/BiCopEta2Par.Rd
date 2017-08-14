@@ -55,4 +55,3 @@ value of the calibration function (eta).
 \code{\link{BiCopTau2Par}} from 
 \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
 }
-

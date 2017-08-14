@@ -2,8 +2,8 @@
 % Please edit documentation in R/gamBiCop.R
 \docType{methods}
 \name{formula.gamBiCop}
-\alias{formula,gamBiCop-method}
 \alias{formula.gamBiCop}
+\alias{formula,gamBiCop-method}
 \title{Model Formula of the gamBiCop Object}
 \usage{
 \S4method{formula}{gamBiCop}(x, ...)
@@ -24,4 +24,3 @@ from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 \code{\link{formula.gam}} function 
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
-

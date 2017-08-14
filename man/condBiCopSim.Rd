@@ -120,4 +120,3 @@ plot(data[, "u1"], data[, "u2"], xlab = "U1", ylab = "U2")
 \seealso{
 \code{\link{gamBiCopFit}} and \code{\link{gamBiCopSimulate}}.
 }
-

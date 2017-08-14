@@ -21,4 +21,3 @@ into an object of the class \code{\link[gamCopula:gamVine-class]{gamVine}}.
 \code{\link{RVineMatrix}} and 
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
-

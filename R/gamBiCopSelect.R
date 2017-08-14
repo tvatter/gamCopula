@@ -52,6 +52,8 @@
 #' @param parallel \code{TRUE} for a parallel estimation across copula families.
 #' As the code is based on mclapply, this parameter has no effect on windows.
 #' @param verbose \code{TRUE} prints informations during the estimation.
+#' @param select.once if \code{TRUE} the GAM structure is only selected once,
+#'   for the family that appears first in \code{familyset}.
 #' @param ... Additional parameters to be passed to \code{\link{gam}} 
 #' @return \code{gamBiCopFit} returns a list consisting of 
 #' \item{res}{S4 \code{\link{gamBiCop-class}} object.} 
@@ -114,14 +116,15 @@
 #' plot(best$res)}
 #' @export
 gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,  
-                        familyset = NA, rotations = TRUE, 
-                        familycrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
-                        method = "FS", tol.rel = 1e-3, n.iters = 10, 
-                        parallel = FALSE, verbose = FALSE, ...) {
+                           familyset = NA, rotations = TRUE, 
+                           familycrit = "AIC", level = 5e-2, edf = 1.5, tau = TRUE, 
+                           method = "FS", tol.rel = 1e-3, n.iters = 10, 
+                           parallel = FALSE, verbose = FALSE, 
+                           select.once = TRUE, ...) {
   
   tmp <- valid.gamBiCopSelect(udata, lin.covs, smooth.covs, rotations, familyset, 
-                           familycrit, level, edf, tau,
-                           method, tol.rel, n.iters, parallel, verbose)
+                              familycrit, level, edf, tau, method, tol.rel,
+                              n.iters, parallel, verbose, select.once)
   if (tmp != TRUE)
     stop(tmp)
   
@@ -134,23 +137,55 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   familyset <- unique(familyset)
 
   parallel <- as.logical(parallel)
-  x <- NULL
-  if (parallel == FALSE) {
-    res <- foreach(x=familyset) %do% 
-      tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
-                              x, tau, method, tol.rel, n.iters, #max.knots,
-                              level, edf, verbose,...),
-               error = function(e) e)
-  } else {
+  if (parallel) {
     cl <- makeCluster(detectCores() - 1)
     registerDoParallel(cl, cores = detectCores() - 1)
-    res <- foreach(x=familyset) %dopar% 
-      tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
-                              x, tau, method, tol.rel, n.iters, 
-                              level, edf, verbose,...),
-               error = function(e) e)
-    stopCluster(cl)
+    on.exit(stopCluster(cl))
   }
+  
+  x <- NULL
+  if (select.once) {
+    res <- vector("list", length(familyset))
+    # select GAM structure for first family in familyset
+    res[[1]] <- tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
+                                        familyset[1], tau, method, tol.rel, 
+                                        n.iters, level, edf, verbose,...),
+                         error = function(e) e)
+    # fit with same structure for all other families
+    if (length(familyset) > 1) {
+      if (!parallel) { 
+        res[-1] <- foreach(x=familyset[-1]) %do%
+          tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
+                               res[[1]]$res@model$formula,
+                               x, tau, method, tol.rel, n.iters,
+                               verbose, ...),
+                   error = function(e) e)
+      } else {
+        res[-1] <- foreach(x=familyset[-1]) %dopar%
+          tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
+                               res[[1]]$res@model$formula,
+                               x, tau, method, tol.rel, n.iters,
+                               verbose, ...),
+                   error = function(e) e)
+      }
+    }
+  } else {
+    # select GAM structure independently for all families
+    if (!parallel) {
+      res <- foreach(x=familyset) %do%
+        tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
+                                x, tau, method, tol.rel, n.iters, #max.knots,
+                                level, edf, verbose, ...),
+                 error = function(e) e)
+    } else {
+      res <- foreach(x=familyset) %dopar%
+        tryCatch(gamBiCopVarSel(udata, lin.covs, smooth.covs,
+                                x, tau, method, tol.rel, n.iters,
+                                level, edf, verbose, ...),
+                 error = function(e) e)
+    }
+  }
+  
   res <- res[sapply(res,length) == 6] 
   if (length(res) == 0 ) { #|| sum(sapply(res, function(x) x$conv) == 0) == 0) {
     return(paste("No convergence of the estimation for any copula family.",
@@ -220,7 +255,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
   } else {
     formula.lin <- NULL
   }
-
+  
   ## Update the list by removing unsignificant predictors 
   if (verbose == TRUE) {
     cat("Remove unsignificant covariates.......\n")
@@ -269,7 +304,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
       }    
     } 
   }
-
+  
   ## Check if we can output a constant or linear model directly
   ## (or re-estimate the model if not)
   if (length(formula.expr) == 0) {
@@ -294,7 +329,7 @@ gamBiCopVarSel <- function(udata, lin.covs, smooth.covs,
     t1 <- Sys.time()
     cat(paste("Select the basis sizes .......\n"))
   }
-
+  
   while (any(sel) && all(basis < n/30)) {
     
     ## Increase basis sizes
@@ -347,15 +382,15 @@ get.linear <- function(x,nn){
 }
 
 valid.gamBiCopSelect <- function(udata, lin.covs, smooth.covs, rotations, 
-                              familyset, familycrit, level, edf, 
-                              tau, method, tol.rel, n.iters, parallel, 
-                              verbose) {
-
+                                 familyset, familycrit, level, edf, 
+                                 tau, method, tol.rel, n.iters, parallel, 
+                                 verbose, select.once) {
+  
   data <- tryCatch(as.data.frame(udata), error = function(e) e$message)
   if (is.character(udata)) {
     return(udata)
   }
-
+  
   tmp <- valid.gamBiCopFit(udata, n.iters, tau, tol.rel, method, verbose, 1)
   if (tmp != TRUE) {
     return(tmp)
@@ -367,7 +402,7 @@ valid.gamBiCopSelect <- function(udata, lin.covs, smooth.covs, rotations,
   }
   
   if (!is.null(lin.covs) && !(is.data.frame(lin.covs) || is.matrix(lin.covs))) {
-      return("lin.covs has to be either a data frame or a matrix.")
+    return("lin.covs has to be either a data frame or a matrix.")
   } else {
     if(!is.null(lin.covs) && dim(lin.covs)[1] != n) {
       return("lin.covs must have the same number of rows as udata.")
@@ -405,6 +440,10 @@ valid.gamBiCopSelect <- function(udata, lin.covs, smooth.covs, rotations,
   
   if (!valid.real(edf)) {
     return(msg.real(var2char(edf)))
+  }
+  
+  if (!is.logical(select.once)) {
+    return("'select.once' must be logical")
   }
   
   return(TRUE)

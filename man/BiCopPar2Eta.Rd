@@ -54,4 +54,3 @@ value of the (first) copula parameter.
 \code{\link{BiCopTau2Par}} from 
 \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
 }
-
