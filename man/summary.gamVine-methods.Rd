@@ -4,7 +4,7 @@
 \name{summary.gamVine}
 \alias{summary.gamVine}
 \alias{summary,gamVine-method}
-\title{Summary for an Object of the Class gamVin}
+\title{Summary for an Object of the Class gamVine}
 \usage{
 \S4method{summary}{gamVine}(object)
 }
@@ -12,7 +12,7 @@
 \item{object}{An object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.}
 
-\item{...}{un-used in this class}
+\item{...}{unused in this class}
 }
 \value{
 A useful summary (see \code{\link{summary.gam}}

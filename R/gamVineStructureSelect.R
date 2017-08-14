@@ -43,7 +43,7 @@
 #' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package. 
 #' @param treecrit Character indicating how pairs are selected in each tree.
-#' \code{treecrit = "tau"} uses the maxmium spanning tree of the Kendall's tau 
+#' \code{treecrit = "tau"} uses the maximum spanning tree of the Kendall's tau 
 #' (i.e., the tree of maximal overall dependence), \code{treecrit = "rho"} 
 #' uses the Spearman's rho.
 #' @param level Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the

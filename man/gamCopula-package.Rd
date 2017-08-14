@@ -58,7 +58,7 @@ Chapman and Hall/CRC.
 }
 \keyword{ package }
 \seealso{
-The present package is heavly relying on the \code{\link[mgcv:mgcv-package]{mgcv}} and \code{\link{VineCopula}} packages, as it basically extends and mix both of them.
+The present package is heavily relying on the \code{\link[mgcv:mgcv-package]{mgcv}} and \code{\link{VineCopula}} packages, as it basically extends and mix both of them.
 }
 \examples{
 ##### A gamBiCop example

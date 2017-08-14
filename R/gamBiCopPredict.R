@@ -17,11 +17,11 @@
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package, only active for 
 #' \code{type = 'calib'}). When this has the value \code{'link'} (default), the 
 #' calibration function is returned.  When \code{type = 'terms'} each component 
-#' of the linear predictor is returned seperately (possibly with standard 
+#' of the linear predictor is returned separately (possibly with standard 
 #' errors): this includes parametric model components, followed by each smooth 
 #' component, but excludes any offset and any intercept. When 
 #' \code{type = 'lpmatrix'} then a matrix is returned which yields the values of
-#' the linear predictor (minus any offset) when postmultiplied by the parameter 
+#' the linear predictor (minus any offset) when post-multiplied by the parameter 
 #' vector (in this case alpha is ignored).
 #' @return If \code{target = 'calib'}, then a list with 1 item \code{calib}. 
 #' If \code{target = 'par'}, \code{target = 'tau'} or 
@@ -33,9 +33,9 @@
 #' \code{calib.CI} as well as e.g. \code{par.CI} and/or \code{tau.CI} depending 
 #' on the value of \code{target}.
 #'  
-#' Otherwhise, if \code{type = 'lpmatrix'} (only active for 
+#' Otherwise, if \code{type = 'lpmatrix'} (only active for 
 #' \code{type = 'calib'}), then a matrix is returned which will give a vector of
-#' linear predictor values (minus any offest) at the supplied covariate values, 
+#' linear predictor values (minus any offset) at the supplied covariate values, 
 #' when applied to the model coefficient vector (similar as 
 #' \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}). 
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.

@@ -50,7 +50,6 @@
 #' @param n.iters Maximal number of iterations for 
 #' \code{'FS'}/\code{'NR'} algorithm.
 #' @param parallel \code{TRUE} for a parallel estimation across copula families.
-#' As the code is based on mclapply, this parameter has no effect on windows.
 #' @param verbose \code{TRUE} prints informations during the estimation.
 #' @param select.once if \code{TRUE} the GAM structure is only selected once,
 #'   for the family that appears first in \code{familyset}.

@@ -14,15 +14,15 @@ gamBiCopCDF(object, newdata = NULL)
 \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame 
 containing the values of the model covariates at which predictions are 
 required. If this is not provided then the distribution corresponding to the 
-original data are returned. If newdata is provided then it should contain all 
+original data are returned. If \code{newdata} is provided then it should contain all 
 the variables needed for prediction: a warning is generated if not.}
 }
 \value{
 The conditional density.
 }
 \description{
-This function returns the distribution functoin of a bivariate conditional  
-copula, where either the copula parameter or the Kendall's tau is modelled 
+This function returns the distribution function of a bivariate conditional  
+copula, where either the copula parameter or the Kendall's tau is modeled 
 as a function of the covariates.
 }
 \examples{
