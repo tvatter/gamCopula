@@ -171,7 +171,7 @@ the variables needed for prediction: a warning is generated if not.</p></td>
   <span class='fu'>s</span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>) +
   <span class='fu'>s</span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>)
 <span class='fu'>system.time</span>(<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.230   0.008   0.239 </div><div class='input'>
+#&gt;   0.224   0.005   0.230 </div><div class='input'>
 <span class='co'>## Evaluate the conditional density</span>
 <span class='fu'>gamBiCopPDF</span>(<span class='no'>fit</span>$<span class='no'>res</span>)</div><div class='output co'>#&gt;   [1]   1.53897409   0.65895255   7.54308919   7.29902794   7.98200466
 #&gt;   [6]   0.91280983   0.65051146   1.08273677   0.13773165   8.67048283

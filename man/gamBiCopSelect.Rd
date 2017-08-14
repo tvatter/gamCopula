@@ -53,7 +53,7 @@ predictors (default: \code{level = 0.05}).}
 smaller than \code{edf} but the predictor is still significant, then
 it is set as linear (default: \code{edf = 1.5}).}
 
-\item{tau}{\code{FALSE} for a calibration fonction specified for 
+\item{tau}{\code{FALSE} for a calibration function specified for 
 the Copula parameter or \code{TRUE} (default) for a calibration function 
 specified for Kendall's tau.}
 

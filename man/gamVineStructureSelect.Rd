@@ -19,9 +19,9 @@ linear) covariates (default: \code{lin.covs = NULL}).}
 \item{smooth.covs}{A matrix or data frame containing the non-parametric 
 (i.e., smooth) covariates (default: \code{smooth.covs = NULL}).}
 
-\item{simplified}{If \code{TRUE} (default), then a simplified PCC is fitted 
+\item{simplified}{If \code{TRUE} (default), then a simplified vine is fitted 
 (which is possible only if there are exogenous covariates). If \code{FALSE}, 
-then a non-simplified PCC is fitted.}
+then a non-simplified vine is fitted.}
 
 \item{type}{\code{type = 0} (default) for a R-Vine and \code{type = 1} for a
 C-Vine.}
@@ -63,7 +63,7 @@ predictors (default: \code{level = 0.05}) for each conditional pair-copula.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
-\item{tau}{\code{TRUE} (default) for a calibration fonction specified for 
+\item{tau}{\code{TRUE} (default) for a calibration function specified for 
 Kendall's tau or \code{FALSE} for a calibration function specified 
 for the Copula parameter.}
 

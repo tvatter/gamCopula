@@ -8,7 +8,7 @@
 #' the attribute \code{covariates} from \code{GVC} is not \code{NA}, 
 #' \code{newdata} is a data frame containing the values of 
 #' the model covariates at which simulations are required.
-#' @return A Nxd matrix of data simulated from the given 
+#' @return A matrix of data simulated from the given 
 #' \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 #' @examples
 #' require(VineCopula)

@@ -18,7 +18,7 @@
 #' \code{\link{gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @param par2 Second parameter for the Student t-copula.
-#' @param tau \code{FALSE} for a calibration fonction specified 
+#' @param tau \code{FALSE} for a calibration function specified 
 #' for the Copula parameter or \code{TRUE} (default) for a calibration 
 #' function specified for Kendall's tau.
 #' @return An object of the class

@@ -28,7 +28,7 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}).}
 \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{tau}{\code{FALSE} (default) for a calibration fonction specified for 
+\item{tau}{\code{FALSE} (default) for a calibration function specified for 
 the Copula parameter or \code{TRUE} for a calibration function specified 
 for Kendall's tau.}
 

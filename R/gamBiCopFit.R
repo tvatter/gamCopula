@@ -24,7 +24,7 @@
 #' \code{402} Double Gumbel type II (standard and rotated 270 degrees), 
 #' \code{403} Double Gumbel type III (survival and rotated 90 degrees), 
 #' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
-#' @param tau \code{FALSE} (default) for a calibration fonction specified for 
+#' @param tau \code{FALSE} (default) for a calibration function specified for 
 #' the Copula parameter or \code{TRUE} for a calibration function specified 
 #' for Kendall's tau.
 #' @param method \code{'NR'} for Newton-Raphson

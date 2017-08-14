@@ -25,7 +25,7 @@ from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{par2}{Second parameter for the Student t-copula.}
 
-\item{tau}{\code{FALSE} for a calibration fonction specified 
+\item{tau}{\code{FALSE} for a calibration function specified 
 for the Copula parameter or \code{TRUE} (default) for a calibration 
 function specified for Kendall's tau.}
 }

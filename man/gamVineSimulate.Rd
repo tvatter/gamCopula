@@ -20,7 +20,7 @@ the attribute \code{covariates} from \code{GVC} is not \code{NA},
 the model covariates at which simulations are required.}
 }
 \value{
-A Nxd matrix of data simulated from the given 
+A matrix of data simulated from the given 
 \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{

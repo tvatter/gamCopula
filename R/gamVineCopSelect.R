@@ -17,9 +17,9 @@
 #' linear) covariates (default: \code{lin.covs = NULL}).
 #' @param smooth.covs A matrix or data frame containing the non-parametric 
 #' (i.e., smooth) covariates (default: \code{smooth.covs = NULL}).
-#' @param simplified If \code{TRUE}, then a simplified PCC is fitted (which is
+#' @param simplified If \code{TRUE}, then a simplified vine is fitted (which is
 #' possible only if there are exogenous covariates). If \code{FALSE} (default),
-#' then a non-simplified PCC is fitted.
+#' then a non-simplified vine is fitted.
 #' @param familyset An integer vector of pair-copula families to select from 
 #' (the independence copula MUST NOT be specified in this vector unless one 
 #' wants to fit an independence vine!). The vector has to include at least one 
@@ -43,7 +43,7 @@
 #' significance level of the test for removing individual
 #' predictors (default: \code{level = 0.05}) for each conditional pair-copula.
 #' @param trunclevel Integer; level of truncation.
-#' @param tau \code{TRUE} (default) for a calibration fonction specified for 
+#' @param tau \code{TRUE} (default) for a calibration function specified for 
 #' Kendall's tau or \code{FALSE} for a calibration function specified 
 #' for the Copula parameter.
 #' @param method \code{'NR'} for Newton-Raphson
