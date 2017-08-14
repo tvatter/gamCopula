@@ -189,7 +189,7 @@ Chapman and Hall/CRC.</p>
           <span class='kw'>main</span> <span class='kw'>=</span> <span class='fu'>paste</span>(<span class='st'>"eta0+f"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>],
                        <span class='st'>"(X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>], <span class='st'>") +f"</span>,<span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>2</span>],
                        <span class='st'>"(X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>2</span>], <span class='st'>")"</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>))
-}</div><div class='img'><img src='gamCopula-package-22.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='img'><img src='gamCopula-package-25.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>## 3-dimensional matrix X of covariates</span>
 <span class='no'>covariates.distr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/copula/topics/Mvdc'>mvdc</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/copula/topics/ellipCopula'>normalCopula</a></span>(<span class='no'>rho</span>, <span class='kw'>dim</span> <span class='kw'>=</span> <span class='fl'>3</span>),
                                  <span class='fu'>c</span>(<span class='st'>"unif"</span>), <span class='fu'>list</span>(<span class='fu'>list</span>(<span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>1</span>)),
@@ -210,12 +210,12 @@ Chapman and Hall/CRC.</p>
 
 <span class='co'>## Model fit with a basis size (arguably) too small </span>
 <span class='co'>## and unpenalized cubic spines</span>
-<span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span></div><div class='img'><img src='gamCopula-package-23.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='no'>basis0</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>4</span>)
+<span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span></div><div class='img'><img src='gamCopula-package-26.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='no'>basis0</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>4</span>)
 <span class='no'>formula</span> <span class='kw'>&lt;-</span> ~<span class='fu'><a href='http://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>1</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
   <span class='fu'><a href='http://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
   <span class='fu'><a href='http://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
 <span class='fu'>system.time</span>(<span class='no'>fit0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.198   0.010   0.211 </div><div class='input'>
+#&gt;   0.215   0.009   0.228 </div><div class='input'>
 <span class='co'>## Model fit with a better basis size and penalized cubic splines (via min GCV)</span>
 <span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
 <span class='no'>basis1</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>10</span>, <span class='fl'>10</span>)
@@ -223,7 +223,7 @@ Chapman and Hall/CRC.</p>
   <span class='fu'><a href='http://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
   <span class='fu'><a href='http://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
 <span class='fu'>system.time</span>(<span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.231   0.008   0.237 </div><div class='input'>
+#&gt;   0.243   0.008   0.252 </div><div class='input'>
 <span class='co'>## Extract the gamBiCop objects and show various methods</span>
 (<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='fu'>list</span>(<span class='no'>fit0</span>,<span class='no'>fit1</span>), <span class='kw'>function</span>(<span class='no'>fit</span>){<span class='no'>fit</span>$<span class='no'>res</span>}))</div><div class='output co'>#&gt; [[1]]
 #&gt; Gaussian copula with tau(z) = (exp(z)-1)/(exp(z)+1) where 
@@ -292,7 +292,7 @@ Chapman and Hall/CRC.</p>
   <span class='fu'>legend</span>(<span class='st'>"bottomleft"</span>, <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>0.6</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>2</span>),
          <span class='fu'>c</span>(<span class='st'>"True"</span>, <span class='st'>"Fitted"</span>, <span class='st'>"Appox 1"</span>, <span class='st'>"Fitted 2"</span>, <span class='st'>"Approx 2"</span>),
          <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"black"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"green"</span>))
-}</div><div class='img'><img src='gamCopula-package-24.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+}</div><div class='img'><img src='gamCopula-package-27.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>##### A gamVine example</span>
 <span class='fu'>set.seed</span>(<span class='fl'>0</span>)
 
