@@ -10,7 +10,8 @@ This R package implements the generalized additive modeling framework for bivari
 copulas introduced by Vatter and Chavez-Demoulin (2015) and its extension to 
 Pair-Copula Constructions (or Vine Copulas) by Vatter and Nagler (2017). 
 It includes functions for parameter estimation, model selection, simulation, 
-and visualization. The package is still under development.
+and visualization. The package is still under development. Please see the [API documentation](https://tvatter.github.io/gamCopula/)
+for a detailed description of all functions.
 
 Table of contents
 -----------------
