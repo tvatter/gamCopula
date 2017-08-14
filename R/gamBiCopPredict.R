@@ -161,7 +161,11 @@ gamBiCopPredict <- function(object, newdata = NULL,
   quantile.fun <- function(x) quantile(x, c((1 - alpha)/2, 1 - (1 - alpha)/2))
   myCI <- function(x) t(apply(x, 2, quantile.fun))
   if (!sel && (alpha != 0) && (alpha != 1)) {
-    Xp <- predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
+    if (is.null(newdata)) {
+      Xp <- predict.gam(mm, type = "lpmatrix")
+    } else {
+      Xp <- predict.gam(mm, as.data.frame(newdata), type = "lpmatrix")
+    }
     b <- coef(mm)
     Vp <- vcov(mm)
     br <- mvrnorm(1e4, b, Vp)
