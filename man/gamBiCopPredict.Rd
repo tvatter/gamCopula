@@ -15,7 +15,7 @@ gamBiCopPredict(object, newdata = NULL, target = "calib", alpha = 0,
 \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame 
 containing the values of the model covariates at which predictions are 
 required. If this is not provided then predictions corresponding to the 
-original data are returned. If newdata is provided then it should contain all 
+original data are returned. If \code{newdata} is provided then it should contain all 
 the variables needed for prediction: a warning is generated if not.}
 
 \item{target}{Either \code{'calib'}, \code{'par'} or \code{'tau'} or a 
