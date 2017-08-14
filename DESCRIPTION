@@ -30,4 +30,7 @@ Description: Implementation of various inference and simulation tools to
     apply generalized additive models to bivariate dependence structures and
     non-simplified vine copulas.
 License: GPL-3
+LazyLoad: yes
+BugReports: https://github.com/tvatter/gamCopula/issues
+URL: https://github.com/tvatter/gamCopula
 RoxygenNote: 6.0.1
