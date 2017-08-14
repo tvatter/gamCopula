@@ -90,7 +90,7 @@ parameter or Kendall's tau</h1>
 
     
     <p>This function returns the density of a bivariate conditional copula, where
-either the copula parameter or the Kendall's tau is modelled as a function
+either the copula parameter or the Kendall's tau is modeled as a function
 of the covariates.</p>
     
 
@@ -109,7 +109,7 @@ of the covariates.</p>
 <code><a href='http://www.rdocumentation.org/packages/mgcv/topics/mgcv-package'>mgcv</a></code> package) A matrix or data frame 
 containing the values of the model covariates at which predictions are 
 required. If this is not provided then the density corresponding to the 
-original data are returned. If newdata is provided then it should contain all 
+original data are returned. If <code>newdata</code> is provided then it should contain all 
 the variables needed for prediction: a warning is generated if not.</p></td>
     </tr>
     </table>
@@ -171,7 +171,7 @@ the variables needed for prediction: a warning is generated if not.</p></td>
   <span class='fu'>s</span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>) +
   <span class='fu'>s</span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>)
 <span class='fu'>system.time</span>(<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.226   0.007   0.234 </div><div class='input'>
+#&gt;   0.236   0.008   0.244 </div><div class='input'>
 <span class='co'>## Evaluate the conditional density</span>
 <span class='fu'>gamBiCopPDF</span>(<span class='no'>fit</span>$<span class='no'>res</span>)</div><div class='output co'>#&gt;   [1]   1.53897409   0.65895255   7.54308919   7.29902794   7.98200466
 #&gt;   [6]   0.91280983   0.65051146   1.08273677   0.13773165   8.67048283

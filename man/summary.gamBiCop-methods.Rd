@@ -12,7 +12,7 @@
 \item{object}{An object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
-\item{...}{un-used in this class}
+\item{...}{unused in this class}
 }
 \value{
 A useful summary (see \code{\link{summary.gam}}

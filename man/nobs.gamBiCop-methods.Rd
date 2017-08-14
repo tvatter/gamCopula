@@ -4,7 +4,7 @@
 \name{nobs.gamBiCop}
 \alias{nobs.gamBiCop}
 \alias{nobs,gamBiCop-method}
-\title{Extract the Number of Obserations from gamBiCop Object}
+\title{Extract the Number of Observations from gamBiCop Object}
 \usage{
 \S4method{nobs}{gamBiCop}(object, ...)
 }

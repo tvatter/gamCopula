@@ -2,7 +2,7 @@
 #' parameter or Kendall's tau
 #' 
 #' This function returns the density of a bivariate conditional copula, where
-#' either the copula parameter or the Kendall's tau is modelled as a function
+#' either the copula parameter or the Kendall's tau is modeled as a function
 #' of the covariates.
 #'
 #' @param object \code{\link{gamBiCop-class}} object.
@@ -10,7 +10,7 @@
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame 
 #' containing the values of the model covariates at which predictions are 
 #' required. If this is not provided then the density corresponding to the 
-#' original data are returned. If newdata is provided then it should contain all 
+#' original data are returned. If \code{newdata} is provided then it should contain all 
 #' the variables needed for prediction: a warning is generated if not.
 #' @return The conditional density.
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopPredict}}.

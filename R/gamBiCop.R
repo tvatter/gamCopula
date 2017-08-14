@@ -17,7 +17,7 @@
 #' @param model A \code{\link{gamObject}} as return by the 
 #' \code{\link{gam}} function 
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
-#' @param par2 Second parameter for the Studen t-copula.
+#' @param par2 Second parameter for the Student t-copula.
 #' @param tau \code{FALSE} for a calibration fonction specified 
 #' for the Copula parameter or \code{TRUE} (default) for a calibration 
 #' function specified for Kendall's tau.
@@ -165,7 +165,7 @@ setMethod("show", signature("gamBiCop"), show.gamBiCop)
 #'
 #' @param object An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
-#' @param ... un-used in this class
+#' @param ... unused in this class
 #' @return A useful summary (see \code{\link{summary.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 #' @seealso \code{\link{summary.gam}}
@@ -196,7 +196,7 @@ setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 #' @export
 setMethod("formula", signature("gamBiCop"), formula.gamBiCop)
 
-#' Extract the Number of Obserations from gamBiCop Object
+#' Extract the Number of Observations from gamBiCop Object
 #' 
 #' Extract the number of 'observations' from a model fit. 
 #' This is principally intended to be used in computing the BIC 

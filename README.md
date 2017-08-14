@@ -76,7 +76,8 @@ hypercube.
     of families and selects the best fitting model (using either AIC or BIC). 
     Returns an object of class `gamBiCop`.
     
-  * `gamBiCopPredict`: Predict method for the GAM copula model.
+  * `gamBiCopPredict`, `gamBiCopPDF`, `gamBiCopCDF`: Predict and PDF/CDF methods 
+    for the GAM copula model.
 
 ### Vine copula modeling: the gamVine-class
 
