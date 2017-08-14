@@ -142,7 +142,7 @@ gamVineStructureSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                                       type, familyset, rotations, familycrit,
                                       treecrit, level, trunclevel,
                                       tau, method, tol.rel, n.iters,
-                                      parallel, verbose)
+                                      parallel, verbose, select.once)
   if (tmp != TRUE) {
     stop(tmp)
   }
