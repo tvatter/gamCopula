@@ -595,16 +595,17 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
     } else {
       w <- dd$dpar^2 * (dd$d2/dd$p - dd$d1^2) + dd$dpar2 * dd$d1
     }
-    #w <- abs(w)
-    #w <- -w
     sel <- !is.na(w) & w > 0
-    w[!sel] <- mean(w[sel])
-    #     w[!sel] <- FisherBiCop(family, new.pars$par[!sel], new.pars$par2[!sel])
-    #     if (tau == TRUE) {
-    #       w[!sel] <- (dd$dpar[!sel] * dd$dtau[!sel])^2 * w[!sel]
-    #     } else {
-    #       w[!sel] <- dd$dpar[!sel]^2 * w[!sel]
-    #     }
+    if (all(!sel)) {
+          w <- FisherBiCop(family, new.pars$par, new.pars$par2)
+          if (tau == TRUE) {
+            w <- (dd$dpar * dd$dtau)^2 * w
+          } else {
+            w <- dd$dpar^2 * w
+          }
+    } else {
+      w[!sel] <- mean(w[sel])
+    }
   } else {
     w <- FisherBiCop(family, new.pars$par, new.pars$par2)
     if (tau == TRUE) {

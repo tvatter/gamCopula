@@ -152,16 +152,23 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
                          error = function(e) e)
     # fit with same structure for all other families
     if (length(familyset) > 1) {
+      # combine data and covariates into one matrix
+      tmpdata <- udata
+      if (!is.null(lin.covs))
+        tmpdata <- cbind(tmpdata, lin.covs)
+      if (!is.null(smooth.covs))
+        tmpdata <- cbind(tmpdata, smooth.covs)
+      
       if (!parallel) { 
         res[-1] <- foreach(x=familyset[-1]) %do%
-          tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
+          tryCatch(gamBiCopFit(tmpdata, 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
                                verbose, ...),
                    error = function(e) e)
       } else {
         res[-1] <- foreach(x=familyset[-1]) %dopar%
-          tryCatch(gamBiCopFit(cbind(udata, lin.covs, smooth.covs), 
+          tryCatch(gamBiCopFit(tmpdata, 
                                res[[1]]$res@model$formula,
                                x, tau, method, tol.rel, n.iters,
                                verbose, ...),
