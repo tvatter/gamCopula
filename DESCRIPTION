@@ -3,7 +3,7 @@ Type: Package
 Title: Generalized Additive Models for Bivariate Conditional Dependence
     Structures and Vine Copulas
 Version: 0.0-4
-Date: 2017-08-14
+Date: 2017-08-17
 Authors@R: c(
     person("Thomas", "Nagler",, "thomas.nagler@tum.de", role = "aut"),
     person("Thibault", "Vatter",, "thibault.vatter@gmail.com", role = c("aut", "cre"))
