@@ -16,8 +16,8 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
 \tabular{ll}{
 Package: \tab gamCopula\cr
 Type: \tab Package\cr
-Version: \tab 0.0-1\cr
-Date: \tab 2016-08-03\cr
+Version: \tab 0.0-4\cr
+Date: \tab 2017-08-17\cr
 License: \tab GPL-3\cr
 }
 }
@@ -45,7 +45,7 @@ Journal of Multivariate Analysis, 141, 147-167.
 
 Vatter, T. and T. Nagler (2016)
 Generalized additive models for non-simplified pair-copula constructions.
-\url{http://ssrn.com/abstract=2817949}
+\url{https://arxiv.org/abs/1608.01593}
 
 Wood, S.N. (2004)
 Stable and efficient multiple smoothing parameter estimation for generalized additive models. 
