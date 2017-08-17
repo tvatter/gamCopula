@@ -597,11 +597,11 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
     }
     sel <- !is.na(w) & w > 0
     if (all(!sel)) {
-          w[!sel] <- FisherBiCop(family, new.pars$par[!sel], new.pars$par2[!sel])
+          w <- FisherBiCop(family, new.pars$par, new.pars$par2)
           if (tau == TRUE) {
-            w[!sel] <- (dd$dpar[!sel] * dd$dtau[!sel])^2 * w[!sel]
+            w <- (dd$dpar * dd$dtau)^2 * w
           } else {
-            w[!sel] <- dd$dpar[!sel]^2 * w[!sel]
+            w <- dd$dpar^2 * w
           }
     } else {
       w[!sel] <- mean(w[sel])
