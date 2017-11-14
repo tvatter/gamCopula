@@ -50,6 +50,8 @@ export("gamVineCopSelect")
 export("gamVineStructureSelect")
 export("gamVineNormalize")
 export("gamVineFamily")
+export("gamVinePDF")
+export("AIC.gamVine")
 export("RVM2GVC")
 
 ## Others
