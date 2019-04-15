@@ -169,7 +169,7 @@ print(GVC)
 sim <- gamVineSimulate(n, GVC)
 fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
-(gamVinePDF(GVC, sim[1:10, ] 
+(gamVinePDF(GVC, sim[1:10, ])) 
 
 ## Plot the results
 dev.off()

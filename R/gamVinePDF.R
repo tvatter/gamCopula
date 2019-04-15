@@ -139,7 +139,7 @@
 #' sim <- gamVineSimulate(n, GVC)
 #' fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 #' fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
-#' (gamVinePDF(GVC, sim[1:10, ]
+#' (gamVinePDF(GVC, sim[1:10, ]))
 #'
 #' ## Plot the results
 #' dev.off()
@@ -167,7 +167,7 @@ gamVinePDF <- function(object, data) {
   l <- tmp$l
   nn <- tmp$nn
   data <- tmp$data
-  covariates <- tmp$covariates
+  covariates <- cbind(tmp$data, tmp$covariates)
 
   oldobject <- object
   oldMat <- object@Matrix
@@ -208,7 +208,7 @@ gamVinePDF <- function(object, data) {
         par <- rep(mm$par, n)
         par2 <- mm$par2
       } else {
-        par <- gamBiCopPredict(mm, target = "par")$par
+        par <- gamBiCopPredict(mm, newdata = covariates, target = "par")$par
         par2 <- mm@par2
       }
       fams <- vapply(
@@ -216,6 +216,7 @@ gamVinePDF <- function(object, data) {
         function(j) famTrans(fam[k, i], inv = FALSE, par = par[j]),
         numeric(1)
       )
+      
       V$dens[k, i, ] <- BiCopPDF(zr2, zr1, fams, par, par2, check.pars = FALSE)
 
       if (CondDistr$direct[k - 1, i]) {
