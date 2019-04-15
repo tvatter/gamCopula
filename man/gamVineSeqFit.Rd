@@ -4,8 +4,8 @@
 \alias{gamVineSeqFit}
 \title{Sequential maximum penalized likelihood estimation of a GAM-Vine model.}
 \usage{
-gamVineSeqFit(data, GVC, covariates = NA, method = "FS", tol.rel = 0.001,
-  n.iters = 10, verbose = FALSE)
+gamVineSeqFit(data, GVC, covariates = NA, method = "FS",
+  tol.rel = 0.001, n.iters = 10, verbose = FALSE)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -169,6 +169,7 @@ print(GVC)
 sim <- gamVineSimulate(n, GVC)
 fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
+(gamVinePDF(GVC, sim[1:10, ] 
 
 ## Plot the results
 dev.off()

@@ -11,11 +11,10 @@
 #' required, along with a number of additional columns corresponding to the
 #' variables in the pair copula decomposition.
 #' @return The conditional density.
-#' @seealso \code{\link{gamVine}}
 #' @examples
 #' require(mgcv)
 #' set.seed(0)
-#' 
+#'
 #' ##  Simulation parameters
 #' # Sample size
 #' n <- 1e3
@@ -26,7 +25,7 @@
 #' Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
 #' Matrix <- matrix(Matrix,d,d)
 #' nnames <- paste("X", 1:d, sep = "")
-#' 
+#'
 #' ## A function factory
 #' eta0 <- 1
 #' calib.surf <- list(
@@ -43,25 +42,25 @@
 #'     Tm <- (Tf - Ti)/2
 #'     a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
 #'     return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
-#' 
+#'
 #' ##  Create the model
 #' # Define gam-vine model list
 #' count <- 1
 #' model <- vector(mode = "list", length = d*(d-1)/2)
 #' sel <- seq(d,d^2-d, by = d)
-#' 
+#'
 #' # First tree
 #' for (i in 1:(d-1)) {
 #'   # Select a copula family
 #'   family <- sample(familyset, 1)
 #'   model[[count]]$family <- family
-#'   
-#'   # Use the canonical link and a randomly generated parameter 
+#'
+#'   # Use the canonical link and a randomly generated parameter
 #'   if (is.element(family,c(1,2))) {
 #'     model[[count]]$par <- tanh(rnorm(1)/2)
 #'     if (family == 2) {
 #'       model[[count]]$par2 <- 2+exp(rnorm(1))
-#'     }  
+#'     }
 #'   } else {
 #'     if (is.element(family,c(401:404))) {
 #'       rr <- rnorm(1)
@@ -73,52 +72,52 @@
 #'   }
 #'   count <- count + 1
 #' }
-#' 
+#'
 #' # A dummy dataset
 #' data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
-#' 
+#'
 #' # Trees 2 to (d-1)
 #' for(j in 2:(d-1)){
-#'   for(i in 1:(d-j)){ 
+#'   for(i in 1:(d-j)){
 #'     # Select a copula family
-#'     family <- sample(familyset, 1)  
-#'     
+#'     family <- sample(familyset, 1)
+#'
 #'     # Select the conditiong set and create a model formula
 #'     cond <- nnames[sort(Matrix[(d-j+2):d,i])]
 #'     tmpform <- paste("~",paste(paste("s(", cond, ", k=10, bs='cr')",
 #'                                      sep = ""), collapse=" + "))
 #'     l <- length(cond)
 #'     temp <- sample(3, l, replace = TRUE)
-#'     
+#'
 #'     # Spline approximation of the true function
 #'     m <- 1e2
 #'     x <- matrix(seq(0,1,length.out=m), nrow = m, ncol = 1)
-#'     if(l != 1){  
+#'     if(l != 1){
 #'       tmp.fct <- paste("function(x){eta0+",
-#'                        paste(sapply(1:l, function(x) 
+#'                        paste(sapply(1:l, function(x)
 #'                          paste("calib.surf[[",temp[x],"]](x[",x,"])",
 #'                                sep="")), collapse="+"),"}",sep="")
 #'       tmp.fct <- eval(parse(text = tmp.fct))
 #'       x <- eval(parse(text = paste0("expand.grid(",
-#'                                    paste0(rep("x",l), collapse = ","),")", 
+#'                                    paste0(rep("x",l), collapse = ","),")",
 #'                                    collapse = "")))
 #'       y <- apply(x,1,tmp.fct)
 #'     }else{
-#'       tmp.fct <- function(x) eta0+calib.surf[[temp]](x)  
+#'       tmp.fct <- function(x) eta0+calib.surf[[temp]](x)
 #'       colnames(x) <- cond
 #'       y <- tmp.fct(x)
 #'     }
-#'     
+#'
 #'     # Estimate the gam model
 #'     form <- as.formula(paste0("y", tmpform))
 #'     dd <- data.frame(y, x)
 #'     names(dd) <- c("y", cond)
 #'     b <- gam(form, data = dd)
 #'     #plot(x[,1],(y-fitted(b))/y)
-#'     
+#'
 #'     # Create a dummy gamBiCop object
 #'     tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
-#'     
+#'
 #'     # Update the copula family and the model coefficients
 #'     attr(tmp, "model")$coefficients <- coefficients(b)
 #'     attr(tmp, "model")$smooth <- b$smooth
@@ -127,33 +126,33 @@
 #'       attr(tmp, "par2") <- 2+exp(rnorm(1))
 #'     }
 #'     model[[count]] <- tmp
-#'     count <- count+1  
-#'   } 
+#'     count <- count+1
+#'   }
 #' }
-#' 
+#'
 #' # Create the gamVineCopula object
 #' GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
 #' print(GVC)
-#' 
+#'
 #' \dontrun{
 #' ## Simulate and fit the model
 #' sim <- gamVineSimulate(n, GVC)
 #' fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 #' fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
-#' (gamVinePDF(GVC, sim[1:10, ] 
+#' (gamVinePDF(GVC, sim[1:10, ]
 #'
 #' ## Plot the results
 #' dev.off()
 #' par(mfrow=c(3,4))
 #' plot(GVC, ylim = c(-2.5,2.5))
-#' 
+#'
 #' plot(fitGVC, ylim = c(-2.5,2.5))
-#' 
+#'
 #' plot(fitGVC2, ylim = c(-2.5,2.5))}
-#' 
-#' @seealso \code{\link{gamVineCopSelect}},\code{\link{gamVineStructureSelect}}, 
-#'  \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
-#'  \code{\link{gamBiCopFit}}.
+#'
+#' @seealso \code{\link{gamVine}}, \code{\link{gamVineCopSelect}},
+#' \code{\link{gamVineStructureSelect}}, \code{\link{gamVine-class}},
+#' \code{\link{gamVineSimulate}} and \code{\link{gamBiCopFit}}.
 gamVinePDF <- function(object, data) {
   tmp <- valid.gamVine(object)
   if (tmp != "TRUE") {
@@ -238,18 +237,18 @@ gamVinePDF <- function(object, data) {
   c(apply(V$dens, 3, prod))
 }
 
-npars.gamVine <- function(object, ...) {
-  sum(sapply(object@model, pair_npar))
-}
-
-pair_npar <- function(x) {
-  if (gamCopula:::valid.gamBiCop(x) != TRUE) {
-    return(VineCopula::BiCop(x$family, x$par, x$par2)$npars)
-  }
-  l <- gamCopula:::logLik.gamBiCop(x)
-  attributes(l)$df
-}
-
-AIC.gamVine <- function(object, data) {
-  -2 * sum(log(gamVinePDF(data, object))) + 2 * npars.gamVine(object)
-}
+# npars.gamVine <- function(object, ...) {
+#   sum(sapply(object@model, pair_npar))
+# }
+# 
+# pair_npar <- function(x) {
+#   if (gamCopula:::valid.gamBiCop(x) != TRUE) {
+#     return(VineCopula::BiCop(x$family, x$par, x$par2)$npars)
+#   }
+#   l <- gamCopula:::logLik.gamBiCop(x)
+#   attributes(l)$df
+# }
+# 
+# AIC.gamVine <- function(object, data) {
+#   -2 * sum(log(gamVinePDF(data, object))) + 2 * npars.gamVine(object)
+# }
