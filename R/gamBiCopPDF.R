@@ -9,7 +9,8 @@
 #' @param newdata (Same as in \code{\link{predict.gam}} from the 
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame 
 #' containing the values of the model covariates at which predictions are 
-#' required. If this is not provided then the density corresponding to the 
+#' required, along with two columns named `"u1"` and `"u2"`. 
+#' If this is not provided then the density corresponding to the 
 #' original data are returned. If \code{newdata} is provided then it should contain all 
 #' the variables needed for prediction: a warning is generated if not.
 #' @return The conditional density.
