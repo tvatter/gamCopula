@@ -167,7 +167,9 @@ gamVinePDF <- function(object, data) {
   l <- tmp$l
   nn <- tmp$nn
   data <- tmp$data
-  covariates <- cbind(tmp$data, tmp$covariates)
+  covariates <- tmp$data
+  if (l > 0)
+    covariates <- cbind(covariates, tmp$covariates)
 
   oldobject <- object
   oldMat <- object@Matrix
