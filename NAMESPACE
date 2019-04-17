@@ -12,7 +12,7 @@ importFrom("graphics", "par")
 importFrom("stats", "as.formula", "coef", "cor", "median", "na.omit",
            "optimize", "predict", "quantile", "runif", "splinefun",
            "update", "vcov")
-importFrom("utils", "capture.output")
+importFrom("utils", "capture.output", "modifyList")
 importFrom("MASS", "mvrnorm")
 importFrom("gsl", "expint_E1")
 importFrom("copula", "safeUroot")
@@ -50,6 +50,8 @@ export("gamVineCopSelect")
 export("gamVineStructureSelect")
 export("gamVineNormalize")
 export("gamVineFamily")
+export("gamVinePDF")
+#export("AIC.gamVine")
 export("RVM2GVC")
 
 ## Others

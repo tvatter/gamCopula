@@ -5,8 +5,9 @@
 \title{Maximum penalized likelihood estimation of a Generalized Additive model 
 for the copula parameter or Kendall's tau.}
 \usage{
-gamBiCopFit(data, formula = ~1, family = 1, tau = TRUE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE, ...)
+gamBiCopFit(data, formula = ~1, family = 1, tau = TRUE,
+  method = "FS", tol.rel = 0.001, n.iters = 10, verbose = FALSE,
+  ...)
 }
 \arguments{
 \item{data}{A list, data frame or matrix containing the model responses,

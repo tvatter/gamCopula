@@ -6,55 +6,56 @@
 \usage{
 gamVineStructureSelect(udata, lin.covs = NULL, smooth.covs = NULL,
   simplified = TRUE, type = 0, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "tau", level = 0.05, trunclevel = NA,
-  tau = TRUE, method = "FS", tol.rel = 0.001, n.iters = 10,
-  parallel = FALSE, verbose = FALSE, select.once = TRUE)
+  familycrit = "AIC", treecrit = "tau", level = 0.05,
+  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
+  n.iters = 10, parallel = FALSE, verbose = FALSE,
+  select.once = TRUE)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the data in [0,1]^d.}
 
-\item{lin.covs}{A matrix or data frame containing the parametric (i.e., 
+\item{lin.covs}{A matrix or data frame containing the parametric (i.e.,
 linear) covariates (default: \code{lin.covs = NULL}).}
 
-\item{smooth.covs}{A matrix or data frame containing the non-parametric 
+\item{smooth.covs}{A matrix or data frame containing the non-parametric
 (i.e., smooth) covariates (default: \code{smooth.covs = NULL}).}
 
-\item{simplified}{If \code{TRUE} (default), then a simplified vine is fitted 
-(which is possible only if there are exogenous covariates). If \code{FALSE}, 
+\item{simplified}{If \code{TRUE} (default), then a simplified vine is fitted
+(which is possible only if there are exogenous covariates). If \code{FALSE},
 then a non-simplified vine is fitted.}
 
 \item{type}{\code{type = 0} (default) for a R-Vine and \code{type = 1} for a
 C-Vine.}
 
-\item{familyset}{An integer vector of pair-copula families to select from 
-(the independence copula MUST NOT be specified in this vector unless one 
-wants to fit an independence vine!). 
-Not listed copula families might be included to better handle 
-limit cases. If \code{familyset = NA} (default), selection among all 
-possible families is performed. Coding of pair-copula families:  
-\code{1} Gaussian, 
-\code{2} Student t, 
-\code{5} Frank, 
-\code{301} Double Clayton type I (standard and rotated 90 degrees), 
-\code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{401} Double Gumbel type I (standard and rotated 90 degrees), 
-\code{402} Double Gumbel type II (standard and rotated 270 degrees), 
-\code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+\item{familyset}{An integer vector of pair-copula families to select from
+(the independence copula MUST NOT be specified in this vector unless one
+wants to fit an independence vine!).
+Not listed copula families might be included to better handle
+limit cases. If \code{familyset = NA} (default), selection among all
+possible families is performed. Coding of pair-copula families:
+\code{1} Gaussian,
+\code{2} Student t,
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{rotations}{If \code{TRUE}, all rotations of the families in familyset 
+\item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
 
-\item{familycrit}{Character indicating the criterion for bivariate copula 
-selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
-\code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
+\item{familycrit}{Character indicating the criterion for bivariate copula
+selection. Possible choices: \code{familycrit = 'AIC'} (default) or
+\code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{treecrit}{Character indicating how pairs are selected in each tree.
-\code{treecrit = "tau"} uses the maximum spanning tree of the Kendall's tau 
-(i.e., the tree of maximal overall dependence), \code{treecrit = "rho"} 
+\code{treecrit = "tau"} uses the maximum spanning tree of the Kendall's tau
+(i.e., the tree of maximal overall dependence), \code{treecrit = "rho"}
 uses the Spearman's rho.}
 
 \item{level}{Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
@@ -63,8 +64,8 @@ predictors (default: \code{level = 0.05}) for each conditional pair-copula.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
-\item{tau}{\code{TRUE} (default) for a calibration function specified for 
-Kendall's tau or \code{FALSE} for a calibration function specified 
+\item{tau}{\code{TRUE} (default) for a calibration function specified for
+Kendall's tau or \code{FALSE} for a calibration function specified
 for the Copula parameter.}
 
 \item{method}{\code{'NR'} for Newton-Raphson
@@ -72,14 +73,14 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{tol.rel}{Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{n.iters}{Maximal number of iterations for 
+\item{n.iters}{Maximal number of iterations for
 \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{parallel}{\code{TRUE} (default) for parallel selection of copula 
+\item{parallel}{\code{TRUE} (default) for parallel selection of copula
 family at each edge or \code{FALSE} for the sequential version.
 for the Copula parameter.}
 
-\item{verbose}{\code{TRUE} if informations should be printed during the 
+\item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 
@@ -90,13 +91,13 @@ for the family that appears first in \code{familyset}.}
 \code{gamVineSeqFit} returns a \code{\link{gamVine-class}} object.
 }
 \description{
-This function select the structure and estimates the parameter(s) of a 
-Generalized Additive model 
+This function select the structure and estimates the parameter(s) of a
+Generalized Additive model
 (GAM) Vine model, where GAMs for individual edges are specified either for
 the copula parameter or Kendall's tau.
-It solves the maximum penalized likelihood estimation for the copula families 
-supported in this package by reformulating each Newton-Raphson iteration as 
-a generalized ridge regression, which is solved using 
+It solves the maximum penalized likelihood estimation for the copula families
+supported in this package by reformulating each Newton-Raphson iteration as
+a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
@@ -111,22 +112,22 @@ n <- 1e3
 
 # Define a R-vine tree structure matrix
 d <- 3
-Matrix <- c(2,3,1,0,3,1,0,0,1)
-Matrix <- matrix(Matrix,d,d)
+Matrix <- c(2, 3, 1, 0, 3, 1, 0, 0, 1)
+Matrix <- matrix(Matrix, d, d)
 nnames <- paste("x", 1:d, sep = "")
 
 # Copula families for each edge
-fam <- c(301,401,1)
+fam <- c(301, 401, 1)
 
 # Parameters for the first tree (two unconditional copulas)
-par <- c(1,2)
+par <- c(1, 2)
 
 # Pre-allocate the GAM-Vine model list
 count <- 1
-model <- vector(mode = "list", length = d*(d-1)/2)
+model <- vector(mode = "list", length = d * (d - 1) / 2)
 
 # The first tree contains only the two unconditional copulas
-for (i in 1:(d-1)) {
+for (i in 1:(d - 1)) {
   model[[count]] <- list(family = fam[count], par = par[count], par2 = 0)
   count <- count + 1
 }
@@ -138,15 +139,14 @@ for (i in 1:(d-1)) {
 tmp <- data.frame(u1 = runif(1e2), u2 = runif(1e2), x1 = runif(1e2))
 
 # Set-up an arbitrary linear model for the calibration function
-model[[count]] <- gamBiCopFit(tmp, ~ x1, fam[count])$res
+model[[count]] <- gamBiCopFit(tmp, ~x1, fam[count])$res
 
 # Update the coefficients of the model
-attr(model[[count]],"model")$coefficients <- c(-5, 10)
+attr(model[[count]], "model")$coefficients <- c(-5, 10)
 
 # Define gamVine object
 GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
 GVC
-
 \dontrun{
 # Simulate new data
 simData <- data.frame(gamVineSimulate(n, GVC))
@@ -156,11 +156,12 @@ colnames(simData) <- nnames
 summary(fitGVC <- gamVineSeqFit(simData, GVC))
 
 # Fit data using structure selection and sequential estimation
-summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))}
+summary(fitGVC2 <- gamVineStructureSelect(simData, simplified = FALSE))
+}
 
 }
 \seealso{
-\code{\link{gamVineSeqFit}},\code{\link{gamVineCopSelect}}, 
- \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+\code{\link{gamVineSeqFit}},\code{\link{gamVineCopSelect}},
+ \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and
  \code{\link{gamBiCopSelect}}.
 }

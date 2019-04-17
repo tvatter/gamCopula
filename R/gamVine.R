@@ -266,8 +266,11 @@ plot.gamVine <- function(x, ...) {
       }
       con2 <- paste0(sort(all.vars(mm@model$pred.formula)), collapse = ",")
       
-      plot(x@model[[j]], main = paste0(c(con1,con2), collapse = "|"), 
-           se = F, ...)
+      args <- list(x = x@model[[j]], 
+                   main = paste0(c(con1,con2), collapse = "|"), 
+                   se = F)
+      args <- modifyList(args, list(...))
+      do.call(plot, args)
     }
   }
 }
