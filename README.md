@@ -102,7 +102,9 @@ hypercube.
     It selects the R-vine structure using Dissmann et al. (2013)'s 
     method, estimates parameters for various families, and selects the best 
     family for each pair.
-    
+
+  * `gamVinePDF`: Computes the PDF for a given `gamVine` object.
+
   * `RVM2GVC`: converts an `RVineMatrix` object from the `VineCopula` package 
     into a `gamVine`
 
