@@ -5,38 +5,38 @@
 \alias{gamBiCop-class}
 \title{The gamBiCop Class}
 \description{
-gamBiCop is an S4 class to store 
- a Generalized Additive Model for bivariate copula a parameter or 
- Kendall's tau. Objects can be created by calls of the form 
+gamBiCop is an S4 class to store
+ a Generalized Additive Model for bivariate copula a parameter or
+ Kendall's tau. Objects can be created by calls of the form
  \code{new("gamBiCop", ...)}, or by function \code{\link{gamBiCop}}.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{family}}{A copula family: \code{1} Gaussian, 
-\code{2} Student t, 
-\code{5} Frank, 
-\code{301} Double Clayton type I (standard and rotated 90 degrees), 
-\code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{401} Double Gumbel type I (standard and rotated 90 degrees), 
-\code{402} Double Gumbel type II (standard and rotated 270 degrees), 
-\code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+\item{\code{family}}{A copula family: \code{1} Gaussian,
+\code{2} Student t,
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{\code{model}}{A \code{\link{gamObject}} as return by the
- \code{\link{gam}} function 
+ \code{\link{gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{\code{par2}}{Second parameter for the Studen t-copula.}
 
-\item{\code{tau}}{\code{FALSE} (default) for a calibration fonction 
-specified for the Copula parameter 
+\item{\code{tau}}{\code{FALSE} (default) for a calibration fonction
+specified for the Copula parameter
 or \code{TRUE} for a calibration function specified for Kendall's tau.}
 }}
 
 \seealso{
-\code{\link{gamBiCopFit}}, 
+\code{\link{gamBiCopFit}},
 \code{\link{gamBiCopPredict}} and \code{\link{gamBiCopSimulate}}.
 }

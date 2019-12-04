@@ -7,14 +7,14 @@
 gamVineNormalize(GVC)
 }
 \arguments{
-\item{GVC}{An object of the class 
+\item{GVC}{An object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.}
 }
 \value{
 The normalized \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{
-Change the R-vine matrix in the natural order, 
+Change the R-vine matrix in the natural order,
 i.e. with d:1 on the diagonal
 }
 \seealso{

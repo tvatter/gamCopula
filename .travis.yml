@@ -11,11 +11,6 @@ matrix:
 #    - Rscript -e 'covr::codecov()'
   - r: oldrel
 
-r:
-  - oldrel
-  - release
-  - devel
-
 apt_packages:
   - libcurl4-openssl-dev
   - libxml2-dev

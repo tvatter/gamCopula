@@ -14,16 +14,16 @@
 
 \item{...}{un-used in this class}
 
-\item{k}{numeric, the penalty per parameter to be used; the default 
+\item{k}{numeric, the penalty per parameter to be used; the default
 \code{k = 2} is the classical AIC.}
 }
 \value{
 A numeric value with the corresponding AIC.
 }
 \description{
-Function calculating Akaike's 'An Information Criterion' (AIC) for an object 
+Function calculating Akaike's 'An Information Criterion' (AIC) for an object
 of the class \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-(note that the models are usually fitted by penalized likelihood 
+(note that the models are usually fitted by penalized likelihood
 maximization).
 }
 \seealso{

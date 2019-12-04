@@ -11,13 +11,13 @@ gamVineFamily(GVC)
 \code{\link[gamCopula:gamVine-class]{gamVine}}.}
 }
 \value{
-Matrix of copula families corresponding to the model list in the 
+Matrix of copula families corresponding to the model list in the
 \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{
-Return the matrix of copula family (see 
-\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}) 
-corresponding to the model list in the 
+Return the matrix of copula family (see
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}})
+corresponding to the model list in the
 \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \seealso{

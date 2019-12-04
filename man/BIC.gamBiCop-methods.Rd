@@ -9,7 +9,7 @@
 \S4method{BIC}{gamBiCop}(object, ...)
 }
 \arguments{
-\item{object}{An object of the class 
+\item{object}{An object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
 \item{...}{un-used in this class}
@@ -18,9 +18,9 @@
 A numeric value with the corresponding BIC.
 }
 \description{
-Function calculating the Schwarz's Bayesian Information Criterion (BIC) 
+Function calculating the Schwarz's Bayesian Information Criterion (BIC)
 for an object of the class
-\code{\link[gamCopula:gamBiCop-class]{gamBiCop}} (note that the models are 
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}} (note that the models are
 usually fitted by penalized likelihood maximization).
 }
 \seealso{

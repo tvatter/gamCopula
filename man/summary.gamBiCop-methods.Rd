@@ -19,7 +19,7 @@ A useful summary (see \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 }
 \description{
-Takes a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object and produces 
+Takes a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object and produces
 various useful summaries from it.
 }
 \seealso{

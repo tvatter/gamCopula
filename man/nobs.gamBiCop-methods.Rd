@@ -18,8 +18,8 @@
 A single number, normally an integer.
 }
 \description{
-Extract the number of 'observations' from a model fit. 
-This is principally intended to be used in computing the BIC 
+Extract the number of 'observations' from a model fit.
+This is principally intended to be used in computing the BIC
 (see \code{\link{AIC}}).
 }
 \seealso{

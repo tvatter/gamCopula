@@ -9,7 +9,7 @@
 \S4method{plot}{gamVine,ANY}(x, y, ...)
 }
 \arguments{
-\item{x}{An object of the class 
+\item{x}{An object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.}
 
 \item{y}{Not used with this class.}
@@ -20,8 +20,8 @@
 This function simply generates plots.
 }
 \description{
-Plot an object of the class 
-\code{\link[gamCopula:gamVine-class]{gamVine}}. 
+Plot an object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}}.
 The function is based on (see \code{\link{plot.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}).
 }

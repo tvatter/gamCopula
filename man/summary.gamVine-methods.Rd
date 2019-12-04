@@ -19,8 +19,8 @@ A useful summary (see \code{\link{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 }
 \description{
-Takes an object of the class 
-\code{\link[gamCopula:gamVine-class]{gamVine}} and produces various 
+Takes an object of the class
+\code{\link[gamCopula:gamVine-class]{gamVine}} and produces various
 useful summaries from it.
 }
 \seealso{

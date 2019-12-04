@@ -6,7 +6,7 @@
 \title{The gamVine Class}
 \description{
 gamVine is an S4 class to store a conditional and potentially
- non-simplified pair-copula construction. Objects can be created by calls of 
+ non-simplified pair-copula construction. Objects can be created by calls of
  the form \code{new("gamVine", ...)}, or by function \code{\link{gamVine}}.
 }
 \section{Slots}{
@@ -14,8 +14,8 @@ gamVine is an S4 class to store a conditional and potentially
 \describe{
 \item{\code{Matrix}}{Lower triangular d x d matrix that defines the tree structure.}
 
-\item{\code{model}}{list containing d x (d-1)/2 lists with three numeric items 
-(family, par and par2) and/or 
+\item{\code{model}}{list containing d x (d-1)/2 lists with three numeric items
+(family, par and par2) and/or
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} objects.}
 
 \item{\code{names}}{vector of d names.}
@@ -24,8 +24,8 @@ gamVine is an S4 class to store a conditional and potentially
 }}
 
 \seealso{
-\code{\link{gamVine}}, 
+\code{\link{gamVine}},
 \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-\code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
+\code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}},
 \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 }
