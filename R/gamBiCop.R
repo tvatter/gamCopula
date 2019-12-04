@@ -35,7 +35,7 @@ gamBiCop <- function(family, model, par2 = 0, tau = TRUE) {
   }
   tmp <- tryCatch(as.integer(family), error = function(e) e)
   msg <- "should be or be coercisable to an integer."
-  if (any(class(tmp) != "integer") || 
+  if (!inherits(tmp, "integer") || 
         length(family) != 1 || as.integer(family) != family) {
     stop(paste("family", msg))
   }
