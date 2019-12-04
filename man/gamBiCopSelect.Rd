@@ -2,7 +2,7 @@
 % Please edit documentation in R/gamBiCopSelect.R
 \name{gamBiCopSelect}
 \alias{gamBiCopSelect}
-\title{Selection and Maximum penalized likelihood estimation of a Generalized 
+\title{Selection and Maximum penalized likelihood estimation of a Generalized
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
 gamBiCopSelect(udata, lin.covs = NULL, smooth.covs = NULL,
@@ -12,58 +12,58 @@ gamBiCopSelect(udata, lin.covs = NULL, smooth.covs = NULL,
   select.once = TRUE, ...)
 }
 \arguments{
-\item{udata}{A matrix or data frame containing the model responses, (u1,u2) in 
+\item{udata}{A matrix or data frame containing the model responses, (u1,u2) in
 [0,1]x[0,1]}
 
-\item{lin.covs}{A matrix or data frame containing the parametric (i.e., 
+\item{lin.covs}{A matrix or data frame containing the parametric (i.e.,
 linear) covariates.}
 
-\item{smooth.covs}{A matrix or data frame containing the non-parametric 
+\item{smooth.covs}{A matrix or data frame containing the non-parametric
 (i.e., smooth) covariates.}
 
-\item{familyset}{(Similar to \code{\link{BiCopSelect}} from the 
-\code{\link[VineCopula:VineCopula-package]{VineCopula}} package) 
-Vector of bivariate copula families to select from. 
+\item{familyset}{(Similar to \code{\link{BiCopSelect}} from the
+\code{\link[VineCopula:VineCopula-package]{VineCopula}} package)
+Vector of bivariate copula families to select from.
 If \code{familyset = NA} (default), selection
-among all possible families is performed.   Coding of bivariate copula 
+among all possible families is performed.   Coding of bivariate copula
 families:
-\code{1} Gaussian, 
-\code{2} Student t, 
-\code{5} Frank, 
-\code{301} Double Clayton type I (standard and rotated 90 degrees), 
-\code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{401} Double Gumbel type I (standard and rotated 90 degrees), 
-\code{402} Double Gumbel type II (standard and rotated 270 degrees), 
-\code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+\code{1} Gaussian,
+\code{2} Student t,
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{rotations}{If \code{TRUE}, all rotations of the families in familyset 
+\item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
 
-\item{familycrit}{Character indicating the criterion for bivariate copula 
-selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
-\code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
+\item{familycrit}{Character indicating the criterion for bivariate copula
+selection. Possible choices: \code{familycrit = 'AIC'} (default) or
+\code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{level}{Numerical; significance level of the test for removing individual
 predictors (default: \code{level = 0.05}).}
 
-\item{edf}{Numerical; if the estimated EDF for individual predictors is 
+\item{edf}{Numerical; if the estimated EDF for individual predictors is
 smaller than \code{edf} but the predictor is still significant, then
 it is set as linear (default: \code{edf = 1.5}).}
 
-\item{tau}{\code{FALSE} for a calibration function specified for 
-the Copula parameter or \code{TRUE} (default) for a calibration function 
+\item{tau}{\code{FALSE} for a calibration function specified for
+the Copula parameter or \code{TRUE} (default) for a calibration function
 specified for Kendall's tau.}
 
-\item{method}{\code{'FS'} for Fisher-scoring (default) and 
+\item{method}{\code{'FS'} for Fisher-scoring (default) and
 \code{'NR'} for Newton-Raphson.}
 
 \item{tol.rel}{Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{n.iters}{Maximal number of iterations for 
+\item{n.iters}{Maximal number of iterations for
 \code{'FS'}/\code{'NR'} algorithm.}
 
 \item{parallel}{\code{TRUE} for a parallel estimation across copula families.}
@@ -76,21 +76,21 @@ for the family that appears first in \code{familyset}.}
 \item{...}{Additional parameters to be passed to \code{\link{gam}}}
 }
 \value{
-\code{gamBiCopFit} returns a list consisting of 
-\item{res}{S4 \code{\link{gamBiCop-class}} object.} 
-\item{method}{\code{'FS'} for Fisher-scoring and 
-\code{'NR'} for Newton-Raphson.} 
-\item{tol.rel}{relative tolerance for \code{'FS'}/\code{'NR'} algorithm.} 
-\item{n.iters}{maximal number of iterations for 
-\code{'FS'}/\code{'NR'} algorithm.} 
-\item{trace}{the estimation procedure's trace.} 
+\code{gamBiCopFit} returns a list consisting of
+\item{res}{S4 \code{\link{gamBiCop-class}} object.}
+\item{method}{\code{'FS'} for Fisher-scoring and
+\code{'NR'} for Newton-Raphson.}
+\item{tol.rel}{relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
+\item{n.iters}{maximal number of iterations for
+\code{'FS'}/\code{'NR'} algorithm.}
+\item{trace}{the estimation procedure's trace.}
 \item{conv}{\code{0} if the algorithm converged and \code{1} otherwise.}
 }
 \description{
-This function selects an appropriate bivariate copula family for given 
-bivariate copula data using one of a range of methods. The corresponding 
+This function selects an appropriate bivariate copula family for given
+bivariate copula data using one of a range of methods. The corresponding
 parameter estimates are obtained by maximum penalized  likelihood estimation,
-where each Newton-Raphson iteration is reformulated as a generalized ridge 
+where each Newton-Raphson iteration is reformulated as a generalized ridge
 regression solved using the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
@@ -106,42 +106,51 @@ par2 <- 4
 
 ## A calibration surface depending on four variables
 eta0 <- 1
-calib.surf <- list(calib.lin <- function(t, Ti = 0, Tf = 1, b = 2) {
-    return(-2+4*t)},
+calib.surf <- list(
+  calib.lin <- function(t, Ti = 0, Tf = 1, b = 2) {
+    return(-2 + 4 * t)
+  },
   calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
-    Tm <- (Tf - Ti)/2
-    a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
-  return(a + b * (t - Tm)^2)},
+    Tm <- (Tf - Ti) / 2
+    a <- -(b / 3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
+    return(a + b * (t - Tm)^2)
+  },
   calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
-    a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
-                                 cos(2 * f * pi * (Tf - Ti))
-                               - cos(2 * f * pi * Ti)))
-    return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
-  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
-    Tm <- (Tf - Ti)/2
-    a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
-    return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
+    a <- b * (1 - 2 * Tf * pi / (f * Tf * pi +
+      cos(2 * f * pi * (Tf - Ti))
+      - cos(2 * f * pi * Ti)))
+    return((a + b) / 2 + (b - a) * sin(2 * f * pi * (t - Ti)) / 2)
+  },
+  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf / 8) {
+    Tm <- (Tf - Ti) / 2
+    a <- (b * s * sqrt(2 * pi) / Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
+    return(a + b * exp(-(t - Tm)^2 / (2 * s^2)))
+  }
+)
 
 ## 6-dimensional matrix X of covariates
 covariates.distr <- mvdc(normalCopula(rho, dim = 6),
-                                 c("unif"), list(list(min = 0, max = 1)),
-                                 marginsIdentical = TRUE)
+  c("unif"), list(list(min = 0, max = 1)),
+  marginsIdentical = TRUE
+)
 X <- rMvdc(n, covariates.distr)
-colnames(X) <- paste("x",1:6,sep="")
+colnames(X) <- paste("x", 1:6, sep = "")
 
 ## U in [0,1]x[0,1] depending on the four first columns of X
-U <- condBiCopSim(fam, function(x1,x2,x3,x4) {eta0+sum(mapply(function(f,x)
-  f(x), calib.surf, c(x1,x2,x3,x4)))}, X[,1:4], par2 = 4, return.par = TRUE)
-
+U <- condBiCopSim(fam, function(x1, x2, x3, x4) {
+  eta0 + sum(mapply(function(f, x)
+    f(x), calib.surf, c(x1, x2, x3, x4)))
+}, X[, 1:4], par2 = 4, return.par = TRUE)
 \dontrun{
-## Selection using AIC (about 30sec on single core) 
+## Selection using AIC (about 30sec on single core)
 ## Use parallel = TRUE to speed-up....
 system.time(best <- gamBiCopSelect(U$data, smooth.covs = X))
 print(best$res)
 EDF(best$res) ## The first function is linear
 ## Plot only the smooth component
-par(mfrow=c(2,2))
-plot(best$res)}
+par(mfrow = c(2, 2))
+plot(best$res)
+}
 }
 \seealso{
 \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.

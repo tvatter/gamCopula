@@ -9,11 +9,11 @@
 \S4method{dim}{gamVine}(x)
 }
 \arguments{
-\item{x}{An object of the class 
+\item{x}{An object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.}
 }
 \value{
-Dimension of the 
+Dimension of the
 \code{\link[gamCopula:gamVine-class]{gamVine}} object.
 }
 \description{

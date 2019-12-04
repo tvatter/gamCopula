@@ -9,7 +9,7 @@
 \S4method{formula}{gamBiCop}(x, ...)
 }
 \arguments{
-\item{x}{An object of the class 
+\item{x}{An object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
 \item{...}{un-used in this class}
@@ -21,6 +21,6 @@ This function is a wrapper to \code{\link{formula.gam}}
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \seealso{
-\code{\link{formula.gam}} function 
+\code{\link{formula.gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }

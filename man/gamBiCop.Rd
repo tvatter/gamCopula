@@ -7,26 +7,26 @@
 gamBiCop(family, model, par2 = 0, tau = TRUE)
 }
 \arguments{
-\item{family}{A copula family: \code{1} Gaussian, 
-\code{2} Student t, 
-\code{5} Frank, 
-\code{301} Double Clayton type I (standard and rotated 90 degrees), 
-\code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{401} Double Gumbel type I (standard and rotated 90 degrees), 
-\code{402} Double Gumbel type II (standard and rotated 270 degrees), 
-\code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+\item{family}{A copula family: \code{1} Gaussian,
+\code{2} Student t,
+\code{5} Frank,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{model}{A \code{\link{gamObject}} as return by the 
-\code{\link{gam}} function 
+\item{model}{A \code{\link{gamObject}} as return by the
+\code{\link{gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{par2}{Second parameter for the Student t-copula.}
 
-\item{tau}{\code{FALSE} for a calibration function specified 
-for the Copula parameter or \code{TRUE} (default) for a calibration 
+\item{tau}{\code{FALSE} for a calibration function specified
+for the Copula parameter or \code{TRUE} (default) for a calibration
 function specified for Kendall's tau.}
 }
 \value{
@@ -38,7 +38,7 @@ Constructs an object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 }
 \seealso{
-\code{\link[gamCopula:gamBiCop-class]{gamBiCop}}, 
-\code{\link{gamBiCopFit}}, \code{\link{gamBiCopPredict}} and 
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}},
+\code{\link{gamBiCopFit}}, \code{\link{gamBiCopPredict}} and
 \code{\link{gamBiCopSimulate}}.
 }

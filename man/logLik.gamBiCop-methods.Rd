@@ -19,8 +19,8 @@ Standard \code{logLik} object: see \code{\link{logLik}}.
 }
 \description{
 Function to extract the log-likelihood from an object of the class
-\code{\link[gamCopula:gamBiCop-class]{gamBiCop}} (note that the models are 
-usually fitted by penalized likelihood maximization). 
+\code{\link[gamCopula:gamBiCop-class]{gamBiCop}} (note that the models are
+usually fitted by penalized likelihood maximization).
 This function is used by \code{\link{AIC}} and \code{\link{BIC}}.
 }
 \seealso{

@@ -9,7 +9,7 @@ gamVine(Matrix, model, names = NA, covariates = NA)
 \arguments{
 \item{Matrix}{lower triangular d x d matrix that defines the tree structure.}
 
-\item{model}{list containing d x (d-1)/2 lists with three numeric items 
+\item{model}{list containing d x (d-1)/2 lists with three numeric items
 (family, par and par2) and/or objects of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 
@@ -26,8 +26,8 @@ Constructs an object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \seealso{
-\code{\link[gamCopula:gamVine-class]{gamVine}}, 
+\code{\link[gamCopula:gamVine-class]{gamVine}},
 \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
-\code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}}, 
+\code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}},
 \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 }

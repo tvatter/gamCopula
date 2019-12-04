@@ -2,7 +2,7 @@
 % Please edit documentation in R/gamVineCopSelect.R
 \name{gamVineCopSelect}
 \alias{gamVineCopSelect}
-\title{Sequential pair-copula selection and maximum penalized likelihood estimation 
+\title{Sequential pair-copula selection and maximum penalized likelihood estimation
 of a GAM-Vine model.}
 \usage{
 gamVineCopSelect(data, Matrix, lin.covs = NULL, smooth.covs = NULL,
@@ -14,39 +14,39 @@ gamVineCopSelect(data, Matrix, lin.covs = NULL, smooth.covs = NULL,
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
 
-\item{Matrix}{Lower triangular \code{d x d} matrix that defines the R-vine 
+\item{Matrix}{Lower triangular \code{d x d} matrix that defines the R-vine
 tree structure.}
 
-\item{lin.covs}{A matrix or data frame containing the parametric (i.e., 
+\item{lin.covs}{A matrix or data frame containing the parametric (i.e.,
 linear) covariates (default: \code{lin.covs = NULL}).}
 
-\item{smooth.covs}{A matrix or data frame containing the non-parametric 
+\item{smooth.covs}{A matrix or data frame containing the non-parametric
 (i.e., smooth) covariates (default: \code{smooth.covs = NULL}).}
 
 \item{simplified}{If \code{TRUE}, then a simplified vine is fitted (which is
 possible only if there are exogenous covariates). If \code{FALSE} (default),
 then a non-simplified vine is fitted.}
 
-\item{familyset}{An integer vector of pair-copula families to select from 
-(the independence copula MUST NOT be specified in this vector unless one 
-wants to fit an independence vine!). The vector has to include at least one 
-pair-copula family that allows for positive and one that allows for negative 
-dependence. Not listed copula families might be included to better handle 
-limit cases. If \code{familyset = NA} (default), selection among all 
-possible families is performed. Coding of pair-copula families:  
-\code{1} Gaussian, \code{2} Student t, 
-\code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton, 
-\code{14} Survival Gumbel,  \code{23} Rotated (90 degrees) Clayton, 
-\code{24} Rotated (90 degrees) Gumbel, 
-\code{33} Rotated (270 degrees) Clayton and 
+\item{familyset}{An integer vector of pair-copula families to select from
+(the independence copula MUST NOT be specified in this vector unless one
+wants to fit an independence vine!). The vector has to include at least one
+pair-copula family that allows for positive and one that allows for negative
+dependence. Not listed copula families might be included to better handle
+limit cases. If \code{familyset = NA} (default), selection among all
+possible families is performed. Coding of pair-copula families:
+\code{1} Gaussian, \code{2} Student t,
+\code{3} Clayton, \code{4} Gumbel, \code{13} Survival Clayton,
+\code{14} Survival Gumbel,  \code{23} Rotated (90 degrees) Clayton,
+\code{24} Rotated (90 degrees) Gumbel,
+\code{33} Rotated (270 degrees) Clayton and
 \code{34} Rotated (270 degrees) Gumbel.}
 
-\item{rotations}{If \code{TRUE}, all rotations of the families in familyset 
+\item{rotations}{If \code{TRUE}, all rotations of the families in familyset
 are included.}
 
-\item{familycrit}{Character indicating the criterion for bivariate copula 
-selection. Possible choices: \code{familycrit = 'AIC'} (default) or 
-\code{'BIC'}, as in \code{\link{BiCopSelect}} from the 
+\item{familycrit}{Character indicating the criterion for bivariate copula
+selection. Possible choices: \code{familycrit = 'AIC'} (default) or
+\code{'BIC'}, as in \code{\link{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{level}{Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
@@ -55,8 +55,8 @@ predictors (default: \code{level = 0.05}) for each conditional pair-copula.}
 
 \item{trunclevel}{Integer; level of truncation.}
 
-\item{tau}{\code{TRUE} (default) for a calibration function specified for 
-Kendall's tau or \code{FALSE} for a calibration function specified 
+\item{tau}{\code{TRUE} (default) for a calibration function specified for
+Kendall's tau or \code{FALSE} for a calibration function specified
 for the Copula parameter.}
 
 \item{method}{\code{'NR'} for Newton-Raphson
@@ -64,14 +64,14 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{tol.rel}{Relative tolerance for \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{n.iters}{Maximal number of iterations for 
+\item{n.iters}{Maximal number of iterations for
 \code{'FS'}/\code{'NR'} algorithm.}
 
-\item{parallel}{\code{TRUE} (default) for parallel selection of copula 
+\item{parallel}{\code{TRUE} (default) for parallel selection of copula
 family at each edge or \code{FALSE} for the sequential version.
 for the Copula parameter.}
 
-\item{verbose}{\code{TRUE} if informations should be printed during the 
+\item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 
@@ -82,13 +82,13 @@ for the family that appears first in \code{familyset}.}
 \code{gamVineCopSelect} returns a \code{\link{gamVine-class}} object.
 }
 \description{
-This function select the copula family and estimates the parameter(s) of a 
-Generalized Additive model 
+This function select the copula family and estimates the parameter(s) of a
+Generalized Additive model
 (GAM) Vine model, where GAMs for individual edges are specified either for
 the copula parameter or Kendall's tau.
-It solves the maximum penalized likelihood estimation for the copula families 
-supported in this package by reformulating each Newton-Raphson iteration as 
-a generalized ridge regression, which is solved using 
+It solves the maximum penalized likelihood estimation for the copula families
+supported in this package by reformulating each Newton-Raphson iteration as
+a generalized ridge regression, which is solved using
 the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \examples{
@@ -99,52 +99,56 @@ set.seed(0)
 # Sample size
 n <- 1e3
 # Copula families
-familyset <- c(1:2,301:304,401:404)
+familyset <- c(1:2, 301:304, 401:404)
 # Define a 4-dimensional R-vine tree structure matrix
 d <- 4
-Matrix <- c(2,3,4,1,0,3,4,1,0,0,4,1,0,0,0,1)
-Matrix <- matrix(Matrix,d,d)
+Matrix <- c(2, 3, 4, 1, 0, 3, 4, 1, 0, 0, 4, 1, 0, 0, 0, 1)
+Matrix <- matrix(Matrix, d, d)
 nnames <- paste("X", 1:d, sep = "")
 
 ## A function factory
 eta0 <- 1
 calib.surf <- list(
   calib.quad <- function(t, Ti = 0, Tf = 1, b = 8) {
-    Tm <- (Tf - Ti)/2
-    a <- -(b/3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
-    return(a + b * (t - Tm)^2)},
+    Tm <- (Tf - Ti) / 2
+    a <- -(b / 3) * (Tf^2 - 3 * Tf * Tm + 3 * Tm^2)
+    return(a + b * (t - Tm)^2)
+  },
   calib.sin <- function(t, Ti = 0, Tf = 1, b = 1, f = 1) {
-    a <- b * (1 - 2 * Tf * pi/(f * Tf * pi +
-                                 cos(2 * f * pi * (Tf - Ti))
-                               - cos(2 * f * pi * Ti)))
-    return((a + b)/2 + (b - a) * sin(2 * f * pi * (t - Ti))/2)},
-  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf/8) {
-    Tm <- (Tf - Ti)/2
-    a <- (b * s * sqrt(2 * pi)/Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
-    return(a + b * exp(-(t - Tm)^2/(2 * s^2)))})
+    a <- b * (1 - 2 * Tf * pi / (f * Tf * pi +
+      cos(2 * f * pi * (Tf - Ti))
+      - cos(2 * f * pi * Ti)))
+    return((a + b) / 2 + (b - a) * sin(2 * f * pi * (t - Ti)) / 2)
+  },
+  calib.exp <- function(t, Ti = 0, Tf = 1, b = 2, s = Tf / 8) {
+    Tm <- (Tf - Ti) / 2
+    a <- (b * s * sqrt(2 * pi) / Tf) * (pnorm(0, Tm, s) - pnorm(Tf, Tm, s))
+    return(a + b * exp(-(t - Tm)^2 / (2 * s^2)))
+  }
+)
 
 ##  Create the model
 # Define gam-vine model list
 count <- 1
-model <- vector(mode = "list", length = d*(d-1)/2)
-sel <- seq(d,d^2-d, by = d)
+model <- vector(mode = "list", length = d * (d - 1) / 2)
+sel <- seq(d, d^2 - d, by = d)
 
 # First tree
-for (i in 1:(d-1)) {
+for (i in 1:(d - 1)) {
   # Select a copula family
   family <- sample(familyset, 1)
   model[[count]]$family <- family
-  
-  # Use the canonical link and a randomly generated parameter 
-  if (is.element(family,c(1,2))) {
-    model[[count]]$par <- tanh(rnorm(1)/2)
+
+  # Use the canonical link and a randomly generated parameter
+  if (is.element(family, c(1, 2))) {
+    model[[count]]$par <- tanh(rnorm(1) / 2)
     if (family == 2) {
-      model[[count]]$par2 <- 2+exp(rnorm(1))
-    }  
+      model[[count]]$par2 <- 2 + exp(rnorm(1))
+    }
   } else {
-    if (is.element(family,c(401:404))) {
+    if (is.element(family, c(401:404))) {
       rr <- rnorm(1)
-      model[[count]]$par <- sign(rr)*(1+abs(rr))
+      model[[count]]$par <- sign(rr) * (1 + abs(rr))
     } else {
       model[[count]]$par <- rnorm(1)
     }
@@ -154,66 +158,70 @@ for (i in 1:(d-1)) {
 }
 
 # A dummy dataset
-data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2*d),1e2,d))
+data <- data.frame(u1 = runif(1e2), u2 = runif(1e2), matrix(runif(1e2 * d), 1e2, d))
 
 # Trees 2 to (d-1)
-for(j in 2:(d-1)){
-  for(i in 1:(d-j)){ 
+for (j in 2:(d - 1)) {
+  for (i in 1:(d - j)) {
     # Select a copula family
-    family <- sample(familyset, 1)  
-    
+    family <- sample(familyset, 1)
+
     # Select the conditiong set and create a model formula
-    cond <- nnames[sort(Matrix[(d-j+2):d,i])]
-    tmpform <- paste("~",paste(paste("s(", cond, ", k=10, bs='cr')",
-                                     sep = ""), collapse=" + "))
+    cond <- nnames[sort(Matrix[(d - j + 2):d, i])]
+    tmpform <- paste("~", paste(paste("s(", cond, ", k=10, bs='cr')",
+      sep = ""
+    ), collapse = " + "))
     l <- length(cond)
     temp <- sample(3, l, replace = TRUE)
-    
+
     # Spline approximation of the true function
     m <- 1e2
-    x <- matrix(seq(0,1,length.out=m), nrow = m, ncol = 1)
-    if(l != 1){  
+    x <- matrix(seq(0, 1, length.out = m), nrow = m, ncol = 1)
+    if (l != 1) {
       tmp.fct <- paste("function(x){eta0+",
-                       paste(sapply(1:l, function(x) 
-                         paste("calib.surf[[",temp[x],"]](x[",x,"])",
-                               sep="")), collapse="+"),"}",sep="")
+        paste(sapply(1:l, function(x)
+          paste("calib.surf[[", temp[x], "]](x[", x, "])",
+            sep = ""
+          )), collapse = "+"), "}",
+        sep = ""
+      )
       tmp.fct <- eval(parse(text = tmp.fct))
       x <- eval(parse(text = paste0("expand.grid(",
-                                   paste0(rep("x",l), collapse = ","),")", 
-                                   collapse = "")))
-      y <- apply(x,1,tmp.fct)
-    }else{
-      tmp.fct <- function(x) eta0+calib.surf[[temp]](x)  
+        paste0(rep("x", l), collapse = ","), ")",
+        collapse = ""
+      )))
+      y <- apply(x, 1, tmp.fct)
+    } else {
+      tmp.fct <- function(x) eta0 + calib.surf[[temp]](x)
       colnames(x) <- cond
       y <- tmp.fct(x)
     }
-    
+
     # Estimate the gam model
     form <- as.formula(paste0("y", tmpform))
     dd <- data.frame(y, x)
     names(dd) <- c("y", cond)
     b <- gam(form, data = dd)
-    #plot(x[,1],(y-fitted(b))/y)
-    
+    # plot(x[,1],(y-fitted(b))/y)
+
     # Create a dummy gamBiCop object
     tmp <- gamBiCopFit(data = data, formula = form, family = 1, n.iters = 1)$res
-    
+
     # Update the copula family and the model coefficients
     attr(tmp, "model")$coefficients <- coefficients(b)
     attr(tmp, "model")$smooth <- b$smooth
     attr(tmp, "family") <- family
     if (family == 2) {
-      attr(tmp, "par2") <- 2+exp(rnorm(1))
+      attr(tmp, "par2") <- 2 + exp(rnorm(1))
     }
     model[[count]] <- tmp
-    count <- count+1  
-  } 
+    count <- count + 1
+  }
 }
 
 # Create the gamVineCopula object
-GVC <- gamVine(Matrix=Matrix,model = model,names=nnames)
+GVC <- gamVine(Matrix = Matrix, model = model, names = nnames)
 print(GVC)
-
 \dontrun{
 ## Simulate and fit the model
 sim <- gamVineSimulate(n, GVC)
@@ -221,16 +229,17 @@ fitGVC <- gamVineSeqFit(sim, GVC, verbose = TRUE)
 fitGVC2 <- gamVineCopSelect(sim, Matrix, verbose = TRUE)
 
 ## Plot the results
-par(mfrow=c(3,4))
-plot(GVC, ylim = c(-2.5,2.5))
+par(mfrow = c(3, 4))
+plot(GVC, ylim = c(-2.5, 2.5))
 
-plot(fitGVC, ylim = c(-2.5,2.5))
+plot(fitGVC, ylim = c(-2.5, 2.5))
 
-plot(fitGVC2, ylim = c(-2.5,2.5))}
+plot(fitGVC2, ylim = c(-2.5, 2.5))
+}
 
 }
 \seealso{
-\code{\link{gamVineSeqFit}},\code{\link{gamVineStructureSelect}}, 
- \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and 
+\code{\link{gamVineSeqFit}},\code{\link{gamVineStructureSelect}},
+ \code{\link{gamVine-class}}, \code{\link{gamVineSimulate}} and
  \code{\link{gamBiCopFit}}.
 }

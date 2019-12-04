@@ -8,15 +8,15 @@
 EDF(object)
 }
 \arguments{
-\item{object}{An object of the class 
+\item{object}{An object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.}
 }
 \value{
 Estimated degrees of freedom for each smooth component.
 }
 \description{
-Function calculating the Equivalent Degrees of Freedom (EDF) 
-for a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object. 
-It basically sums the edf of the \code{\link{gamObject}} 
+Function calculating the Equivalent Degrees of Freedom (EDF)
+for a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object.
+It basically sums the edf of the \code{\link{gamObject}}
 for each smooth component.
 }

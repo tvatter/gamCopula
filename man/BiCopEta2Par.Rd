@@ -9,15 +9,15 @@ BiCopEta2Par(family, eta)
 }
 \arguments{
 \item{family}{A copula family:
-\code{1} Gaussian, 
-\code{2} Student t, 
-\code{301} Double Clayton type I (standard and rotated 90 degrees), 
-\code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{401} Double Gumbel type I (standard and rotated 90 degrees), 
-\code{402} Double Gumbel type II (standard and rotated 270 degrees), 
-\code{403} Double Gumbel type III (survival and rotated 90 degrees), 
+\code{1} Gaussian,
+\code{2} Student t,
+\code{301} Double Clayton type I (standard and rotated 90 degrees),
+\code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{401} Double Gumbel type I (standard and rotated 90 degrees),
+\code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
 \item{eta}{The calibration function.}
@@ -28,30 +28,30 @@ parameter and family as:
 \itemize{
 \item \code{1} Gaussian, \code{f(x) = tanh(x/2)}
 \item \code{2} Student t, \code{f(x) = tanh(x/2)}
-\item \code{301} Double Clayton type I (standard and rotated 90 degrees), 
+\item \code{301} Double Clayton type I (standard and rotated 90 degrees),
 \code{f(x) = x}
-\item \code{302} Double Clayton type II (standard and rotated 270 degrees), 
-\code{f(x) = x} 
-\item \code{303} Double Clayton type III (survival and rotated 90 degrees), 
-\code{f(x) = x} 
-\item \code{304} Double Clayton type IV (survival and rotated 270 degrees), 
-\code{f(x) = x} 
-\item \code{401} Double Gumbel type I (standard and rotated 90 degrees),  
+\item \code{302} Double Clayton type II (standard and rotated 270 degrees),
+\code{f(x) = x}
+\item \code{303} Double Clayton type III (survival and rotated 90 degrees),
+\code{f(x) = x}
+\item \code{304} Double Clayton type IV (survival and rotated 270 degrees),
+\code{f(x) = x}
+\item \code{401} Double Gumbel type I (standard and rotated 90 degrees),
 \code{f(x) = x*(1+abs(x))/abs(x)}
-\item \code{402} Double Gumbel type II (standard and rotated 270 degrees),  
-\code{f(x) = x*(1+abs(x))/abs(x)} 
-\item \code{403} Double Gumbel type III (survival and rotated 90 degrees),  
-\code{f(x) = x*(1+abs(x))/abs(x)} 
-\item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)  
+\item \code{402} Double Gumbel type II (standard and rotated 270 degrees),
+\code{f(x) = x*(1+abs(x))/abs(x)}
+\item \code{403} Double Gumbel type III (survival and rotated 90 degrees),
+\code{f(x) = x*(1+abs(x))/abs(x)}
+\item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)
 \code{f(x) = x*(1+abs(x))/abs(x)}.
 }
 }
 \description{
-Computes the (first) copula parameter of a bivariate copula for a given 
+Computes the (first) copula parameter of a bivariate copula for a given
 value of the calibration function (eta).
 }
 \seealso{
 \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
-\code{\link{BiCopTau2Par}} from 
+\code{\link{BiCopTau2Par}} from
 \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
 }
