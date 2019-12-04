@@ -1,16 +1,20 @@
 language: R
 cache: packages
 sudo: required
-warnings_are_errors: false
+warnings_are_errors: true
 
 matrix:
   include:
-    - os: linux
-      r: release
-    - os: linux
-      r: devel
-    #- os: osx
-    #  osx_image: xcode8.3
+  - r: devel
+  - r: release
+#    after_success:
+#    - Rscript -e 'covr::codecov()'
+  - r: oldrel
+
+r:
+  - oldrel
+  - release
+  - devel
 
 apt_packages:
   - libcurl4-openssl-dev
@@ -18,17 +22,5 @@ apt_packages:
   - libudunits2-dev
   - libgsl-dev
 
-r_packages:
-  - VineCopula
-  - gsl
-  - copula
-  - igraph
-
-before_install:
-  - sudo add-apt-repository ppa:marutter/c2d4u -y
-  - sudo apt-get update -q
-
-repos:
-  CRAN: http://cran.rstudio.com
 
 
