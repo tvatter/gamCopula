@@ -21,11 +21,11 @@
 gamVine <- function(Matrix, model, names = NA, covariates = NA) {
   tmp <- tryCatch(as.character(names), error = function(e) e)
   msg <- "should be or be coercisable to a character vector."
-  if (!inherits(tmp, "character")) {
+  if (!is(tmp, "character")) {
     stop(paste("names", msg))
   }
   tmp <- tryCatch(as.character(covariates), error = function(e) e)
-  if (!inherits(tmp, "character")) {
+  if (!is(tmp, "character")) {
     stop(paste("covariates", msg))
   }
   new("gamVine", Matrix = Matrix, model = model, 
@@ -412,7 +412,7 @@ gamVineFamily <- function(GVC) {
 #' @export
 RVM2GVC <- function(RVM) {
   
-  if (!inherits(RVN, "RVineMatrix")) {
+  if (!is(RVN, "RVineMatrix")) {
     stop("RVM has to be an object of the class RVineMatrix.")
   }
   

@@ -288,7 +288,7 @@ valid.gamVineSeqFit <- function(data, GVC, covariates,
   }
   
   covariates <- tryCatch(as.character(covariates), error = function(e) e)
-  if (!is.vector(covariates) || !inherits(covariates, "character")) {
+  if (!is.vector(covariates) || !is(covariates, "character")) {
     return("covariates should be or be coercisable to a character vector.")
   }
   if (!(length(covariates) == 1 && is.na(covariates))) {

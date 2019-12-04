@@ -210,7 +210,7 @@ valid.gamVineSimulate <- function(n, GVC, U, newdata) {
     } 
     newdata <- tryCatch(as.data.frame(newdata), error = function(e) e)
     msg <- "should be or be coercisable to a data frame."
-    if (!inherits(newdata, "data.frame")) {
+    if (!is(newdata, "data.frame")) {
       return(paste("newdata", msg))
     }
     if (any(!is.element(names(newdata), covariates))) {
@@ -222,7 +222,7 @@ valid.gamVineSimulate <- function(n, GVC, U, newdata) {
   if (!is.null(U)) {
     U <- tryCatch(as.matrix(U), error = function(e) e)
     msg <- "should be or be coercisable to a matrix."
-    if (!inherits(U, "matrix")) {
+    if (!is(U, "matrix")) {
       return(paste("U", msg))
     }   
     if (!is.numeric(U) || dim(U)[2] != d || any(U <= 0) || any(U >= 1)) {

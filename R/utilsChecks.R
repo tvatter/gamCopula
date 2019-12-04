@@ -92,7 +92,7 @@ msg.familysetneg <- function(x) {
 }
 
 valid.covariates <- function(x, msg) {
-  if (!is.vector(x) || !inherits(x, "character")) {
+  if (!is.vector(x) || !is(x, "character")) {
     return(msg)
   }
   if (!(length(x) == 1 && is.na(x))) {
