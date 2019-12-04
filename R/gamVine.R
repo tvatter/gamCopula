@@ -412,7 +412,7 @@ gamVineFamily <- function(GVC) {
 #' @export
 RVM2GVC <- function(RVM) {
   
-  if (!is(RVN, "RVineMatrix")) {
+  if (!is(RVM, "RVineMatrix")) {
     stop("RVM has to be an object of the class RVineMatrix.")
   }
   
