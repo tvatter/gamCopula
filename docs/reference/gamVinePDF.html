@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sequential pair-copula selection and maximum penalized likelihood estimation
-of a GAM-Vine model. — gamVineCopSelect • gamCopula</title>
+<title>Conditional density function of a gamVine — gamVinePDF • gamCopula</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,17 +30,11 @@ of a GAM-Vine model. — gamVineCopSelect • gamCopula</title>
 
 
 
-<meta property="og:title" content="Sequential pair-copula selection and maximum penalized likelihood estimation
-of a GAM-Vine model. — gamVineCopSelect" />
+<meta property="og:title" content="Conditional density function of a gamVine — gamVinePDF" />
 
-<meta property="og:description" content="This function select the copula family and estimates the parameter(s) of a
-Generalized Additive model
-(GAM) Vine model, where GAMs for individual edges are specified either for
-the copula parameter or Kendall's tau.
-It solves the maximum penalized likelihood estimation for the copula families
-supported in this package by reformulating each Newton-Raphson iteration as
-a generalized ridge regression, which is solved using
-the mgcv package." />
+<meta property="og:description" content="This function returns the density of a conditional pair-copula constructions,
+where either the copula parameters or the Kendall's taus are modeled as a function
+of the covariates." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -111,145 +104,47 @@ the mgcv package." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sequential pair-copula selection and maximum penalized likelihood estimation
-of a GAM-Vine model.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/tvatter/gamCopula/blob/master/R/gamVineCopSelect.R'><code>R/gamVineCopSelect.R</code></a></small>
-    <div class="hidden name"><code>gamVineCopSelect.Rd</code></div>
+    <h1>Conditional density function of a gamVine</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tvatter/gamCopula/blob/master/R/gamVinePDF.R'><code>R/gamVinePDF.R</code></a></small>
+    <div class="hidden name"><code>gamVinePDF.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function select the copula family and estimates the parameter(s) of a
-Generalized Additive model
-(GAM) Vine model, where GAMs for individual edges are specified either for
-the copula parameter or Kendall's tau.
-It solves the maximum penalized likelihood estimation for the copula families
-supported in this package by reformulating each Newton-Raphson iteration as
-a generalized ridge regression, which is solved using
-the <code><a href='https://www.rdocumentation.org/packages/mgcv/topics/mgcv-package'>mgcv</a></code> package.</p>
+    <p>This function returns the density of a conditional pair-copula constructions,
+where either the copula parameters or the Kendall's taus are modeled as a function
+of the covariates.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>gamVineCopSelect</span>(<span class='no'>data</span>, <span class='no'>Matrix</span>, <span class='kw'>lin.covs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>smooth.covs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>simplified</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>familyset</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>rotations</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>familycrit</span> <span class='kw'>=</span> <span class='st'>"AIC"</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>trunclevel</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"FS"</span>, <span class='kw'>tol.rel</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>n.iters</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>select.once</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>gamVinePDF</span>(<span class='no'>object</span>, <span class='no'>data</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>object</th>
+      <td><p><code><a href='gamVine-class.html'>gamVine-class</a></code> object.</p></td>
+    </tr>
+    <tr>
       <th>data</th>
-      <td><p>A matrix or data frame containing the data in [0,1]^d.</p></td>
-    </tr>
-    <tr>
-      <th>Matrix</th>
-      <td><p>Lower triangular <code>d x d</code> matrix that defines the R-vine
-tree structure.</p></td>
-    </tr>
-    <tr>
-      <th>lin.covs</th>
-      <td><p>A matrix or data frame containing the parametric (i.e.,
-linear) covariates (default: <code>lin.covs = NULL</code>).</p></td>
-    </tr>
-    <tr>
-      <th>smooth.covs</th>
-      <td><p>A matrix or data frame containing the non-parametric
-(i.e., smooth) covariates (default: <code>smooth.covs = NULL</code>).</p></td>
-    </tr>
-    <tr>
-      <th>simplified</th>
-      <td><p>If <code>TRUE</code>, then a simplified vine is fitted (which is
-possible only if there are exogenous covariates). If <code>FALSE</code> (default),
-then a non-simplified vine is fitted.</p></td>
-    </tr>
-    <tr>
-      <th>familyset</th>
-      <td><p>An integer vector of pair-copula families to select from
-(the independence copula MUST NOT be specified in this vector unless one
-wants to fit an independence vine!). The vector has to include at least one
-pair-copula family that allows for positive and one that allows for negative
-dependence. Not listed copula families might be included to better handle
-limit cases. If <code>familyset = NA</code> (default), selection among all
-possible families is performed. Coding of pair-copula families:
-<code>1</code> Gaussian, <code>2</code> Student t,
-<code>3</code> Clayton, <code>4</code> Gumbel, <code>13</code> Survival Clayton,
-<code>14</code> Survival Gumbel,  <code>23</code> Rotated (90 degrees) Clayton,
-<code>24</code> Rotated (90 degrees) Gumbel,
-<code>33</code> Rotated (270 degrees) Clayton and
-<code>34</code> Rotated (270 degrees) Gumbel.</p></td>
-    </tr>
-    <tr>
-      <th>rotations</th>
-      <td><p>If <code>TRUE</code>, all rotations of the families in familyset
-are included.</p></td>
-    </tr>
-    <tr>
-      <th>familycrit</th>
-      <td><p>Character indicating the criterion for bivariate copula
-selection. Possible choices: <code>familycrit = 'AIC'</code> (default) or
-<code>'BIC'</code>, as in <code>BiCopSelect</code> from the
-<code><a href='https://www.rdocumentation.org/packages/VineCopula/topics/VineCopula-package'>VineCopula</a></code> package.</p></td>
-    </tr>
-    <tr>
-      <th>level</th>
-      <td><p>Numerical; Passed to <code><a href='gamBiCopSelect.html'>gamBiCopSelect</a></code>, it is the
-significance level of the test for removing individual
-predictors (default: <code>level = 0.05</code>) for each conditional pair-copula.</p></td>
-    </tr>
-    <tr>
-      <th>trunclevel</th>
-      <td><p>Integer; level of truncation.</p></td>
-    </tr>
-    <tr>
-      <th>tau</th>
-      <td><p><code>TRUE</code> (default) for a calibration function specified for
-Kendall's tau or <code>FALSE</code> for a calibration function specified
-for the Copula parameter.</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p><code>'NR'</code> for Newton-Raphson
-and  <code>'FS'</code> for Fisher-scoring (default).</p></td>
-    </tr>
-    <tr>
-      <th>tol.rel</th>
-      <td><p>Relative tolerance for <code>'FS'</code>/<code>'NR'</code> algorithm.</p></td>
-    </tr>
-    <tr>
-      <th>n.iters</th>
-      <td><p>Maximal number of iterations for
-<code>'FS'</code>/<code>'NR'</code> algorithm.</p></td>
-    </tr>
-    <tr>
-      <th>parallel</th>
-      <td><p><code>TRUE</code> (default) for parallel selection of copula
-family at each edge or <code>FALSE</code> for the sequential version.
-for the Copula parameter.</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p><code>TRUE</code> if informations should be printed during the
-estimation and <code>FALSE</code> (default) for a silent version.
-from <code><a href='https://www.rdocumentation.org/packages/mgcv/topics/mgcv-package'>mgcv</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>select.once</th>
-      <td><p>if <code>TRUE</code> the GAM structure is only selected once,
-for the family that appears first in <code>familyset</code>.</p></td>
+      <td><p>(Same as in <code>predict.gam</code> from the
+<code><a href='https://www.rdocumentation.org/packages/mgcv/topics/mgcv-package'>mgcv</a></code> package) A matrix or data frame
+containing the values of the model covariates at which predictions are
+required, along with a number of additional columns corresponding to the
+variables in the pair copula decomposition.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>gamVineCopSelect</code> returns a <code><a href='gamVine-class.html'>gamVine-class</a></code> object.</p>
+    <p>The conditional density.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='gamVineSeqFit.html'>gamVineSeqFit</a></code>,<code><a href='gamVineStructureSelect.html'>gamVineStructureSelect</a></code>,
- <code><a href='gamVine-class.html'>gamVine-class</a></code>, <code><a href='gamVineSimulate.html'>gamVineSimulate</a></code> and
- <code><a href='gamBiCopFit.html'>gamBiCopFit</a></code>.</p></div>
+    <div class='dont-index'><p><code><a href='gamVine.html'>gamVine</a></code>, <code><a href='gamVineCopSelect.html'>gamVineCopSelect</a></code>,
+<code><a href='gamVineStructureSelect.html'>gamVineStructureSelect</a></code>, <code><a href='gamVine-class.html'>gamVine-class</a></code>,
+<code><a href='gamVineSimulate.html'>gamVineSimulate</a></code> and <code><a href='gamBiCopFit.html'>gamBiCopFit</a></code>.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -412,9 +307,11 @@ for the family that appears first in <code>familyset</code>.</p></td>
 <span class='co'>## Simulate and fit the model</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineSimulate.html'>gamVineSimulate</a></span>(<span class='no'>n</span>, <span class='no'>GVC</span>)
 <span class='no'>fitGVC</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineSeqFit.html'>gamVineSeqFit</a></span>(<span class='no'>sim</span>, <span class='no'>GVC</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>fitGVC2</span> <span class='kw'>&lt;-</span> <span class='fu'>gamVineCopSelect</span>(<span class='no'>sim</span>, <span class='no'>Matrix</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>fitGVC2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineCopSelect.html'>gamVineCopSelect</a></span>(<span class='no'>sim</span>, <span class='no'>Matrix</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+(<span class='fu'>gamVinePDF</span>(<span class='no'>GVC</span>, <span class='no'>sim</span>[<span class='fl'>1</span>:<span class='fl'>10</span>, ]))
 
 <span class='co'>## Plot the results</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/grDevices/topics/dev'>dev.off</a></span>()
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>))
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>GVC</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>2.5</span>, <span class='fl'>2.5</span>))
 
