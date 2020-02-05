@@ -6,7 +6,7 @@
 \alias{summary,gamBiCop-method}
 \title{Summary for a gamBiCop Object}
 \usage{
-\S4method{summary}{gamBiCop}(object)
+\S4method{summary}{gamBiCop}(object, ...)
 }
 \arguments{
 \item{object}{An object of the class

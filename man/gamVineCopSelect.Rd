@@ -5,11 +5,26 @@
 \title{Sequential pair-copula selection and maximum penalized likelihood estimation
 of a GAM-Vine model.}
 \usage{
-gamVineCopSelect(data, Matrix, lin.covs = NULL, smooth.covs = NULL,
-  simplified = FALSE, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", level = 0.05, trunclevel = NA, tau = TRUE,
-  method = "FS", tol.rel = 0.001, n.iters = 10, parallel = FALSE,
-  verbose = FALSE, select.once = TRUE)
+gamVineCopSelect(
+  data,
+  Matrix,
+  lin.covs = NULL,
+  smooth.covs = NULL,
+  simplified = FALSE,
+  familyset = NA,
+  rotations = TRUE,
+  familycrit = "AIC",
+  level = 0.05,
+  trunclevel = NA,
+  tau = TRUE,
+  method = "FS",
+  tol.rel = 0.001,
+  n.iters = 10,
+  parallel = FALSE,
+  verbose = FALSE,
+  select.once = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -77,6 +92,9 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 
 \item{select.once}{if \code{TRUE} the GAM structure is only selected once,
 for the family that appears first in \code{familyset}.}
+
+\item{...}{Additional parameters to be passed to \code{\link{gam}}
+from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
 \code{gamVineCopSelect} returns a \code{\link{gamVine-class}} object.

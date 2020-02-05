@@ -6,7 +6,7 @@
 \alias{summary,gamVine-method}
 \title{Summary for an Object of the Class gamVine}
 \usage{
-\S4method{summary}{gamVine}(object)
+\S4method{summary}{gamVine}(object, ...)
 }
 \arguments{
 \item{object}{An object of the class

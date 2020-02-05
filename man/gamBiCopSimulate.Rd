@@ -4,8 +4,14 @@
 \alias{gamBiCopSimulate}
 \title{Simulate from \code{\link{gamBiCop-class}} object}
 \usage{
-gamBiCopSimulate(object, newdata = NULL, N = NULL,
-  return.calib = FALSE, return.par = FALSE, return.tau = FALSE)
+gamBiCopSimulate(
+  object,
+  newdata = NULL,
+  N = NULL,
+  return.calib = FALSE,
+  return.par = FALSE,
+  return.tau = FALSE
+)
 }
 \arguments{
 \item{object}{\code{\link{gamBiCop-class}} object.}

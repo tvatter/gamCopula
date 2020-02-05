@@ -5,11 +5,24 @@
 \title{Selection and Maximum penalized likelihood estimation of a Generalized
 Additive model (gam) for the copula parameter or Kendall's tau.}
 \usage{
-gamBiCopSelect(udata, lin.covs = NULL, smooth.covs = NULL,
-  familyset = NA, rotations = TRUE, familycrit = "AIC",
-  level = 0.05, edf = 1.5, tau = TRUE, method = "FS",
-  tol.rel = 0.001, n.iters = 10, parallel = FALSE, verbose = FALSE,
-  select.once = TRUE, ...)
+gamBiCopSelect(
+  udata,
+  lin.covs = NULL,
+  smooth.covs = NULL,
+  familyset = NA,
+  rotations = TRUE,
+  familycrit = "AIC",
+  level = 0.05,
+  edf = 1.5,
+  tau = TRUE,
+  method = "FS",
+  tol.rel = 0.001,
+  n.iters = 10,
+  parallel = FALSE,
+  verbose = FALSE,
+  select.once = TRUE,
+  ...
+)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the model responses, (u1,u2) in

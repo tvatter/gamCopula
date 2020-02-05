@@ -185,7 +185,7 @@ show.gamVine <- function(object) {
   }
 }
 
-summary.gamVine <- function(object) {
+summary.gamVine <- function(object, ...) {
   detail <- FALSE
   GVC <- object
   cat("GAM-Vine matrix:", "\n")

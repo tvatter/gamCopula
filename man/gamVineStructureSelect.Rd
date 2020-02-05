@@ -4,12 +4,26 @@
 \alias{gamVineStructureSelect}
 \title{Structure selection and estimation of a GAM-Vine model.}
 \usage{
-gamVineStructureSelect(udata, lin.covs = NULL, smooth.covs = NULL,
-  simplified = TRUE, type = 0, familyset = NA, rotations = TRUE,
-  familycrit = "AIC", treecrit = "tau", level = 0.05,
-  trunclevel = NA, tau = TRUE, method = "FS", tol.rel = 0.001,
-  n.iters = 10, parallel = FALSE, verbose = FALSE,
-  select.once = TRUE)
+gamVineStructureSelect(
+  udata,
+  lin.covs = NULL,
+  smooth.covs = NULL,
+  simplified = TRUE,
+  type = 0,
+  familyset = NA,
+  rotations = TRUE,
+  familycrit = "AIC",
+  treecrit = "tau",
+  level = 0.05,
+  trunclevel = NA,
+  tau = TRUE,
+  method = "FS",
+  tol.rel = 0.001,
+  n.iters = 10,
+  parallel = FALSE,
+  verbose = FALSE,
+  select.once = TRUE
+)
 }
 \arguments{
 \item{udata}{A matrix or data frame containing the data in [0,1]^d.}

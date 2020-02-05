@@ -4,8 +4,7 @@
 \alias{condBiCopSim}
 \title{Simulation from a Conditional Bivariate Copula}
 \usage{
-condBiCopSim(family, calib.fnc, X, par2 = 0, return.par = TRUE,
-  tau = TRUE)
+condBiCopSim(family, calib.fnc, X, par2 = 0, return.par = TRUE, tau = TRUE)
 }
 \arguments{
 \item{family}{family A copula family:

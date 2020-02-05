@@ -5,8 +5,13 @@
 \title{Predict method of a Generalized Additive model for the copula parameter
 or Kendall's tau}
 \usage{
-gamBiCopPredict(object, newdata = NULL, target = "calib", alpha = 0,
-  type = "link")
+gamBiCopPredict(
+  object,
+  newdata = NULL,
+  target = "calib",
+  alpha = 0,
+  type = "link"
+)
 }
 \arguments{
 \item{object}{\code{\link{gamBiCop-class}} object.}

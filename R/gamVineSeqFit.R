@@ -177,7 +177,7 @@
 #'  \code{\link{gamBiCopFit}}.
 gamVineSeqFit <- function(data, GVC, covariates = NA,
                           method = "FS", tol.rel = 0.001, n.iters = 10,
-                          verbose = FALSE) {
+                          verbose = FALSE, ...) {
   tmp <- valid.gamVineSeqFit(
     data, GVC, covariates,
     method, tol.rel, n.iters, verbose
@@ -263,7 +263,8 @@ gamVineSeqFit <- function(data, GVC, covariates = NA,
         }
         mm <- gamBiCopFit(
           tmp, mm@model$formula, fam[k, i], mm@tau,
-          method, tol.rel, n.iters
+          method, tol.rel, n.iters,
+          FALSE, ...
         )$res
         par <- gamBiCopPredict(mm, target = "par")$par
         par2 <- mm@par2

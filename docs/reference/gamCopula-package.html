@@ -9,21 +9,25 @@
 <title>Generalized Additive Models for Bivariate Conditional Dependence Structures and 
 Vine Copulas — gamCopula-package • gamCopula</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -31,12 +35,13 @@ Vine Copulas — gamCopula-package • gamCopula</title>
 
 
 
+
 <meta property="og:title" content="Generalized Additive Models for Bivariate Conditional Dependence Structures and 
 Vine Copulas — gamCopula-package" />
-
 <meta property="og:description" content="This package implements inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.
 More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (2016)." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -48,6 +53,7 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -66,7 +72,7 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gamCopula</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.7</span>
       </span>
     </div>
 
@@ -74,7 +80,7 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -85,11 +91,10 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/tvatter/gamCopula">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -100,6 +105,7 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -112,26 +118,24 @@ Vine Copulas</h1>
     </div>
 
     <div class="ref-description">
-    
     <p>This package implements inference and simulation tools to apply generalized additive models to bivariate dependence structures and vine copulas.</p>
 <p>More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (2016).</p>
-    
     </div>
 
-        
+
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <table class='table'>
-<tr><td></td><td>Package:</td></tr>
-<tr><td>gamCopula</td><td></td></tr>
-<tr><td>Type:</td><td>Package</td></tr>
-<tr><td></td><td>Version:</td></tr>
-<tr><td>0.0-6</td><td></td></tr>
-<tr><td>Date:</td><td>2019-12-04</td></tr>
-<tr><td></td><td>License:</td></tr>
-<tr><td>GPL-3</td><td></td></tr>
-</table>
     
+<table class='table'>
+<tr><td>Package:</td><td>gamCopula</td></tr>
+<tr><td>Type:</td><td>Package</td></tr>
+<tr><td>Version:</td><td>0.0-7</td></tr>
+<tr><td>Date:</td><td>2020-02-05</td></tr>
+<tr><td>License:</td><td>GPL-3</td></tr>
+</table>
+
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Aas, K., C. Czado, A. Frigessi, and H. Bakken (2009)
@@ -155,17 +159,15 @@ Journal of the American Statistical Association, 99, 673-686.</p>
 <p>Wood, S.N. (2006) 
 Generalized Additive Models: an introduction with R.
 Chapman and Hall/CRC.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The present package is heavily relying on the <code><a href='https://www.rdocumentation.org/packages/mgcv/topics/mgcv-package'>mgcv</a></code> and <code>VineCopula</code> packages, as it basically extends and mix both of them.</p></div>
-    
+    <div class='dont-index'><p>The present package is heavily relying on the <code><a href='https://rdrr.io/pkg/mgcv/man/mgcv-package.html'>mgcv</a></code> and <code>VineCopula</code> packages, as it basically extends and mix both of them.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>##### A gamBiCop example</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>copula</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>require</a></span>(<span class='no'>mgcv</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>copula</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>mgcv</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>0</span>)
 
 <span class='co'>## Simulation parameters (sample size, correlation between covariates,</span>
 <span class='co'>## Gaussian copula family)</span>
@@ -175,77 +177,77 @@ Chapman and Hall/CRC.</p>
 
 <span class='co'>## A calibration surface depending on three variables</span>
 <span class='no'>eta0</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>calib.surf</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(
+<span class='no'>calib.surf</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
   <span class='no'>calib.quad</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>8</span>) {
     <span class='no'>Tm</span> <span class='kw'>&lt;-</span> (<span class='no'>Tf</span> - <span class='no'>Ti</span>)/<span class='fl'>2</span>
     <span class='no'>a</span> <span class='kw'>&lt;-</span> -(<span class='no'>b</span>/<span class='fl'>3</span>) * (<span class='no'>Tf</span>^<span class='fl'>2</span> - <span class='fl'>3</span> * <span class='no'>Tf</span> * <span class='no'>Tm</span> + <span class='fl'>3</span> * <span class='no'>Tm</span>^<span class='fl'>2</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * (<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>)},
+  <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * (<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>)},
   <span class='no'>calib.sin</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>f</span> <span class='kw'>=</span> <span class='fl'>1</span>) {
     <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>b</span> * (<span class='fl'>1</span> - <span class='fl'>2</span> * <span class='no'>Tf</span> * <span class='no'>pi</span>/(<span class='no'>f</span> * <span class='no'>Tf</span> * <span class='no'>pi</span> +
-                                 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>Tf</span> - <span class='no'>Ti</span>))
-                               - <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * <span class='no'>Ti</span>)))
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>((<span class='no'>a</span> + <span class='no'>b</span>)/<span class='fl'>2</span> + (<span class='no'>b</span> - <span class='no'>a</span>) * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>sin</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>t</span> - <span class='no'>Ti</span>))/<span class='fl'>2</span>)},
+                                 <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>Tf</span> - <span class='no'>Ti</span>))
+                               - <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * <span class='no'>Ti</span>)))
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>((<span class='no'>a</span> + <span class='no'>b</span>)/<span class='fl'>2</span> + (<span class='no'>b</span> - <span class='no'>a</span>) * <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>sin</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>t</span> - <span class='no'>Ti</span>))/<span class='fl'>2</span>)},
   <span class='no'>calib.exp</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>s</span> <span class='kw'>=</span> <span class='no'>Tf</span>/<span class='fl'>8</span>) {
     <span class='no'>Tm</span> <span class='kw'>&lt;-</span> (<span class='no'>Tf</span> - <span class='no'>Ti</span>)/<span class='fl'>2</span>
-    <span class='no'>a</span> <span class='kw'>&lt;-</span> (<span class='no'>b</span> * <span class='no'>s</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/MathFun'>sqrt</a></span>(<span class='fl'>2</span> * <span class='no'>pi</span>)/<span class='no'>Tf</span>) * (<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>pnorm</a></span>(<span class='fl'>0</span>, <span class='no'>Tm</span>, <span class='no'>s</span>) - <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>pnorm</a></span>(<span class='no'>Tf</span>, <span class='no'>Tm</span>, <span class='no'>s</span>))
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(-(<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>/(<span class='fl'>2</span> * <span class='no'>s</span>^<span class='fl'>2</span>)))})
+    <span class='no'>a</span> <span class='kw'>&lt;-</span> (<span class='no'>b</span> * <span class='no'>s</span> * <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fl'>2</span> * <span class='no'>pi</span>)/<span class='no'>Tf</span>) * (<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>0</span>, <span class='no'>Tm</span>, <span class='no'>s</span>) - <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='no'>Tf</span>, <span class='no'>Tm</span>, <span class='no'>s</span>))
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(-(<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>/(<span class='fl'>2</span> * <span class='no'>s</span>^<span class='fl'>2</span>)))})
 
 <span class='co'>## Display the calibration surface</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>), <span class='kw'>pty</span> <span class='kw'>=</span> <span class='st'>"s"</span>, <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span>, <span class='fl'>1</span>))
-<span class='no'>u</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>, <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='fl'>100</span>)
-<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>jet.colors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/grDevices/topics/colorRamp'>colorRamp</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"#00007F"</span>, <span class='st'>"blue"</span>, <span class='st'>"#007FFF"</span>, <span class='st'>"cyan"</span>, <span class='st'>"#7FFF7F"</span>,
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>), <span class='kw'>pty</span> <span class='kw'>=</span> <span class='st'>"s"</span>, <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span>, <span class='fl'>1</span>))
+<span class='no'>u</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>, <span class='kw'>length.out</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>jet.colors</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRamp</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#00007F"</span>, <span class='st'>"blue"</span>, <span class='st'>"#007FFF"</span>, <span class='st'>"cyan"</span>, <span class='st'>"#7FFF7F"</span>,
                           <span class='st'>"yellow"</span>, <span class='st'>"#FF7F00"</span>, <span class='st'>"red"</span>, <span class='st'>"#7F0000"</span>))
-<span class='no'>jet</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://www.rdocumentation.org/packages/grDevices/topics/rgb'>rgb</a></span>(<span class='fu'>jet.colors</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='no'>x</span>/<span class='fl'>3</span>)/(<span class='fl'>1</span> + <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='no'>x</span>/<span class='fl'>3</span>))),
+<span class='no'>jet</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/grDevices/rgb.html'>rgb</a></span>(<span class='fu'>jet.colors</span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='no'>x</span>/<span class='fl'>3</span>)/(<span class='fl'>1</span> + <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='no'>x</span>/<span class='fl'>3</span>))),
                        <span class='kw'>maxColorValue</span> <span class='kw'>=</span> <span class='fl'>255</span>)
 <span class='kw'>for</span> (<span class='no'>k</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>3</span>) {
-    <span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/outer'>outer</a></span>(<span class='no'>u</span>, <span class='no'>u</span>, <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>)
+    <span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/outer.html'>outer</a></span>(<span class='no'>u</span>, <span class='no'>u</span>, <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>)
       <span class='no'>eta0</span> + <span class='no'>calib.surf</span><span class='kw'>[[</span><span class='no'>sel</span>[<span class='no'>k</span>,<span class='fl'>1</span>]]](<span class='no'>x</span>) + <span class='no'>calib.surf</span><span class='kw'>[[</span><span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>2</span>]]](<span class='no'>y</span>))
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/persp'>persp</a></span>(<span class='no'>u</span>, <span class='no'>u</span>, <span class='no'>tmp</span>, <span class='kw'>border</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>theta</span> <span class='kw'>=</span> <span class='fl'>60</span>, <span class='kw'>phi</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>zlab</span> <span class='kw'>=</span> <span class='st'>""</span>,
-          <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'>jet</span>(<span class='no'>tmp</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>100</span>),
-          <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>], <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>),
-          <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>,<span class='fl'>2</span>], <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>),
-          <span class='kw'>main</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"eta0+f"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>],
+    <span class='fu'><a href='https://rdrr.io/r/graphics/persp.html'>persp</a></span>(<span class='no'>u</span>, <span class='no'>u</span>, <span class='no'>tmp</span>, <span class='kw'>border</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>theta</span> <span class='kw'>=</span> <span class='fl'>60</span>, <span class='kw'>phi</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>zlab</span> <span class='kw'>=</span> <span class='st'>""</span>,
+          <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'>jet</span>(<span class='no'>tmp</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>100</span>),
+          <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>], <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>),
+          <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>,<span class='fl'>2</span>], <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>),
+          <span class='kw'>main</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"eta0+f"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>],
                        <span class='st'>"(X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>1</span>], <span class='st'>") +f"</span>,<span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>2</span>],
                        <span class='st'>"(X"</span>, <span class='no'>sel</span>[<span class='no'>k</span>, <span class='fl'>2</span>], <span class='st'>")"</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>))
 }</div><div class='img'><img src='gamCopula-package-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## 3-dimensional matrix X of covariates</span>
-<span class='no'>covariates.distr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/copula/topics/Mvdc'>mvdc</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/copula/topics/ellipCopula'>normalCopula</a></span>(<span class='no'>rho</span>, <span class='kw'>dim</span> <span class='kw'>=</span> <span class='fl'>3</span>),
-                                 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"unif"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>1</span>)),
+<span class='no'>covariates.distr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/copula/man/Mvdc.html'>mvdc</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/copula/man/ellipCopula.html'>normalCopula</a></span>(<span class='no'>rho</span>, <span class='kw'>dim</span> <span class='kw'>=</span> <span class='fl'>3</span>),
+                                 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unif"</span>), <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>min</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>1</span>)),
                                  <span class='kw'>marginsIdentical</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/copula/topics/Mvdc'>rMvdc</a></span>(<span class='no'>n</span>, <span class='no'>covariates.distr</span>)
+<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/copula/man/Mvdc.html'>rMvdc</a></span>(<span class='no'>n</span>, <span class='no'>covariates.distr</span>)
 
 <span class='co'>## U in [0,1]x[0,1] with copula parameter depending on X</span>
-<span class='no'>U</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='condBiCopSim.html'>condBiCopSim</a></span>(<span class='no'>fam</span>, <span class='kw'>function</span>(<span class='no'>x1</span>,<span class='no'>x2</span>,<span class='no'>x3</span>) {<span class='no'>eta0</span>+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sum'>sum</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/mapply'>mapply</a></span>(<span class='kw'>function</span>(<span class='no'>f</span>,<span class='no'>x</span>)
-  <span class='fu'>f</span>(<span class='no'>x</span>), <span class='no'>calib.surf</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x1</span>,<span class='no'>x2</span>,<span class='no'>x3</span>)))}, <span class='no'>X</span>[,<span class='fl'>1</span>:<span class='fl'>3</span>], <span class='kw'>par2</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>return.par</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>U</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='condBiCopSim.html'>condBiCopSim</a></span>(<span class='no'>fam</span>, <span class='kw'>function</span>(<span class='no'>x1</span>,<span class='no'>x2</span>,<span class='no'>x3</span>) {<span class='no'>eta0</span>+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/mapply.html'>mapply</a></span>(<span class='kw'>function</span>(<span class='no'>f</span>,<span class='no'>x</span>)
+  <span class='fu'>f</span>(<span class='no'>x</span>), <span class='no'>calib.surf</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>x1</span>,<span class='no'>x2</span>,<span class='no'>x3</span>)))}, <span class='no'>X</span>[,<span class='fl'>1</span>:<span class='fl'>3</span>], <span class='kw'>par2</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>return.par</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'>## Merge U and X</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='no'>U</span>$<span class='no'>data</span>,<span class='no'>X</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>data</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"u"</span>,<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>),<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"x"</span>,<span class='fl'>1</span>:<span class='fl'>3</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>))
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>U</span>$<span class='no'>data</span>,<span class='no'>X</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>data</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"u"</span>,<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>),<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"x"</span>,<span class='fl'>1</span>:<span class='fl'>3</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>))
 
 <span class='co'>## Display the data</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/grDevices/topics/dev'>dev.off</a></span>()</div><div class='output co'>#&gt; null device 
-#&gt;           1 </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>data</span>[, <span class='st'>"u1"</span>], <span class='no'>data</span>[, <span class='st'>"u2"</span>], <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"U1"</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"U2"</span>)
+<span class='fu'><a href='https://rdrr.io/r/grDevices/dev.html'>dev.off</a></span>()</div><div class='output co'>#&gt; null device 
+#&gt;           1 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>data</span>[, <span class='st'>"u1"</span>], <span class='no'>data</span>[, <span class='st'>"u2"</span>], <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"U1"</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"U2"</span>)
 
 <span class='co'>## Model fit with a basis size (arguably) too small </span>
 <span class='co'>## and unpenalized cubic spines</span>
 <span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
-<span class='no'>basis0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>4</span>)
-<span class='no'>formula</span> <span class='kw'>&lt;-</span> ~<span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>1</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.time'>system.time</a></span>(<span class='no'>fit0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;    0.09    0.00    0.09 </div><div class='input'>
+<span class='no'>basis0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>4</span>)
+<span class='no'>formula</span> <span class='kw'>&lt;-</span> ~<span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>1</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
+  <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
+  <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='no'>fit0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
+#&gt;   0.109   0.000   0.109 </div><div class='input'>
 <span class='co'>## Model fit with a better basis size and penalized cubic splines (via min GCV)</span>
 <span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
-<span class='no'>basis1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10</span>, <span class='fl'>10</span>)
-<span class='no'>formula</span> <span class='kw'>&lt;-</span> ~<span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>1</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.time'>system.time</a></span>(<span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.166   0.000   0.166 </div><div class='input'>
+<span class='no'>basis1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10</span>, <span class='fl'>10</span>)
+<span class='no'>formula</span> <span class='kw'>&lt;-</span> ~<span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>1</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
+  <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
+  <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
+#&gt;   0.243   0.000   0.243 </div><div class='input'>
 <span class='co'>## Extract the gamBiCop objects and show various methods</span>
-(<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>sapply</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='no'>fit0</span>,<span class='no'>fit1</span>), <span class='kw'>function</span>(<span class='no'>fit</span>){<span class='no'>fit</span>$<span class='no'>res</span>}))</div><div class='output co'>#&gt; [[1]]
+(<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>fit0</span>,<span class='no'>fit1</span>), <span class='kw'>function</span>(<span class='no'>fit</span>){<span class='no'>fit</span>$<span class='no'>res</span>}))</div><div class='output co'>#&gt; [[1]]
 #&gt; Gaussian copula with tau(z) = (exp(z)-1)/(exp(z)+1) where 
 #&gt; z ~ s(x1, k = basis0[1], bs = "cr", fx = !pen) + s(x2, k = basis0[2], 
 #&gt;     bs = "cr", fx = !pen) + s(x3, k = basis0[3], bs = "cr", fx = !pen)
@@ -254,8 +256,8 @@ Chapman and Hall/CRC.</p>
 #&gt; Gaussian copula with tau(z) = (exp(z)-1)/(exp(z)+1) where 
 #&gt; z ~ s(x1, k = basis1[1], bs = "cr", fx = !pen) + s(x2, k = basis1[2], 
 #&gt;     bs = "cr", fx = !pen) + s(x3, k = basis1[3], bs = "cr", fx = !pen)
-#&gt; </div><div class='input'><span class='no'>metds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='st'>'logLik'</span><span class='kw'>=</span><span class='no'>logLik</span>,<span class='st'>'AIC'</span><span class='kw'>=</span><span class='no'>AIC</span>,<span class='st'>'BIC'</span><span class='kw'>=</span><span class='no'>BIC</span>,<span class='st'>'EDF'</span><span class='kw'>=</span><span class='no'>EDF</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>res</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>sapply</a></span>(<span class='no'>metds</span>, <span class='kw'>function</span>(<span class='no'>f</span>) <span class='fu'>f</span>(<span class='no'>x</span>)))</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='no'>metds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>'logLik'</span><span class='kw'>=</span><span class='no'>logLik</span>,<span class='st'>'AIC'</span><span class='kw'>=</span><span class='no'>AIC</span>,<span class='st'>'BIC'</span><span class='kw'>=</span><span class='no'>BIC</span>,<span class='st'>'EDF'</span><span class='kw'>=</span><span class='no'>EDF</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>res</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='no'>metds</span>, <span class='kw'>function</span>(<span class='no'>f</span>) <span class='fu'>f</span>(<span class='no'>x</span>)))</div><div class='output co'>#&gt; [[1]]
 #&gt; [[1]]$logLik
 #&gt; 'log Lik.' 266.8974 (df=9)
 #&gt; 
@@ -286,89 +288,89 @@ Chapman and Hall/CRC.</p>
 
 <span class='co'>## Comparison between fitted, true smooth and spline approximation for each</span>
 <span class='co'>## true smooth function for the two basis sizes</span>
-<span class='no'>fitted</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>lapply</a></span>(<span class='no'>res</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='gamBiCopPredict.html'>gamBiCopPredict</a></span>(<span class='no'>x</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>x1</span><span class='kw'>=</span><span class='no'>u</span>,<span class='kw'>x2</span><span class='kw'>=</span><span class='no'>u</span>,<span class='kw'>x3</span><span class='kw'>=</span><span class='no'>u</span>),
+<span class='no'>fitted</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>res</span>, <span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='gamBiCopPredict.html'>gamBiCopPredict</a></span>(<span class='no'>x</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x1</span><span class='kw'>=</span><span class='no'>u</span>,<span class='kw'>x2</span><span class='kw'>=</span><span class='no'>u</span>,<span class='kw'>x3</span><span class='kw'>=</span><span class='no'>u</span>),
                                                <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"terms"</span>)$<span class='no'>calib</span>)
-<span class='no'>true</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/vector'>vector</a></span>(<span class='st'>"list"</span>, <span class='fl'>3</span>)
+<span class='no'>true</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>vector</a></span>(<span class='st'>"list"</span>, <span class='fl'>3</span>)
 <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>3</span>) {
     <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>eta0</span>+<span class='no'>calib.surf</span><span class='kw'>[[</span><span class='no'>i</span>]](<span class='no'>u</span>)
     <span class='no'>true</span><span class='kw'>[[</span><span class='no'>i</span>]]$<span class='no'>true</span> <span class='kw'>&lt;-</span> <span class='no'>y</span> - <span class='no'>eta0</span>
-    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/gam'>gam</a></span>(<span class='no'>y</span> ~ <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>u</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='no'>i</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>))
-    <span class='no'>true</span><span class='kw'>[[</span><span class='no'>i</span>]]$<span class='no'>approx</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/predict.gam'>predict.gam</a></span>(<span class='no'>temp</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"terms"</span>)
-    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/gam'>gam</a></span>(<span class='no'>y</span> ~<span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/s'>s</a></span>(<span class='no'>u</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='no'>i</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>))
-    <span class='no'>true</span><span class='kw'>[[</span><span class='no'>i</span>]]$<span class='no'>approx2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/predict.gam'>predict.gam</a></span>(<span class='no'>temp</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"terms"</span>)
+    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/gam.html'>gam</a></span>(<span class='no'>y</span> ~ <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>u</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='no'>i</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>))
+    <span class='no'>true</span><span class='kw'>[[</span><span class='no'>i</span>]]$<span class='no'>approx</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/predict.gam.html'>predict.gam</a></span>(<span class='no'>temp</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"terms"</span>)
+    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/gam.html'>gam</a></span>(<span class='no'>y</span> ~<span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>u</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='no'>i</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>))
+    <span class='no'>true</span><span class='kw'>[[</span><span class='no'>i</span>]]$<span class='no'>approx2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/predict.gam.html'>predict.gam</a></span>(<span class='no'>temp</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"terms"</span>)
 }
 
 <span class='co'>## Display results</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>), <span class='kw'>pty</span> <span class='kw'>=</span> <span class='st'>"s"</span>)
-<span class='no'>yy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/range'>range</a></span>(<span class='no'>true</span>, <span class='no'>fitted</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>), <span class='kw'>pty</span> <span class='kw'>=</span> <span class='st'>"s"</span>)
+<span class='no'>yy</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='no'>true</span>, <span class='no'>fitted</span>)
 <span class='no'>yy</span>[<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='no'>yy</span>[<span class='fl'>1</span>] * <span class='fl'>1.5</span>
 <span class='kw'>for</span>(<span class='no'>k</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>3</span>){
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>true</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"l"</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='no'>yy</span>,
-       <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"Covariate"</span>,<span class='no'>k</span>), <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"Smooth"</span>,<span class='no'>k</span>))
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/lines'>lines</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>approx</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/lines'>lines</a></span>(<span class='no'>u</span>, <span class='no'>fitted</span><span class='kw'>[[</span><span class='fl'>1</span>]][, <span class='no'>k</span>], <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/lines'>lines</a></span>(<span class='no'>u</span>, <span class='no'>fitted</span><span class='kw'>[[</span><span class='fl'>2</span>]][, <span class='no'>k</span>], <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/lines'>lines</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>approx2</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/legend'>legend</a></span>(<span class='st'>"bottomleft"</span>, <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>0.6</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>2</span>),
-         <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"True"</span>, <span class='st'>"Fitted"</span>, <span class='st'>"Appox 1"</span>, <span class='st'>"Fitted 2"</span>, <span class='st'>"Approx 2"</span>),
-         <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"black"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"green"</span>))
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>true</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"l"</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='no'>yy</span>,
+       <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"Covariate"</span>,<span class='no'>k</span>), <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"Smooth"</span>,<span class='no'>k</span>))
+  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>approx</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>u</span>, <span class='no'>fitted</span><span class='kw'>[[</span><span class='fl'>1</span>]][, <span class='no'>k</span>], <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"red"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>u</span>, <span class='no'>fitted</span><span class='kw'>[[</span><span class='fl'>2</span>]][, <span class='no'>k</span>], <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>u</span>, <span class='no'>true</span><span class='kw'>[[</span><span class='no'>k</span>]]$<span class='no'>approx2</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"green"</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+  <span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"bottomleft"</span>, <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>0.6</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>2</span>),
+         <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"True"</span>, <span class='st'>"Fitted"</span>, <span class='st'>"Appox 1"</span>, <span class='st'>"Fitted 2"</span>, <span class='st'>"Approx 2"</span>),
+         <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"black"</span>, <span class='st'>"red"</span>, <span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"green"</span>))
 }
 
 <span class='co'>##### A gamVine example</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>0</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>0</span>)
 
 <span class='co'>##  Simulation parameters</span>
 <span class='co'># Sample size</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>1e3</span>
 <span class='co'># Copula families</span>
-<span class='no'>familyset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='fl'>301</span>:<span class='fl'>304</span>,<span class='fl'>401</span>:<span class='fl'>404</span>)
+<span class='no'>familyset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='fl'>301</span>:<span class='fl'>304</span>,<span class='fl'>401</span>:<span class='fl'>404</span>)
 <span class='co'># Define a 4-dimensional R-vine tree structure matrix</span>
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fl'>4</span>
-<span class='no'>Matrix</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
-<span class='no'>Matrix</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>Matrix</span>,<span class='no'>d</span>,<span class='no'>d</span>)
-<span class='no'>nnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"X"</span>, <span class='fl'>1</span>:<span class='no'>d</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='no'>Matrix</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>4</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>)
+<span class='no'>Matrix</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='no'>Matrix</span>,<span class='no'>d</span>,<span class='no'>d</span>)
+<span class='no'>nnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"X"</span>, <span class='fl'>1</span>:<span class='no'>d</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
 <span class='co'>## A function factory</span>
 <span class='no'>eta0</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>calib.surf</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(
+<span class='no'>calib.surf</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
   <span class='no'>calib.quad</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>8</span>) {
     <span class='no'>Tm</span> <span class='kw'>&lt;-</span> (<span class='no'>Tf</span> - <span class='no'>Ti</span>)/<span class='fl'>2</span>
     <span class='no'>a</span> <span class='kw'>&lt;-</span> -(<span class='no'>b</span>/<span class='fl'>3</span>) * (<span class='no'>Tf</span>^<span class='fl'>2</span> - <span class='fl'>3</span> * <span class='no'>Tf</span> * <span class='no'>Tm</span> + <span class='fl'>3</span> * <span class='no'>Tm</span>^<span class='fl'>2</span>)
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * (<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>)},
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * (<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>)},
   <span class='no'>calib.sin</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>f</span> <span class='kw'>=</span> <span class='fl'>1</span>) {
     <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='no'>b</span> * (<span class='fl'>1</span> - <span class='fl'>2</span> * <span class='no'>Tf</span> * <span class='no'>pi</span>/(<span class='no'>f</span> * <span class='no'>Tf</span> * <span class='no'>pi</span> +
-                                 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>Tf</span> - <span class='no'>Ti</span>))
-                               - <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * <span class='no'>Ti</span>)))
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>((<span class='no'>a</span> + <span class='no'>b</span>)/<span class='fl'>2</span> + (<span class='no'>b</span> - <span class='no'>a</span>) * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Trig'>sin</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>t</span> - <span class='no'>Ti</span>))/<span class='fl'>2</span>)},
+                                 <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>Tf</span> - <span class='no'>Ti</span>))
+                               - <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>cos</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * <span class='no'>Ti</span>)))
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>((<span class='no'>a</span> + <span class='no'>b</span>)/<span class='fl'>2</span> + (<span class='no'>b</span> - <span class='no'>a</span>) * <span class='fu'><a href='https://rdrr.io/r/base/Trig.html'>sin</a></span>(<span class='fl'>2</span> * <span class='no'>f</span> * <span class='no'>pi</span> * (<span class='no'>t</span> - <span class='no'>Ti</span>))/<span class='fl'>2</span>)},
   <span class='no'>calib.exp</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>t</span>, <span class='no'>Ti</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>Tf</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>s</span> <span class='kw'>=</span> <span class='no'>Tf</span>/<span class='fl'>8</span>) {
     <span class='no'>Tm</span> <span class='kw'>&lt;-</span> (<span class='no'>Tf</span> - <span class='no'>Ti</span>)/<span class='fl'>2</span>
-    <span class='no'>a</span> <span class='kw'>&lt;-</span> (<span class='no'>b</span> * <span class='no'>s</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/MathFun'>sqrt</a></span>(<span class='fl'>2</span> * <span class='no'>pi</span>)/<span class='no'>Tf</span>) * (<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>pnorm</a></span>(<span class='fl'>0</span>, <span class='no'>Tm</span>, <span class='no'>s</span>) - <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>pnorm</a></span>(<span class='no'>Tf</span>, <span class='no'>Tm</span>, <span class='no'>s</span>))
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(-(<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>/(<span class='fl'>2</span> * <span class='no'>s</span>^<span class='fl'>2</span>)))})
+    <span class='no'>a</span> <span class='kw'>&lt;-</span> (<span class='no'>b</span> * <span class='no'>s</span> * <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fl'>2</span> * <span class='no'>pi</span>)/<span class='no'>Tf</span>) * (<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='fl'>0</span>, <span class='no'>Tm</span>, <span class='no'>s</span>) - <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='no'>Tf</span>, <span class='no'>Tm</span>, <span class='no'>s</span>))
+    <span class='fu'><a href='https://rdrr.io/r/base/function.html'>return</a></span>(<span class='no'>a</span> + <span class='no'>b</span> * <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(-(<span class='no'>t</span> - <span class='no'>Tm</span>)^<span class='fl'>2</span>/(<span class='fl'>2</span> * <span class='no'>s</span>^<span class='fl'>2</span>)))})
 
 <span class='co'>##  Create the model</span>
 <span class='co'># Define gam-vine model list</span>
 <span class='no'>count</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/vector'>vector</a></span>(<span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"list"</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='no'>d</span>*(<span class='no'>d</span>-<span class='fl'>1</span>)/<span class='fl'>2</span>)
-<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='no'>d</span>,<span class='no'>d</span>^<span class='fl'>2</span>-<span class='no'>d</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>d</span>)
+<span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>vector</a></span>(<span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"list"</span>, <span class='kw'>length</span> <span class='kw'>=</span> <span class='no'>d</span>*(<span class='no'>d</span>-<span class='fl'>1</span>)/<span class='fl'>2</span>)
+<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='no'>d</span>,<span class='no'>d</span>^<span class='fl'>2</span>-<span class='no'>d</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='no'>d</span>)
 
 <span class='co'># First tree</span>
 <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:(<span class='no'>d</span>-<span class='fl'>1</span>)) {
   <span class='co'># Select a copula family</span>
-  <span class='no'>family</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='no'>familyset</span>, <span class='fl'>1</span>)
+  <span class='no'>family</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>familyset</span>, <span class='fl'>1</span>)
   <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>family</span> <span class='kw'>&lt;-</span> <span class='no'>family</span>
 
   <span class='co'># Use the canonical link and a randomly generated parameter </span>
-  <span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sets'>is.element</a></span>(<span class='no'>family</span>,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))) {
-    <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Hyperbolic'>tanh</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>1</span>)/<span class='fl'>2</span>)
+  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/sets.html'>is.element</a></span>(<span class='no'>family</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))) {
+    <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Hyperbolic.html'>tanh</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1</span>)/<span class='fl'>2</span>)
     <span class='kw'>if</span> (<span class='no'>family</span> <span class='kw'>==</span> <span class='fl'>2</span>) {
-      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par2</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>1</span>))
+      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par2</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>+<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1</span>))
     }
   } <span class='kw'>else</span> {
-    <span class='kw'>if</span> (<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sets'>is.element</a></span>(<span class='no'>family</span>,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>401</span>:<span class='fl'>404</span>))) {
-      <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>1</span>)
-      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sign'>sign</a></span>(<span class='no'>rr</span>)*(<span class='fl'>1</span>+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/MathFun'>abs</a></span>(<span class='no'>rr</span>))
+    <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/sets.html'>is.element</a></span>(<span class='no'>family</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>401</span>:<span class='fl'>404</span>))) {
+      <span class='no'>rr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1</span>)
+      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sign.html'>sign</a></span>(<span class='no'>rr</span>)*(<span class='fl'>1</span>+<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>rr</span>))
     } <span class='kw'>else</span> {
-      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>1</span>)
+      <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1</span>)
     }
     <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]]$<span class='no'>par2</span> <span class='kw'>&lt;-</span> <span class='fl'>0</span>
   }
@@ -376,56 +378,56 @@ Chapman and Hall/CRC.</p>
 }
 
 <span class='co'># A dummy dataset</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>u1</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e2</span>), <span class='kw'>u2</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e2</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>1e2</span>*<span class='no'>d</span>),<span class='fl'>1e2</span>,<span class='no'>d</span>))
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>u1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1e2</span>), <span class='kw'>u2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1e2</span>), <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>1e2</span>*<span class='no'>d</span>),<span class='fl'>1e2</span>,<span class='no'>d</span>))
 
 <span class='co'># Trees 2 to (d-1)</span>
 <span class='kw'>for</span>(<span class='no'>j</span> <span class='kw'>in</span> <span class='fl'>2</span>:(<span class='no'>d</span>-<span class='fl'>1</span>)){
   <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:(<span class='no'>d</span>-<span class='no'>j</span>)){
     <span class='co'># Select a copula family</span>
-    <span class='no'>family</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='no'>familyset</span>, <span class='fl'>1</span>)
+    <span class='no'>family</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>familyset</span>, <span class='fl'>1</span>)
 
     <span class='co'># Select the conditiong set and create a model formula</span>
-    <span class='no'>cond</span> <span class='kw'>&lt;-</span> <span class='no'>nnames</span>[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sort'>sort</a></span>(<span class='no'>Matrix</span>[(<span class='no'>d</span>-<span class='no'>j</span>+<span class='fl'>2</span>):<span class='no'>d</span>,<span class='no'>i</span>])]
-    <span class='no'>tmpform</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"~"</span>,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"s("</span>, <span class='no'>cond</span>, <span class='st'>", k=10, bs='cr')"</span>,
+    <span class='no'>cond</span> <span class='kw'>&lt;-</span> <span class='no'>nnames</span>[<span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='no'>Matrix</span>[(<span class='no'>d</span>-<span class='no'>j</span>+<span class='fl'>2</span>):<span class='no'>d</span>,<span class='no'>i</span>])]
+    <span class='no'>tmpform</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"~"</span>,<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"s("</span>, <span class='no'>cond</span>, <span class='st'>", k=10, bs='cr')"</span>,
                                      <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>), <span class='kw'>collapse</span><span class='kw'>=</span><span class='st'>" + "</span>))
-    <span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>cond</span>)
-    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='fl'>3</span>, <span class='no'>l</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>cond</span>)
+    <span class='no'>temp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>3</span>, <span class='no'>l</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
     <span class='co'># Spline approximation of the true function</span>
     <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>1e2</span>
-    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='kw'>length.out</span><span class='kw'>=</span><span class='no'>m</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+    <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='kw'>length.out</span><span class='kw'>=</span><span class='no'>m</span>), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>)
     <span class='kw'>if</span>(<span class='no'>l</span> <span class='kw'>!=</span> <span class='fl'>1</span>){
-      <span class='no'>tmp.fct</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"function(x){eta0+"</span>,
-                       <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>sapply</a></span>(<span class='fl'>1</span>:<span class='no'>l</span>, <span class='kw'>function</span>(<span class='no'>x</span>)
-                         <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"calib.surf[["</span>,<span class='no'>temp</span>[<span class='no'>x</span>],<span class='st'>"]](x["</span>,<span class='no'>x</span>,<span class='st'>"])"</span>,
+      <span class='no'>tmp.fct</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"function(x){eta0+"</span>,
+                       <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fl'>1</span>:<span class='no'>l</span>, <span class='kw'>function</span>(<span class='no'>x</span>)
+                         <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"calib.surf[["</span>,<span class='no'>temp</span>[<span class='no'>x</span>],<span class='st'>"]](x["</span>,<span class='no'>x</span>,<span class='st'>"])"</span>,
                                <span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>)), <span class='kw'>collapse</span><span class='kw'>=</span><span class='st'>"+"</span>),<span class='st'>"}"</span>,<span class='kw'>sep</span><span class='kw'>=</span><span class='st'>""</span>)
-      <span class='no'>tmp.fct</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/eval'>eval</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/parse'>parse</a></span>(<span class='kw'>text</span> <span class='kw'>=</span> <span class='no'>tmp.fct</span>))
-      <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/eval'>eval</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/parse'>parse</a></span>(<span class='kw'>text</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='st'>"expand.grid("</span>,
-                                   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"x"</span>,<span class='no'>l</span>), <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='st'>","</span>),<span class='st'>")"</span>,
+      <span class='no'>tmp.fct</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/eval.html'>eval</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/parse.html'>parse</a></span>(<span class='kw'>text</span> <span class='kw'>=</span> <span class='no'>tmp.fct</span>))
+      <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/eval.html'>eval</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/parse.html'>parse</a></span>(<span class='kw'>text</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"expand.grid("</span>,
+                                   <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='st'>"x"</span>,<span class='no'>l</span>), <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='st'>","</span>),<span class='st'>")"</span>,
                                    <span class='kw'>collapse</span> <span class='kw'>=</span> <span class='st'>""</span>)))
-      <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/apply'>apply</a></span>(<span class='no'>x</span>,<span class='fl'>1</span>,<span class='no'>tmp.fct</span>)
+      <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='no'>x</span>,<span class='fl'>1</span>,<span class='no'>tmp.fct</span>)
     }<span class='kw'>else</span>{
       <span class='no'>tmp.fct</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) <span class='no'>eta0</span>+<span class='no'>calib.surf</span><span class='kw'>[[</span><span class='no'>temp</span>]](<span class='no'>x</span>)
-      <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/colnames'>colnames</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='no'>cond</span>
+      <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='no'>cond</span>
       <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>tmp.fct</span>(<span class='no'>x</span>)
     }
 
     <span class='co'># Estimate the gam model</span>
-    <span class='no'>form</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/formula'>as.formula</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='st'>"y"</span>, <span class='no'>tmpform</span>))
-    <span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='no'>y</span>, <span class='no'>x</span>)
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>dd</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"y"</span>, <span class='no'>cond</span>)
-    <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/mgcv/topics/gam'>gam</a></span>(<span class='no'>form</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dd</span>)
+    <span class='no'>form</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/formula.html'>as.formula</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"y"</span>, <span class='no'>tmpform</span>))
+    <span class='no'>dd</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='no'>y</span>, <span class='no'>x</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>dd</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"y"</span>, <span class='no'>cond</span>)
+    <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/gam.html'>gam</a></span>(<span class='no'>form</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dd</span>)
     <span class='co'>#plot(x[,1],(y-fitted(b))/y)</span>
 
     <span class='co'># Create a dummy gamBiCop object</span>
     <span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>data</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>form</span>, <span class='kw'>family</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>n.iters</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>res</span>
 
     <span class='co'># Update the copula family and the model coefficients</span>
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"model"</span>)$<span class='no'>coefficients</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coefficients</a></span>(<span class='no'>b</span>)
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"model"</span>)$<span class='no'>smooth</span> <span class='kw'>&lt;-</span> <span class='no'>b</span>$<span class='no'>smooth</span>
-    <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"family"</span>) <span class='kw'>&lt;-</span> <span class='no'>family</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"model"</span>)$<span class='no'>coefficients</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coefficients</a></span>(<span class='no'>b</span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"model"</span>)$<span class='no'>smooth</span> <span class='kw'>&lt;-</span> <span class='no'>b</span>$<span class='no'>smooth</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"family"</span>) <span class='kw'>&lt;-</span> <span class='no'>family</span>
     <span class='kw'>if</span> (<span class='no'>family</span> <span class='kw'>==</span> <span class='fl'>2</span>) {
-      <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/attr'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"par2"</span>) <span class='kw'>&lt;-</span> <span class='fl'>2</span>+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Log'>exp</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>1</span>))
+      <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>tmp</span>, <span class='st'>"par2"</span>) <span class='kw'>&lt;-</span> <span class='fl'>2</span>+<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1</span>))
     }
     <span class='no'>model</span><span class='kw'>[[</span><span class='no'>count</span>]] <span class='kw'>&lt;-</span> <span class='no'>tmp</span>
     <span class='no'>count</span> <span class='kw'>&lt;-</span> <span class='no'>count</span>+<span class='fl'>1</span>
@@ -434,7 +436,7 @@ Chapman and Hall/CRC.</p>
 
 <span class='co'># Create the gamVineCopula object</span>
 <span class='no'>GVC</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVine.html'>gamVine</a></span>(<span class='kw'>Matrix</span><span class='kw'>=</span><span class='no'>Matrix</span>,<span class='kw'>model</span> <span class='kw'>=</span> <span class='no'>model</span>,<span class='kw'>names</span><span class='kw'>=</span><span class='no'>nnames</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='no'>GVC</span>)</div><div class='output co'>#&gt; GAM-Vine matrix: 
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>GVC</span>)</div><div class='output co'>#&gt; GAM-Vine matrix: 
 #&gt;      [,1] [,2] [,3] [,4]
 #&gt; [1,]    2    0    0    0
 #&gt; [2,]    3    3    0    0
@@ -461,32 +463,26 @@ Chapman and Hall/CRC.</p>
 #&gt;  Tree 3: 
 #&gt; X2,X3|X4,X1 : Gumbel type 4 (survival and 270 degrees rotated) copula with tau(z) = (exp(z)-1)/(exp(z)+1) where 
 #&gt; z ~ s(X1, k = 10, bs = "cr") + s(X4, k = 10, bs = "cr")</div><div class='input'>
-</div><span class='co'># NOT RUN {</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'>## Simulate and fit the model</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineSimulate.html'>gamVineSimulate</a></span>(<span class='no'>n</span>, <span class='no'>GVC</span>)
 <span class='no'>fitGVC</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineSeqFit.html'>gamVineSeqFit</a></span>(<span class='no'>sim</span>, <span class='no'>GVC</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 <span class='no'>fitGVC2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamVineCopSelect.html'>gamVineCopSelect</a></span>(<span class='no'>sim</span>, <span class='no'>Matrix</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='co'>## Plot the results</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>GVC</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>4</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>GVC</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fitGVC</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fitGVC</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fitGVC2</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))
-<span class='co'># }</span><div class='input'>
-</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fitGVC2</span>, <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>2.5</span>,<span class='fl'>2.5</span>))}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#references">References</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
@@ -496,19 +492,23 @@ Chapman and Hall/CRC.</p>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Thomas Nagler, Thibault Vatter.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

@@ -59,6 +59,8 @@
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @param select.once if \code{TRUE} the GAM structure is only selected once,
 #'   for the family that appears first in \code{familyset}.
+#' @param ... Additional parameters to be passed to \code{\link{gam}}
+#' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamVineCopSelect} returns a \code{\link{gamVine-class}} object.
 #' @examples
 #' require(mgcv)
@@ -217,7 +219,7 @@ gamVineCopSelect <- function(data, Matrix,
                              trunclevel = NA, tau = TRUE, method = "FS",
                              tol.rel = 0.001, n.iters = 10,
                              parallel = FALSE, verbose = FALSE,
-                             select.once = TRUE) {
+                             select.once = TRUE, ...) {
   tmp <- valid.gamVineCopSelect(
     data, Matrix, lin.covs, smooth.covs, simplified,
     familyset, rotations, familycrit, level,
@@ -311,7 +313,7 @@ gamVineCopSelect <- function(data, Matrix,
           tmp <- fitAGAMCopula(
             tmp, familyset, familycrit, level,
             tau, method, tol.rel, n.iters, FALSE,
-            rotations, select.once
+            rotations, select.once, ...
           )
         }
       }
