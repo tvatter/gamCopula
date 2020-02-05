@@ -305,7 +305,7 @@ from <code><a href='https://rdrr.io/pkg/mgcv/man/mgcv-package.html'>mgcv</a></co
   <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
   <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis0</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='no'>fit0</span> <span class='kw'>&lt;-</span> <span class='fu'>gamBiCopFit</span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.117   0.000   0.118 </div><div class='input'>
+#&gt;   0.127   0.000   0.127 </div><div class='input'>
 <span class='co'>## Model fit with a better basis size and penalized cubic splines (via min GCV)</span>
 <span class='no'>pen</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
 <span class='no'>basis1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10</span>, <span class='fl'>10</span>)
@@ -313,7 +313,7 @@ from <code><a href='https://rdrr.io/pkg/mgcv/man/mgcv-package.html'>mgcv</a></co
   <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>) +
   <span class='fu'><a href='https://rdrr.io/pkg/mgcv/man/s.html'>s</a></span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis1</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>, <span class='kw'>fx</span> <span class='kw'>=</span> !<span class='no'>pen</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='no'>fit1</span> <span class='kw'>&lt;-</span> <span class='fu'>gamBiCopFit</span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;    0.26    0.00    0.26 </div><div class='input'>
+#&gt;   0.238   0.000   0.239 </div><div class='input'>
 <span class='co'>## Extract the gamBiCop objects and show various methods</span>
 (<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>fit0</span>, <span class='no'>fit1</span>), <span class='kw'>function</span>(<span class='no'>fit</span>) {
   <span class='no'>fit</span>$<span class='no'>res</span>

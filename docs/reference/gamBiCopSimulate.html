@@ -221,7 +221,7 @@ and/or <code>return.tau = TRUE</code>, then the list also contains respectively 
   <span class='fu'>s</span>(<span class='no'>x2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>2</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>) +
   <span class='fu'>s</span>(<span class='no'>x3</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='no'>basis</span>[<span class='fl'>3</span>], <span class='kw'>bs</span> <span class='kw'>=</span> <span class='st'>"cr"</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span>(<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gamBiCopFit.html'>gamBiCopFit</a></span>(<span class='no'>data</span>, <span class='no'>formula</span>, <span class='no'>fam</span>))</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.257   0.000   0.257 </div><div class='input'>
+#&gt;   0.209   0.000   0.209 </div><div class='input'>
 <span class='co'>## Extract the gamBiCop objects and show various methods</span>
 (<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='no'>fit</span>$<span class='no'>res</span>)</div><div class='output co'>#&gt; Gaussian copula with tau(z) = (exp(z)-1)/(exp(z)+1) where 
 #&gt; z ~ s(x1, k = basis[1], bs = "cr") + s(x2, k = basis[2], bs = "cr") + 
