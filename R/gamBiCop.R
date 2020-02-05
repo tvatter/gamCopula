@@ -90,7 +90,7 @@ show.gamBiCop <- function(object) {
   show(object@model$formula)
 }
 
-summary.gamBiCop <- function(object) {
+summary.gamBiCop <- function(object, ...) {
   cat(bicopname(object@family), "copula with ")
   if (object@tau == TRUE) {
     cat("tau(z) = (exp(z)-1)/(exp(z)+1) where \n")

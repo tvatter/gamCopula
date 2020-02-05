@@ -4,8 +4,16 @@
 \alias{gamVineSeqFit}
 \title{Sequential maximum penalized likelihood estimation of a GAM-Vine model.}
 \usage{
-gamVineSeqFit(data, GVC, covariates = NA, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE)
+gamVineSeqFit(
+  data,
+  GVC,
+  covariates = NA,
+  method = "FS",
+  tol.rel = 0.001,
+  n.iters = 10,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}

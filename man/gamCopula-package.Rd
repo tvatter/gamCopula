@@ -16,8 +16,8 @@ More references in Vatter and Chavez-Demoulin (2015), and Vatter and Nagler (201
 \tabular{ll}{
 Package: \tab gamCopula\cr
 Type: \tab Package\cr
-Version: \tab 0.0-6\cr
-Date: \tab 2019-12-04\cr
+Version: \tab 0.0-7\cr
+Date: \tab 2020-02-05\cr
 License: \tab GPL-3\cr
 }
 }
