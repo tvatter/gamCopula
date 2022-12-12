@@ -33,4 +33,5 @@ License: GPL-3
 LazyLoad: yes
 BugReports: https://github.com/tvatter/gamCopula/issues
 URL: https://github.com/tvatter/gamCopula
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.0
+Encoding: UTF-8

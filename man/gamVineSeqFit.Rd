@@ -4,8 +4,15 @@
 \alias{gamVineSeqFit}
 \title{Sequential maximum penalized likelihood estimation of a GAM-Vine model.}
 \usage{
-gamVineSeqFit(data, GVC, covariates = NA, method = "FS",
-  tol.rel = 0.001, n.iters = 10, verbose = FALSE)
+gamVineSeqFit(
+  data,
+  GVC,
+  covariates = NA,
+  method = "FS",
+  tol.rel = 0.001,
+  n.iters = 10,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{A matrix or data frame containing the data in [0,1]^d.}
@@ -24,9 +31,6 @@ and  \code{'FS'} for Fisher-scoring (default).}
 
 \item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.}
-
-\item{...}{Additional parameters to be passed to \code{\link{gam}}
-from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
 \code{gamVineSeqFit} returns a
