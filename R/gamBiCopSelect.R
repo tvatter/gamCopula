@@ -139,7 +139,7 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
   }
 
   if (length(familyset) == 1 && is.na(familyset)) {
-    familyset <- get.familyset()
+    familyset <- setdiff(get.familyset(), 5)
   }
   if (rotations) {
     familyset <- withRotations(familyset)
