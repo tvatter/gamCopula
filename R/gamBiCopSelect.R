@@ -134,6 +134,8 @@ gamBiCopSelect <- function(udata, lin.covs = NULL, smooth.covs = NULL,
     familycrit, level, edf, tau, method, tol.rel,
     n.iters, parallel, verbose, select.once
   )
+  lin.covs <- as.data.frame(lin.covs)
+  smooth.covs <- as.data.frame(smooth.covs)
   if (tmp != TRUE) {
     stop(tmp)
   }
