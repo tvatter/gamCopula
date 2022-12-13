@@ -1,7 +1,7 @@
 ## The current familyset of the gamCopula package
 get.familyset <- function() {
   # the Frank is available, but it works poorly.... still don't know why
-  c(1, 2, 301:304, 401:404)
+  c(1, 2, 5, 301:304, 401:404)
 }
 
 ## Fisher information with respect to the Copula parameter for a

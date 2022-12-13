@@ -54,7 +54,7 @@ prepare.data <- function(data, covariates, trunclevel = NA,
     familyset <- 0
   }
   if (length(familyset) == 1 && is.na(familyset)) {
-    familyset <- get.familyset()
+    familyset <- setdiff(get.familyset(), 5)
   }
   if (rotations) {
     familyset <- withRotations(familyset)
@@ -107,7 +107,7 @@ prepare.data2 <- function(udata, lin.covs, smooth.covs, trunclevel = NA,
     familyset <- 0
   }
   if (length(familyset) == 1 && is.na(familyset)) {
-    familyset <- get.familyset()
+    familyset <- setdiff(get.familyset(), 5)
   }
   if (rotations) {
     familyset <- withRotations(familyset)
