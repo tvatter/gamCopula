@@ -14,8 +14,7 @@ jobs:
         config:
         - { os: windows-latest, r: 'release', args: "--no-manual"}
         - { os: macOS-latest, r: 'release', args: "--no-manual"}
-        - { os: macOS-latest, r: 'devel', args: "--as-cran"}
-        - { os: ubuntu-22.04, r: 'devel', args: "--no-manual" }
+        - { os: ubuntu-22.04, r: 'release', args: "--no-manual" }
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true

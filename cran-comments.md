@@ -4,8 +4,9 @@ This release corrects Rd cross-references.
 
 ## Test environments
 
-* ubuntu 16.04 (travis-ci), oldrel/release/devel
-* Windows Server 2012 R2 x64 (appveyor), R 3.6.2
+- Windows (release), R 4.x, GitHub Actions
+- macOS (release), R 4.x, GitHub Actions
+- Ubuntu 22.04 (release), R 4.x, GitHub Actions
 
 ## R CMD check results
 
