@@ -14,3 +14,4 @@ revdep
 ^-*\.directory^
 .github/
 ^\.github/workflows/R-CMD-check\.yaml$
+^CRAN-SUBMISSION$
