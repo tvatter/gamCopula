@@ -611,7 +611,7 @@ fitACopula <- function(u1, u2, familyset = NA, familycrit = "AIC",
 
 fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
                           method, tol.rel, n.iters, parallel, rotation = TRUE,
-                          select.once = TRUE) {
+                          select.once = TRUE, ...) {
   out <- list()
   u1 <- data[[1]][, 1]
   u2 <- data[[1]][, 2]
@@ -635,7 +635,7 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
     tmp <- gamBiCopSelect(udata, lin.covs, smooth.covs,
       familyset, FALSE, familycrit, level, 1.5, tau,
       method, tol.rel, n.iters, parallel,
-      select.once = select.once
+      select.once = select.once, FALSE, ...
     )
     if (!is.character(tmp)) {
       nvar <- unique(all.vars(tmp$res@model$pred.formula))

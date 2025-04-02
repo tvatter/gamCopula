@@ -1,3 +1,10 @@
+gamCopula 0.0.7 (February 5, 2020)
+----------------------------------------------------------------
+
+BUG FIXES
+
+  * Update documentation to fix CRAN warnings.
+
 gamCopula 0.0.6 (December 4, 2019)
 ----------------------------------------------------------------
 
