@@ -14,7 +14,7 @@
 
 \item{y}{Not used with this class.}
 
-\item{...}{additional arguments to be passed to \code{\link{plot.gam}}.}
+\item{...}{additional arguments to be passed to \code{\link[mgcv]{plot.gam}}.}
 }
 \value{
 This function simply generates plots.
@@ -22,9 +22,9 @@ This function simply generates plots.
 \description{
 Plot an object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
-The function is based on (see \code{\link{plot.gam}}
+The function is based on (see \code{\link[mgcv]{plot.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}).
 }
 \seealso{
-\code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
+\code{\link[mgcv]{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 }

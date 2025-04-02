@@ -10,8 +10,8 @@
 #'
 #' @param data A list, data frame or matrix containing the model responses,
 #'  (u1,u2) in [0,1]x[0,1], and covariates required by the formula.
-#' @param formula A gam formula (see \code{\link{gam}},
-#' \code{\link{formula.gam}} and \code{\link{gam.models}}
+#' @param formula A gam formula (see \code{\link[mgcv]{gam}},
+#' \code{\link[mgcv]{formula.gam}} and \code{\link[mgcv]{gam.models}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @param family A copula family: \code{1} Gaussian,
 #' \code{2} Student t,
@@ -34,7 +34,7 @@
 #' \code{'FS'}/\code{'NR'} algorithm.
 #' @param verbose \code{TRUE} if informations should be printed during the
 #' estimation and \code{FALSE} (default) for a silent version.
-#' @param ... Additional parameters to be passed to \code{\link{gam}}
+#' @param ... Additional parameters to be passed to \code{\link[mgcv]{gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamBiCopFit} returns a list consisting of
 #' \item{res}{S4 \code{\link{gamBiCop-class}} object.}

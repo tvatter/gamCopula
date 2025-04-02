@@ -7,17 +7,17 @@
 RVM2GVC(RVM)
 }
 \arguments{
-\item{RVM}{An object of the class \code{\link{RVineMatrix}}.}
+\item{RVM}{An object of the class \code{\link[VineCopula]{RVineMatrix}}.}
 }
 \value{
 An object of the class
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \description{
-Transform an object of the class \code{\link{RVineMatrix}}
+Transform an object of the class \code{\link[VineCopula]{RVineMatrix}}
 into an object of the class \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }
 \seealso{
-\code{\link{RVineMatrix}} and
+\code{\link[VineCopula]{RVineMatrix}} and
 \code{\link[gamCopula:gamVine-class]{gamVine}}.
 }

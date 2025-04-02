@@ -38,9 +38,8 @@
 #' \item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)
 #' \code{f(x) = x*(1+abs(x))/abs(x)}.
 #' }
-#' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
-#' \code{\link{BiCopTau2Par}} from
-#' \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+#' @seealso \code{\link{BiCopPar2Eta}}, \code{\link[VineCopula]{BiCopPar2Tau}},
+#' and \code{\link[VineCopula]{BiCopTau2Par}} from the \pkg{VineCopula} package.
 #' @name BiCopEta2Par
 #' @rdname BiCopEta2Par
 #' @export
@@ -104,9 +103,9 @@ BiCopEta2Par <- function(family, eta) {
 #' \item \code{404} Double Gumbel type IV (survival and rotated 270 degrees)
 #' \code{f(x) = x*(1-1/abs(x))}.
 #' }
-#' @seealso  \code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
-#' \code{\link{BiCopTau2Par}} from
-#' \code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+#' @seealso  \code{\link{BiCopEta2Par}},
+#' \code{\link[VineCopula]{BiCopPar2Tau}},
+#' and \code{\link[VineCopula]{BiCopTau2Par}} from the \pkg{VineCopula} package.
 #' @name BiCopPar2Eta
 #' @rdname BiCopPar2Eta
 #' @export

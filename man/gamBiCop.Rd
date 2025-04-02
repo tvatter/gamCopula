@@ -19,8 +19,8 @@ gamBiCop(family, model, par2 = 0, tau = TRUE)
 \code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{model}{A \code{\link{gamObject}} as return by the
-\code{\link{gam}} function
+\item{model}{A \code{\link[mgcv]{gamObject}} as return by the
+\code{\link[mgcv]{gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{par2}{Second parameter for the Student t-copula.}

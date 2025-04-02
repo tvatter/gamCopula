@@ -9,7 +9,7 @@ gamVinePDF(object, data)
 \arguments{
 \item{object}{\code{\link{gamVine-class}} object.}
 
-\item{data}{(Same as in \code{\link{predict.gam}} from the
+\item{data}{(Same as in \code{\link[mgcv]{predict.gam}} from the
 \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame
 containing the values of the model covariates at which predictions are
 required, along with a number of additional columns corresponding to the

@@ -40,7 +40,7 @@
 #' are included.
 #' @param familycrit Character indicating the criterion for bivariate copula
 #' selection. Possible choices: \code{familycrit = 'AIC'} (default) or
-#' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the
+#' \code{'BIC'}, as in \code{\link[VineCopula]{BiCopSelect}} from the
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.
 #' @param treecrit Character indicating how pairs are selected in each tree.
 #' \code{treecrit = "tau"} uses the maximum spanning tree of the Kendall's tau

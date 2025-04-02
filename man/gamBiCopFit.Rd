@@ -21,8 +21,8 @@ gamBiCopFit(
 \item{data}{A list, data frame or matrix containing the model responses,
 (u1,u2) in [0,1]x[0,1], and covariates required by the formula.}
 
-\item{formula}{A gam formula (see \code{\link{gam}},
-\code{\link{formula.gam}} and \code{\link{gam.models}}
+\item{formula}{A gam formula (see \code{\link[mgcv]{gam}},
+\code{\link[mgcv]{formula.gam}} and \code{\link[mgcv]{gam.models}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}).}
 
 \item{family}{A copula family: \code{1} Gaussian,
@@ -52,7 +52,7 @@ and  \code{'FS'} for Fisher-scoring (default).}
 \item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.}
 
-\item{...}{Additional parameters to be passed to \code{\link{gam}}
+\item{...}{Additional parameters to be passed to \code{\link[mgcv]{gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{

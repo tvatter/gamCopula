@@ -14,8 +14,8 @@
 #' \code{402} Double Gumbel type II (standard and rotated 270 degrees),
 #' \code{403} Double Gumbel type III (survival and rotated 90 degrees),
 #' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
-#' @param model A \code{\link{gamObject}} as return by the
-#' \code{\link{gam}} function
+#' @param model A \code{\link[mgcv]{gamObject}} as return by the
+#' \code{\link[mgcv]{gam}} function
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @param par2 Second parameter for the Student t-copula.
 #' @param tau \code{FALSE} for a calibration function specified
@@ -170,9 +170,9 @@ setMethod("show", signature("gamBiCop"), show.gamBiCop)
 #' @param object An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param ... unused in this class
-#' @return A useful summary (see \code{\link{summary.gam}}
+#' @return A useful summary (see \code{\link[mgcv]{summary.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
-#' @seealso \code{\link{summary.gam}}
+#' @seealso \code{\link[mgcv]{summary.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}
 #' @docType methods
 #' @name summary.gamBiCop
@@ -183,15 +183,15 @@ setMethod("summary", signature("gamBiCop"), summary.gamBiCop)
 
 #' Model Formula of the gamBiCop Object
 #'
-#' Extracts the \code{\link{gam}} formula from an object of the class
+#' Extracts the \code{\link[mgcv]{gam}} formula from an object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
-#' This function is a wrapper to \code{\link{formula.gam}}
+#' This function is a wrapper to \code{\link[mgcv]{formula.gam}}
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #'
 #' @param x An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param ... un-used in this class
-#' @seealso \code{\link{formula.gam}} function
+#' @seealso \code{\link[mgcv]{formula.gam}} function
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @docType methods
 #' @name formula.gamBiCop
@@ -281,15 +281,15 @@ setMethod("AIC", signature("gamBiCop"), AIC.gamBiCop)
 #'
 #' Plot from an object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
-#' The function is based on (see \code{\link{plot.gam}}
+#' The function is based on (see \code{\link[mgcv]{plot.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #'
 #' @param x An object of the class
 #' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
 #' @param y Not used with this class.
-#' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
+#' @param ... additional arguments to be passed to \code{\link[mgcv]{plot.gam}}.
 #' @return This function simply generates plots.
-#' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' @seealso \code{\link[mgcv]{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @docType methods
 #' @name plot.gamBiCop
 #' @rdname plot.gamBiCop-methods
@@ -302,7 +302,7 @@ setMethod("plot", signature(x = "gamBiCop"), plot.gamBiCop)
 #'
 #' Function calculating the Equivalent Degrees of Freedom (EDF)
 #' for a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object.
-#' It basically sums the edf of the \code{\link{gamObject}}
+#' It basically sums the edf of the \code{\link[mgcv]{gamObject}}
 #' for each smooth component.
 #'
 #' @param object An object of the class

@@ -51,7 +51,6 @@ Computes the (first) copula parameter of a bivariate copula for a given
 value of the calibration function (eta).
 }
 \seealso{
-\code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
-\code{\link{BiCopTau2Par}} from
-\code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+\code{\link{BiCopPar2Eta}}, \code{\link[VineCopula]{BiCopPar2Tau}},
+and \code{\link[VineCopula]{BiCopTau2Par}} from the \pkg{VineCopula} package.
 }

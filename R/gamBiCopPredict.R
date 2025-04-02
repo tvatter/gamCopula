@@ -2,7 +2,7 @@
 #' or Kendall's tau
 #'
 #' @param object \code{\link{gamBiCop-class}} object.
-#' @param newdata (Same as in \code{\link{predict.gam}} from the
+#' @param newdata (Same as in \code{\link[mgcv]{predict.gam}} from the
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame
 #' containing the values of the model covariates at which predictions are
 #' required. If this is not provided then predictions corresponding to the
@@ -13,7 +13,7 @@
 #' function, \code{'par'} to the copula parameter and
 #' \code{'tau'} to Kendall's tau.
 #' @param alpha In (0,1) to return the corresponding confidence interval.
-#' @param type (Similar as in \code{\link{predict.gam}} from the
+#' @param type (Similar as in \code{\link[mgcv]{predict.gam}} from the
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package, only active for
 #' \code{type = 'calib'}). When this has the value \code{'link'} (default), the
 #' calibration function is returned.  When \code{type = 'terms'} each component
@@ -37,7 +37,7 @@
 #' \code{type = 'calib'}), then a matrix is returned which will give a vector of
 #' linear predictor values (minus any offset) at the supplied covariate values,
 #' when applied to the model coefficient vector (similar as
-#' \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' \code{\link[mgcv]{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @seealso \code{\link{gamBiCop}} and \code{\link{gamBiCopFit}}.
 #' @examples
 #' require(copula)

@@ -50,7 +50,7 @@ Computes the calibration function (eta) of a bivariate copula for a given
 value of the (first) copula parameter.
 }
 \seealso{
-\code{\link{BiCopEta2Par}} or \code{\link{BiCopPar2Tau}} and
-\code{\link{BiCopTau2Par}} from
-\code{\link[VineCopula:VineCopula-package]{VineCopula}}.
+\code{\link{BiCopEta2Par}},
+\code{\link[VineCopula]{BiCopPar2Tau}},
+and \code{\link[VineCopula]{BiCopTau2Par}} from the \pkg{VineCopula} package.
 }

@@ -61,7 +61,7 @@ are included.}
 
 \item{familycrit}{Character indicating the criterion for bivariate copula
 selection. Possible choices: \code{familycrit = 'AIC'} (default) or
-\code{'BIC'}, as in \code{\link{BiCopSelect}} from the
+\code{'BIC'}, as in \code{\link[VineCopula]{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{level}{Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
@@ -93,7 +93,7 @@ from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 \item{select.once}{if \code{TRUE} the GAM structure is only selected once,
 for the family that appears first in \code{familyset}.}
 
-\item{...}{Additional parameters to be passed to \code{\link{gam}}
+\item{...}{Additional parameters to be passed to \code{\link[mgcv]{gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{

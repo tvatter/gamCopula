@@ -15,7 +15,7 @@
 \item{...}{unused in this class}
 }
 \value{
-A useful summary (see \code{\link{summary.gam}}
+A useful summary (see \code{\link[mgcv]{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
 }
 \description{
@@ -23,6 +23,6 @@ Takes a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object and produces
 various useful summaries from it.
 }
 \seealso{
-\code{\link{summary.gam}}
+\code{\link[mgcv]{summary.gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}
 }

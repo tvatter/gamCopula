@@ -34,7 +34,7 @@ linear) covariates.}
 \item{smooth.covs}{A matrix or data frame containing the non-parametric
 (i.e., smooth) covariates.}
 
-\item{familyset}{(Similar to \code{\link{BiCopSelect}} from the
+\item{familyset}{(Similar to \code{\link[VineCopula]{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package)
 Vector of bivariate copula families to select from.
 If \code{familyset = NA} (default), selection
@@ -57,7 +57,7 @@ are included.}
 
 \item{familycrit}{Character indicating the criterion for bivariate copula
 selection. Possible choices: \code{familycrit = 'AIC'} (default) or
-\code{'BIC'}, as in \code{\link{BiCopSelect}} from the
+\code{'BIC'}, as in \code{\link[VineCopula]{BiCopSelect}} from the
 \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.}
 
 \item{level}{Numerical; significance level of the test for removing individual
@@ -86,7 +86,7 @@ specified for Kendall's tau.}
 \item{select.once}{if \code{TRUE} the GAM structure is only selected once,
 for the family that appears first in \code{familyset}.}
 
-\item{...}{Additional parameters to be passed to \code{\link{gam}}}
+\item{...}{Additional parameters to be passed to \code{\link[mgcv]{gam}}}
 }
 \value{
 \code{gamBiCopFit} returns a list consisting of

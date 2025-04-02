@@ -16,7 +16,7 @@ gamBiCopSimulate(
 \arguments{
 \item{object}{\code{\link{gamBiCop-class}} object.}
 
-\item{newdata}{(same as in \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which simulations are required.
+\item{newdata}{(same as in \code{\link[mgcv]{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which simulations are required.
 If this is not provided then simulations corresponding to the original data are returned.}
 
 \item{N}{sample size.}

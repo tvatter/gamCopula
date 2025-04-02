@@ -18,7 +18,7 @@
 #' \code{'FS'}/\code{'NR'} algorithm.
 #' @param verbose \code{TRUE} if informations should be printed during the
 #' estimation and \code{FALSE} (default) for a silent version.
-#' @param ... Additional parameters to be passed to \code{\link{gam}}
+#' @param ... Additional parameters to be passed to \code{\link[mgcv]{gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamVineSeqFit} returns a
 #' \code{\link[gamCopula:gamVine-class]{gamVine}} object.

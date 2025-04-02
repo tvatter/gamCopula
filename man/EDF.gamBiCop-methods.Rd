@@ -17,6 +17,6 @@ Estimated degrees of freedom for each smooth component.
 \description{
 Function calculating the Equivalent Degrees of Freedom (EDF)
 for a \code{\link[gamCopula:gamBiCop-class]{gamBiCop}} object.
-It basically sums the edf of the \code{\link{gamObject}}
+It basically sums the edf of the \code{\link[mgcv]{gamObject}}
 for each smooth component.
 }
