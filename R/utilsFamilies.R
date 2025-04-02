@@ -60,6 +60,7 @@ get.familyset <- function() {
 }
 
 # Check parameter(s) for a given copula family
+#' @noRd
 family.check <- function(family, par, par2 = 0) {
   if (!(family %in% c(0, get.familyset()))) {
     return("Copula family not yet implemented.")

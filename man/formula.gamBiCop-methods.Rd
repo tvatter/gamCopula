@@ -15,12 +15,12 @@
 \item{...}{un-used in this class}
 }
 \description{
-Extracts the \code{\link{gam}} formula from an object of the class
+Extracts the \code{\link[mgcv]{gam}} formula from an object of the class
 \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}.
-This function is a wrapper to \code{\link{formula.gam}}
+This function is a wrapper to \code{\link[mgcv]{formula.gam}}
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }
 \seealso{
-\code{\link{formula.gam}} function
+\code{\link[mgcv]{formula.gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 }

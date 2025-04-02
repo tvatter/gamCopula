@@ -37,7 +37,7 @@
 #' are included.
 #' @param familycrit Character indicating the criterion for bivariate copula
 #' selection. Possible choices: \code{familycrit = 'AIC'} (default) or
-#' \code{'BIC'}, as in \code{\link{BiCopSelect}} from the
+#' \code{'BIC'}, as in \code{\link[VineCopula]{BiCopSelect}} from the
 #' \code{\link[VineCopula:VineCopula-package]{VineCopula}} package.
 #' @param level Numerical; Passed to \code{\link{gamBiCopSelect}}, it is the
 #' significance level of the test for removing individual
@@ -59,7 +59,7 @@
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @param select.once if \code{TRUE} the GAM structure is only selected once,
 #'   for the family that appears first in \code{familyset}.
-#' @param ... Additional parameters to be passed to \code{\link{gam}}
+#' @param ... Additional parameters to be passed to \code{\link[mgcv]{gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}.
 #' @return \code{gamVineCopSelect} returns a \code{\link{gamVine-class}} object.
 #' @examples

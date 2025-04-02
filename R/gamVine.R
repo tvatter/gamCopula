@@ -12,7 +12,7 @@
 #' @return An object of the class
 #'  \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @seealso \code{\link[gamCopula:gamVine-class]{gamVine}},
-#' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
+#' \code{\link[VineCopula]{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
 #' \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}},
 #' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 #' @name gamVine
@@ -121,6 +121,7 @@ valid.gamVine <- function(object) {
   return(TRUE)
 }
 
+#' @noRd
 dim.gamVine <- function(x) {
   GVC <- x
   return(dim(GVC@Matrix)[1])
@@ -317,9 +318,9 @@ setMethod("show", signature("gamVine"), show.gamVine)
 #' @param object An object of the class
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @param ... unused in this class
-#' @return A useful summary (see \code{\link{summary.gam}}
+#' @return A useful summary (see \code{\link[mgcv]{summary.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}} for more details).
-#' @seealso \code{\link{summary.gam}}
+#' @seealso \code{\link[mgcv]{summary.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}
 #' @docType methods
 #' @name summary.gamVine
@@ -349,15 +350,15 @@ setMethod("dim", signature("gamVine"), dim.gamVine)
 #'
 #' Plot an object of the class
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
-#' The function is based on (see \code{\link{plot.gam}}
+#' The function is based on (see \code{\link[mgcv]{plot.gam}}
 #' from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #'
 #' @param x An object of the class
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @param y Not used with this class.
-#' @param ... additional arguments to be passed to \code{\link{plot.gam}}.
+#' @param ... additional arguments to be passed to \code{\link[mgcv]{plot.gam}}.
 #' @return This function simply generates plots.
-#' @seealso \code{\link{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
+#' @seealso \code{\link[mgcv]{plot.gam}} from \code{\link[mgcv:mgcv-package]{mgcv}}).
 #' @docType methods
 #' @name plot.gamVine
 #' @rdname plot.gamVine-methods
@@ -431,13 +432,13 @@ gamVineFamily <- function(GVC) {
 
 #' Transform an Object of the Class R-Vine into an Object of the Class gamVine
 #'
-#' Transform an object of the class \code{\link{RVineMatrix}}
+#' Transform an object of the class \code{\link[VineCopula]{RVineMatrix}}
 #' into an object of the class \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #'
-#' @param RVM An object of the class \code{\link{RVineMatrix}}.
+#' @param RVM An object of the class \code{\link[VineCopula]{RVineMatrix}}.
 #' @return An object of the class
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
-#' @seealso \code{\link{RVineMatrix}} and
+#' @seealso \code{\link[VineCopula]{RVineMatrix}} and
 #' \code{\link[gamCopula:gamVine-class]{gamVine}}.
 #' @name RVM2GVC
 #' @rdname RVM2GVC

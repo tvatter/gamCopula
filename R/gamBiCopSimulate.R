@@ -1,7 +1,7 @@
 #' Simulate from \code{\link{gamBiCop-class}} object
 #'
 #' @param object \code{\link{gamBiCop-class}} object.
-#' @param newdata (same as in \code{\link{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which simulations are required.
+#' @param newdata (same as in \code{\link[mgcv]{predict.gam}} from the \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame containing the values of the model covariates at which simulations are required.
 #' If this is not provided then simulations corresponding to the original data are returned.
 #' @param N sample size.
 #' @param return.calib should the calibration function (\code{TRUE}) be returned or not (\code{FALSE})?

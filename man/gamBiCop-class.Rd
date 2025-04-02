@@ -25,8 +25,8 @@ gamBiCop is an S4 class to store
 \code{403} Double Gumbel type III (survival and rotated 90 degrees),
 \code{404} Double Gumbel type IV (survival and rotated 270 degrees).}
 
-\item{\code{model}}{A \code{\link{gamObject}} as return by the
- \code{\link{gam}} function
+\item{\code{model}}{A \code{\link[mgcv]{gamObject}} as return by the
+ \code{\link[mgcv]{gam}} function
 from the \code{\link[mgcv:mgcv-package]{mgcv}} package.}
 
 \item{\code{par2}}{Second parameter for the Studen t-copula.}

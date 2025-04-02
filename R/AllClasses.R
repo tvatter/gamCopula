@@ -18,8 +18,8 @@ setOldClass(c("gam"))
 #' \code{402} Double Gumbel type II (standard and rotated 270 degrees),
 #' \code{403} Double Gumbel type III (survival and rotated 90 degrees),
 #' \code{404} Double Gumbel type IV (survival and rotated 270 degrees).
-#' @slot model A \code{\link{gamObject}} as return by the
-#'  \code{\link{gam}} function
+#' @slot model A \code{\link[mgcv]{gamObject}} as return by the
+#'  \code{\link[mgcv]{gam}} function
 #' from the \code{\link[mgcv:mgcv-package]{mgcv}} package.
 #' @slot par2 Second parameter for the Studen t-copula.
 #' @slot tau \code{FALSE} (default) for a calibration fonction
@@ -48,7 +48,8 @@ setClass("gamBiCop", slots = c(
 #' @slot names vector of d names.
 #' @slot covariates vector of names for the exogenous covariates.
 #' @seealso \code{\link{gamVine}},
-#' \code{\link{RVineMatrix}}, \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
+#' \code{\link[VineCopula]{RVineMatrix}},
+#' \code{\link[gamCopula:gamBiCop-class]{gamBiCop}}
 #' \code{\link{gamVineSeqFit}}, \code{\link{gamVineCopSelect}},
 #' \code{\link{gamVineStructureSelect}} and \code{\link{gamVineSimulate}}.
 #' @name gamVine-class

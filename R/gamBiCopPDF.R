@@ -6,7 +6,7 @@
 #' of the covariates.
 #'
 #' @param object \code{\link{gamBiCop-class}} object.
-#' @param newdata (Same as in \code{\link{predict.gam}} from the
+#' @param newdata (Same as in \code{\link[mgcv]{predict.gam}} from the
 #' \code{\link[mgcv:mgcv-package]{mgcv}} package) A matrix or data frame
 #' containing the values of the model covariates at which predictions are
 #' required, along with two columns named `"u1"` and `"u2"`.

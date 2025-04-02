@@ -33,7 +33,7 @@ and  \code{'FS'} for Fisher-scoring (default).}
 \item{verbose}{\code{TRUE} if informations should be printed during the
 estimation and \code{FALSE} (default) for a silent version.}
 
-\item{...}{Additional parameters to be passed to \code{\link{gam}}
+\item{...}{Additional parameters to be passed to \code{\link[mgcv]{gam}}
 from \code{\link[mgcv:mgcv-package]{mgcv}}.}
 }
 \value{
