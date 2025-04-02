@@ -4,9 +4,9 @@ This release corrects Rd cross-references.
 
 ## Test environments
 
-- Windows (release), R 4.x, GitHub Actions
-- macOS (release), R 4.x, GitHub Actions
-- Ubuntu 22.04 (release), R 4.x, GitHub Actions
+- Windows (release), GitHub Actions
+- macOS (release), GitHub Actions
+- Ubuntu 22.04 (release, devel), GitHub Actions
 
 ## R CMD check results
 
