@@ -82,7 +82,9 @@ gamBiCopCDF <- function(object, newdata = NULL) {
   } else {
     data <- cbind(newdata[, "u1"], newdata[, "u2"])
   }
-  data <- cbind(data, par)
+  # The second parameter is the Student t's degrees of freedom, and 0 for
+  # every other family; without it, bicoppd1d2 evaluates the t at 0.
+  data <- cbind(data, par, object@par2)
   out <- as.numeric(bicoppd1d2(data, object@family, p = FALSE, cdf = TRUE))
 
   return(out)
