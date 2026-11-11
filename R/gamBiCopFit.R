@@ -202,8 +202,8 @@ gamBiCopFit <- function(data, formula = ~1, family = 1, tau = TRUE,
   }
 
   if (is.list(data)) {
-    if (!is.null(data$xt)) {
-      xt <- data$xt
+    if (!is.null(data[["xt"]])) {
+      xt <- data[["xt"]]
       data <- data[-which(names(data) == "xt")]
     }
     data <- as.data.frame(data)
@@ -484,7 +484,7 @@ valid.gamBiCopFit <- function(data, n.iters, tau, tol.rel, method, verbose,
   }
 
   if (is.list(data)) {
-    if (!is.null(data$xt)) {
+    if (!is.null(data[["xt"]])) {
       data <- data[-which(names(data) == "xt")]
     }
     data <- tryCatch(as.data.frame(data), error = function(e) e$message)

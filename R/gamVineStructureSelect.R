@@ -635,6 +635,22 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
     fam <- 0
     par2 <- 0
   } else {
+    ## gamBiCopFit reads the covariates by name, from a data frame that also
+    ## holds the pair (u1, u2), the working response and weights (z, w) and
+    ## mgcv's xt; in a non-simplified vine, the covariates of a pair beyond the
+    ## first tree include its conditioning variables
+    nms <- c(colnames(lin.covs), colnames(smooth.covs))
+    bad <- is.na(nms) | duplicated(nms) | make.names(nms) != nms |
+      is.element(nms, c("u1", "u2", "w", "z", "xt"))
+    if (any(bad)) {
+      stop(paste0(
+        "The names of the covariates, and of the variables in a ",
+        "non-simplified vine, must be unique, syntactically valid, and none ",
+        "of u1, u2, w, z and xt (which the pair-copula fits use for other ",
+        "columns); rename: ", paste(unique(nms[bad]), collapse = ", "), "."
+      ), call. = FALSE)
+    }
+
     ## transform the familyset to codes for the VineCopula package
     fams <- famTrans(familyset, inv = FALSE, set = TRUE)
 
