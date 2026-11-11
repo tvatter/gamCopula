@@ -423,6 +423,12 @@ buildNextGraph <- function(graph, udata, l, lin.covs, smooth.covs, simplified,
     V(g)$conditioningSet <- E(graph)$conditioningSet
   }
 
+  ## Full-length attributes, set below edge by edge: the edges that break the
+  ## proximity condition are skipped (and deleted), so starting from no
+  ## attribute could leave it shorter than ecount(g), which igraph >= 2 refuses.
+  E(g)$conditionedSet <- vector("list", ecount(g))
+  E(g)$conditioningSet <- vector("list", ecount(g))
+
   for (i in 1:ecount(g)) {
     con <- ends(g, i, FALSE)
     tmp <- ends(graph, con, FALSE)
@@ -511,12 +517,8 @@ buildNextGraph <- function(graph, udata, l, lin.covs, smooth.covs, simplified,
       }
       out <- intersectDifference(l1, l2)
 
-      suppressWarnings({
-        E(g)$conditionedSet[i] <- list(out$difference)
-      })
-      suppressWarnings({
-        E(g)$conditioningSet[i] <- list(out$intersection)
-      })
+      E(g)$conditionedSet[i] <- list(out$difference)
+      E(g)$conditioningSet[i] <- list(out$intersection)
 
       if (treecrit == "tau") {
         E(g)[i]$weight <- 1 - abs(fasttau(zr1a[noNAs], zr2a[noNAs]))
