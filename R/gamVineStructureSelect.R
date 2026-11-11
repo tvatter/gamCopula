@@ -592,6 +592,14 @@ fitACopula <- function(u1, u2, familyset = NA, familycrit = "AIC",
     inv = TRUE,
     par = cor(u1, u2), familyset = familyset
   )
+
+  ## store pseudo-observations for estimation in next tree, from the copula
+  ## of (u1, u2) as fitted
+  tmp <- bicoppd1d2(cbind(u1, u2, out$par, out$par2), fam, p = FALSE, h = TRUE)
+
+  ## with rotation = TRUE, store the family of the pair with its arguments
+  ## swapped (the 90 and 270 degrees rotations are exchanged), which as.GVC
+  ## swaps back when the vine evaluates the pair as fitted
   if (rotation == TRUE) {
     if (fam %in% c(301, 303, 401, 403)) {
       fam <- fam + 1
@@ -600,9 +608,6 @@ fitACopula <- function(u1, u2, familyset = NA, familycrit = "AIC",
     }
   }
   out$family <- fam
-
-  ## store pseudo-observations for estimation in next tree
-  tmp <- bicoppd1d2(cbind(u1, u2, out$par, out$par2), out$family, p = FALSE, h = TRUE)
 
   ## save the model and pseudo-observations
   model <- list(family = out$family, par = out$par, par2 = out$par2)
@@ -659,25 +664,30 @@ fitAGAMCopula <- function(data, familyset, familycrit, level, tau,
       out$model$par2 <- par2 <- tmp$par2
     }
     fam <- famTrans(fam, inv = TRUE, par = cor(u1, u2), familyset = familyset)
-    if (rotation == TRUE) {
-      if (fam %in% c(301, 303, 401, 403)) {
-        fam <- fam + 1
-      } else if (fam %in% c(302, 304, 402, 404)) {
-        fam <- fam - 1
-      }
-    }
-    if (isS4(out$model)) {
-      attr(out$model, "family") <- fam
-    } else {
-      out$model$family <- fam
-    }
   }
 
-  ## store pseudo-observations for estimation in next tree
+  ## store pseudo-observations for estimation in next tree, from the copula
+  ## of (u1, u2) as fitted
   fams <- vapply(1:length(par), function(j)
     famTrans(fam, inv = FALSE, par = par[j]), numeric(1))
   out$CondOn1 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc2
   out$CondOn2 <- BiCopHfunc(u1, u2, fams, par, par2, check.pars = FALSE)$hfunc1
+
+  ## with rotation = TRUE, store the family of the pair with its arguments
+  ## swapped (the 90 and 270 degrees rotations are exchanged), which as.GVC
+  ## swaps back when the vine evaluates the pair as fitted
+  if (rotation == TRUE) {
+    if (fam %in% c(301, 303, 401, 403)) {
+      fam <- fam + 1
+    } else if (fam %in% c(302, 304, 402, 404)) {
+      fam <- fam - 1
+    }
+  }
+  if (isS4(out$model)) {
+    attr(out$model, "family") <- fam
+  } else {
+    out$model$family <- fam
+  }
 
   return(out)
 }

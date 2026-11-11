@@ -310,10 +310,13 @@ gamVineCopSelect <- function(data, Matrix,
             }
           }
 
+          ## the pair is fitted in the order in which the vine evaluates it,
+          ## so its family is stored as fitted ('rotations' only extends
+          ## familyset, see prepare.data2)
           tmp <- fitAGAMCopula(
             tmp, familyset, familycrit, level,
             tau, method, tol.rel, n.iters, FALSE,
-            rotations, select.once, ...
+            FALSE, select.once, ...
           )
         }
       }
