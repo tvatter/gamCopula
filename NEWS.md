@@ -1,3 +1,26 @@
+gamCopula (development version)
+----------------------------------------------------------------
+
+BUG FIXES
+
+* `gamVineCopSelect` evaluates each pair-copula as it was fitted: with
+  `rotations = TRUE` (the default), a double Clayton or Gumbel family was
+  stored with its 90 and 270 degrees rotations exchanged. `rotations` only
+  includes all rotations of the families in `familyset`, as documented.
+* `gamVineStructureSelect` fits each tree on the h-functions of the
+  pair-copulas fitted in the previous one, not on those of their rotations
+  exchanged.
+* `gamVineStructureSelect` no longer fails with igraph >= 2 ("Length of new
+  attribute value must be 1 or ...") when the first candidate edge of a tree
+  breaks the proximity condition.
+* `gamVineCopSelect` and `gamVineStructureSelect` stop with an error when a
+  covariate, or a conditioning variable in a non-simplified vine, is named
+  u1, u2, w, z or xt, shares its name with another, or does not have a
+  syntactically valid name; a conditioning variable named u1 or u2 was read
+  as the pair-copula's argument.
+* `gamBiCopFit` no longer takes a column whose name starts with "xt" for
+  mgcv's `xt`.
+
 gamCopula 0.0.8 (April 2, 2025)
 ----------------------------------------------------------------
 
